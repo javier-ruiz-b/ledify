@@ -51,7 +51,7 @@ void CommandReaderTest::failsWhenWrittingSeparatorAndNoCommand() {
 bool CommandReaderTest::writeCommand(std::string command) {
     bool lastResult = false;
     for (int i = 0; i < command.length(); i++) {
-        lastResult = m_tested->write(command[i]);
+        lastResult = m_tested->writeChar(command[i]);
     }
     return lastResult;
 }

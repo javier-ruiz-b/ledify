@@ -8,7 +8,7 @@ const char *CommandReader::command() const {
     return m_bufferedCommand;
 }
 
-bool CommandReader::write(char c) {
+bool CommandReader::writeChar(char c) {
     if (m_prefixIndex < SIZE_OF_STRING(COMMAND_PREFIX)) {
         if (c == COMMAND_PREFIX[m_prefixIndex]) {
             m_prefixIndex++;

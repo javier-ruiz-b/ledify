@@ -22,7 +22,7 @@ public:
     const char *command() const;
 
     //! Returns true when a command is ready to be read
-    bool write(char c);
+    bool writeChar(char c);
 
 private:
     void reset();
