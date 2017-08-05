@@ -27,7 +27,7 @@ bool CommandReader::write(char c) {
         if (c == COMMAND_TERMINATION) {
             m_bufferedCommand[m_commandIndex] = '\0';
             reset();
-            return true;
+            return (m_bufferedCommand[m_commandIndex] != '\0');
         } else if (m_commandIndex <= COMMAND_MAX_LENGTH) {
             m_bufferedCommand[m_commandIndex] = c;
             m_commandIndex++;
