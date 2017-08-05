@@ -7,4 +7,6 @@ project(LightLib)
 add_subdirectory(src)
 
 enable_testing()
+find_package(Qt5Core)
+find_package(Qt5Test)
 add_subdirectory(test)

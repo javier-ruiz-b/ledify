@@ -1,14 +1,14 @@
-#include "SerialParser.h"
+#include "CommandReader.h"
 
-SerialParser::SerialParser() {
+CommandReader::CommandReader() {
     reset();
 }
 
-const char *SerialParser::command() const {
+const char *CommandReader::command() const {
     return m_bufferedCommand;
 }
 
-bool SerialParser::write(char c) {
+bool CommandReader::write(char c) {
     if (m_prefixIndex < SIZE_OF_STRING(COMMAND_PREFIX)) {
         if (c == COMMAND_PREFIX[m_prefixIndex]) {
             m_prefixIndex++;
@@ -38,7 +38,7 @@ bool SerialParser::write(char c) {
     return false;
 }
 
-void SerialParser::reset() {
+void CommandReader::reset() {
     m_prefixIndex = 0;
     m_commandIndex = 0;
 }

@@ -15,9 +15,9 @@
  *      C+POWEROFF
  *      C+COLOR=255,255,255,255
  */
-class SerialParser {
+class CommandReader {
 public:
-    SerialParser();
+    CommandReader();
 
     const char *command() const;
 

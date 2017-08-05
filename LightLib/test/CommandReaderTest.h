@@ -1,13 +1,13 @@
 #pragma once
 #include <QtTest>
 
-class SerialParser;
+class CommandReader;
 
-class SerialParserTest : public QObject {
+class CommandReaderTest : public QObject {
     Q_OBJECT
 
 public:
-    SerialParserTest() {}
+    CommandReaderTest() {}
 
 private slots:
     void init();
@@ -25,5 +25,5 @@ private:
     bool writeCommand(std::string command);
 
 private:
-    SerialParser *m_tested;
+    CommandReader *m_tested;
 };
