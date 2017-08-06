@@ -1,4 +1,8 @@
 add_library (CommandReader CommandReader.cpp CommandReader.h)
-
+add_library (definitions definitions.cpp definitions.h)
+add_library (Layer Layer.cpp Layer.h)
+add_library (ColorLayer ColorLayer.cpp ColorLayer.h)
+add_library (ColorConversion ColorConversion.cpp ColorConversion.h)
+target_link_libraries(Layer definitions)
 #add_executable(${PROJECT_NAME} main.cpp)
 #target_link_libraries(${PROJECT_NAME} CommandReader)

@@ -1,8 +1,8 @@
 #pragma once
+
 #include <QtTest>
 
 class CommandReader;
-
 class CommandReaderTest : public QObject {
     Q_OBJECT
 
