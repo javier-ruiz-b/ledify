@@ -3,16 +3,11 @@
 
 class Layer {
 public:
-    Layer();
+    Layer() {}
 
-    virtual uint32 pixel() = 0;
-    void finish(bool propagate);
-    void setParent(Layer *parent);
+    virtual uint32 pixel(uint16) = 0;
 
 protected:
-    bool m_finished;
 
-private:
-    Layer *m_parent;
 
 };

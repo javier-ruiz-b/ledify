@@ -18,11 +18,11 @@ typedef unsigned int size_t;
 
 #ifndef ARDUINO
 #define MOCKABLE_TIME
-static void setMockedTime(bool mockedTime);
-static uint32 getRealTimeMicroseconds();
-static uint32 micros();
-static uint32 millis();
-static void setMockMicros(uint32 timeUs);
-static void setMockMillis(uint32 timeMs);
+void setMockedTime(bool mockedTime);
+uint32 getRealTimeMicroseconds();
+uint32 micros();
+uint32 millis();
+void setMockMicros(uint32 timeUs);
+void setMockMillis(uint32 timeMs);
 #endif
 

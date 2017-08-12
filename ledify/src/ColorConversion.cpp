@@ -10,7 +10,7 @@ uint32 ColorConversion::argbToRgb(uint32 argb) {
     byte r = (byte)(argb >> 16);
     byte g = (byte)(argb >> 8);
     byte b = (byte)(argb >> 0);
-    uint16 rgb =    ((r * alpha) << 16) |
+    uint32 rgb =    ((r * alpha) << 16) |
                     ((g * alpha) << 8) |
                     (b * alpha);
     return rgb;
