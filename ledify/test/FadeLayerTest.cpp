@@ -10,10 +10,6 @@ void FadeLayerTest::init() {
     m_blackColor = new ColorLayer();
     m_blackColor->setColor(0, 0, 0, 0);
     m_tested = new FadeLayer();
-    m_tested->setSourceLayer(m_whiteColor);
-    m_tested->setDestinationLayer(m_blackColor);
-    m_tested->setStartTimeMs(5000);
-    m_tested->setDuration(1000);
     setMockedTime(true);
 }
 
@@ -25,31 +21,38 @@ void FadeLayerTest::cleanup() {
 }
 
 void FadeLayerTest::showsSourceLayer() {
-    m_tested->setStartTimeMs(5000);
+    m_tested->setParams(m_whiteColor, m_blackColor, FadeLayer::InterpolatorLinear, 5000, 1000);
     setMockMillis(5000);
+    m_tested->startPixel();
     QCOMPARE(m_tested->pixel(0), (uint32)0xFFFFFFFF);
 }
 
 void FadeLayerTest::showsDestinationLayer() {
-    m_tested->setStartTimeMs(5000);
-    m_tested->setDuration(1000);
+    m_tested->setParams(m_whiteColor, m_blackColor, FadeLayer::InterpolatorLinear, 5000, 1000);
     setMockMillis(5999);
+    m_tested->startPixel();
     QCOMPARE(m_tested->pixel(0), (uint32)0x00000000);
 }
 
 void FadeLayerTest::calculatesLinearFadeMiddleValue() {
-    m_tested->setStartTimeMs(5000);
-    m_tested->setDuration(1000);
+    m_tested->setParams(m_whiteColor, m_blackColor, FadeLayer::InterpolatorLinear, 5000, 1000);
     setMockMillis(5500);
+    m_tested->startPixel();
     QCOMPARE(m_tested->pixel(0), (uint32)0x7F7F7F7F);
 }
 
 void FadeLayerTest::calculatesAcceleratedFadeMiddleValue() {
-    m_tested->setStartTimeMs(5000);
-    m_tested->setDuration(1000);
-    m_tested->setInterpolator(2);
+    m_tested->setParams(m_whiteColor, m_blackColor, FadeLayer::InterpolatorAccelerate, 5000, 1000);
     setMockMillis(5500);
-    QCOMPARE(m_tested->pixel(0), (uint32)0x90909090);
+    m_tested->startPixel();
+    QCOMPARE(m_tested->pixel(0), (uint32)0xBFBFBFBF);
+}
+
+void FadeLayerTest::calculatesDeceleratedFadeMiddleValue() {
+    m_tested->setParams(m_whiteColor, m_blackColor, FadeLayer::InterpolatorDecelerate, 5000, 1000);
+    setMockMillis(5500);
+    m_tested->startPixel();
+    QCOMPARE(m_tested->pixel(0), (uint32)0x3F3F3F3F);
 }
 
 QTEST_APPLESS_MAIN(FadeLayerTest)

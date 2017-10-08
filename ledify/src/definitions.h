@@ -16,6 +16,10 @@ typedef unsigned int size_t;
 #define SIZE_OF(x) ((sizeof(x)/sizeof(0[x])) / ((size_t)(!(sizeof(x) % sizeof(0[x])))))
 #define SIZE_OF_STRING(x) (SIZE_OF(x) - 1)
 
+#ifdef ARDUINO
+#include "Arduino.h"
+#endif
+
 #ifndef ARDUINO
 #define MOCKABLE_TIME
 void setMockedTime(bool mockedTime);

@@ -17,6 +17,7 @@ private slots:
     void showsDestinationLayer();
     void calculatesLinearFadeMiddleValue();
     void calculatesAcceleratedFadeMiddleValue();
+    void calculatesDeceleratedFadeMiddleValue();
 
 private:
     FadeLayer *m_tested;

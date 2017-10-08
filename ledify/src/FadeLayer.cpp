@@ -1,30 +1,62 @@
 #include "FadeLayer.h"
 
-byte FadeLayer::interpolatedDestinationValue(uint32 timeMs) {
+byte FadeLayer::interpolatedDestinationValue() {
     switch (m_interpolator) {
-    case LINEAR_INTERPOLATOR:
+    case InterpolatorAccelerate:
+        return interpolatedAcceleratedValue();
+    case InterpolatorDecelerate:
+        return interpolatedDeceleratedValue();
+    case InterpolatorLinear:
     default:
-        return (byte) (((timeMs - m_startMs) * 256) / m_durationMs);
+        return (byte) (((uint32)m_currentTimeDifferenceMs * 256) / (uint32)m_durationMs);
     }
 }
 
-void FadeLayer::setInterpolator(byte interpolatorType) {
-    m_interpolator = interpolatorType;
+byte FadeLayer::interpolatedAcceleratedValue() {
+    uint32 timeDiffPow = (uint32)m_currentTimeDifferenceMs * (uint32)m_currentTimeDifferenceMs;
+    uint32 durationMsPow = (uint32)m_durationMs * (uint32)m_durationMs;
+    return (byte) ((timeDiffPow * 256) / durationMsPow);
+}
+
+byte FadeLayer::interpolatedDeceleratedValue() {
+    uint32 timeDiffInv = m_durationMs - m_currentTimeDifferenceMs;
+    uint32 durationMsPow = (uint32)m_durationMs * (uint32)m_durationMs;
+    uint32 timeDiffPow = (uint32)timeDiffInv * (uint32)timeDiffInv;
+    uint32 timeDiffPowInv = durationMsPow - timeDiffPow;
+    return (byte) ((timeDiffPowInv * 256) / durationMsPow);
+}
+
+void FadeLayer::setParams(Layer *source,
+                          Layer *destination,
+                          FadeLayer::Interpolator interpolator,
+                          uint32 startTimeMs,
+                          uint16 durationMs) {
+    m_source = source;
+    m_destination = destination;
+    m_interpolator = interpolator;
+    m_startMs = startTimeMs;
+    m_durationMs = durationMs;
+}
+
+void FadeLayer::startPixel() {
+    uint32 currentTimeMs = millis();
+    if (m_startMs == 0) {
+        m_startMs = currentTimeMs;
+    }
+    m_currentTimeDifferenceMs = (uint16) (currentTimeMs - m_startMs);
+}
+
+void FadeLayer::endPixel() {
 }
 
 uint32 FadeLayer::pixel(uint16 position) {
-    uint32 timeMs = millis();
-    if (m_startMs == 0) {
-        m_startMs = timeMs;
-    }
-
-    if (timeMs >= (m_startMs + m_durationMs)) {
+    if (m_currentTimeDifferenceMs >= m_durationMs) {
         return m_destination->pixel(position);
     }
 
     uint32 sourcePixel = m_source->pixel(position);
     uint32 destinationPixel = m_destination->pixel(position);
-    byte alphaDestination = interpolatedDestinationValue(timeMs);
+    byte alphaDestination = interpolatedDestinationValue();
     uint16 alphaSource = 256 - alphaDestination;
 
     byte w = (byte) (((uint16)(sourcePixel >> 24) * alphaSource
