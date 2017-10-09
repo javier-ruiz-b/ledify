@@ -70,5 +70,9 @@ uint32 FadeLayer::pixel(uint16 position) {
     return ((uint32)w << 24) |
            ((uint32)r << 16) |
            ((uint32)g << 8) |
-           b;
+            b;
+}
+
+bool FadeLayer::finished() {
+    return m_currentTimeDifferenceMs > m_durationMs;
 }

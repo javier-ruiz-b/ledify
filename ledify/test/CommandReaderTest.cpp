@@ -26,8 +26,7 @@ void CommandReaderTest::emptyCommandWhenWrittingJustC() {
 }
 
 void CommandReaderTest::failsWhenCommandTooLong() {
-    // max. 32 + \n = 33. Counting after AT+.
-    bool result = writeCommand("C+0123456789012345678901234567890123\n");
+    bool result = writeCommand("C+012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789\n");
 
     QVERIFY(!result);
 }

@@ -4,13 +4,14 @@
 
 #define COMMAND_PREFIX      "C"
 #define PREFIX_SEPARATOR    '+'
-#define COMMAND_MAX_LENGTH  32
+#define COMMAND_MAX_LENGTH  48
 #define COMMAND_TERMINATION '\n'
 
 /**
  * @brief Parses byte by byte the output of the serial interface.
  * Expects commands with following structure:
  *      "C+" + COMMAND_NAME + '\n'
+ *  It resets automatically for the next command.
  * Example:
  *      C+POWEROFF
  *      C+COLOR=255,255,255,255

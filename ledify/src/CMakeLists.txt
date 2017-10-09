@@ -3,6 +3,7 @@ add_library (definitions definitions.cpp definitions.h)
 add_library (Layer Layer.cpp Layer.h)
 add_library (ColorLayer ColorLayer.cpp ColorLayer.h)
 add_library (FadeLayer FadeLayer.cpp FadeLayer.h)
+add_library (FakeNeoPixelLib FakeNeoPixelLib.cpp FakeNeoPixelLib.h)
 add_library (LedStripController LedStripController.cpp LedStripController.h)
 
 #add_library (ColorConversion ColorConversion.cpp ColorConversion.h)

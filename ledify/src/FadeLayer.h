@@ -17,6 +17,7 @@ public:
     void startPixel();
     void endPixel();
     uint32 pixel(uint16);
+    bool finished();
 
 private:
     inline byte interpolatedDestinationValue();

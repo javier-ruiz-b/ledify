@@ -1,6 +1,7 @@
 #pragma once
 
 typedef unsigned char byte;
+typedef unsigned char uint8;
 typedef unsigned long long int uint64;
 typedef signed long long int int64;
 typedef unsigned long int uint32;
