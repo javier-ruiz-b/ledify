@@ -11,11 +11,14 @@ Adafruit_NeoPixel::Adafruit_NeoPixel() {
     pixels = nullptr;
 }
 
-Adafruit_NeoPixel::~Adafruit_NeoPixel()
-{
+Adafruit_NeoPixel::~Adafruit_NeoPixel() {
     if (pixels) {
         delete[] pixels;
     }
+}
+
+void Adafruit_NeoPixel::setPixelColor(uint16 n, uint32 c){
+    pixels[n] = c;
 }
 
 void Adafruit_NeoPixel::clear() {
@@ -28,7 +31,10 @@ void Adafruit_NeoPixel::updateLength(uint16 n) {
     if (pixels) {
         delete[] pixels;
     }
-    pixels = new uint8[n];
+    pixels = new uint32[n];
+    for (int i = 0; i < n; i++) {
+        pixels[i] = 0xFEFEFEFE;
+    }
     numLEDs = n;
 }
 

@@ -37,7 +37,7 @@ void LedStripControllerTest::setsRedColor() {
 
     m_tested->draw();
 
-    QCOMPARE(m_fakePixelLib->getPixelColor(0), static_cast<uint32>(0xFF000000));
+    QCOMPARE(m_fakePixelLib->getPixelColor(0), static_cast<uint32>(0x00FF0000)); //WRGB
 }
 
 void LedStripControllerTest::createsTwoColorsAndSetsSecond() {
@@ -47,7 +47,8 @@ void LedStripControllerTest::createsTwoColorsAndSetsSecond() {
 
     m_tested->draw();
 
-    QCOMPARE(m_fakePixelLib->getPixelColor(0), static_cast<uint32>(0x00FF0000));
+    QCOMPARE(m_fakePixelLib->getPixelColor(0), static_cast<uint32>(0x0000FF00)); //WRGB
+    QCOMPARE(m_tested->m_availableLayers[1], static_cast<Layer *>(nullptr));
 }
 
 void LedStripControllerTest::fadesBetweenTwoColors() {
@@ -59,20 +60,24 @@ void LedStripControllerTest::fadesBetweenTwoColors() {
     setMockMillis(1500); //in the middle of the fade
     m_tested->draw();
 
-    QCOMPARE(m_fakePixelLib->getPixelColor(0), static_cast<uint32>(0x7F7F0000));
+    QCOMPARE(m_fakePixelLib->getPixelColor(0), static_cast<uint32>(0x007F7F00)); //WRGB
+    QCOMPARE(m_tested->m_availableLayers[0], static_cast<Layer *>(nullptr));
+    QCOMPARE(m_tested->m_availableLayers[1], static_cast<Layer *>(nullptr));
+    QCOMPARE(m_tested->m_availableLayers[2], static_cast<Layer *>(nullptr));
 }
 
 void LedStripControllerTest::twoFadesAtTheSameTime() {
     writeCommand("C+COLOR=0,255,0,0,0");
     writeCommand("C+COLOR=1,0,255,0,0");
-    writeCommand("C+COLOR=2,127,127,FF,0");
+    writeCommand("C+COLOR=2,127,127,255,0");
     writeCommand("C+FADE=3,0,1,0,0,1000"); // COLOR3= 0+1 @ 500ms = 127,127,0,0
     writeCommand("C+FADE=4,2,3,0,0,1000"); // COLOR4= 2+3 € 500ms = 127,127,127,0
+    writeCommand("C+SET=4");
 
     setMockMillis(500); //in the middle of the fade
     m_tested->draw();
 
-    QCOMPARE(m_fakePixelLib->getPixelColor(0), static_cast<uint32>(0x7F7F7F00));
+    QCOMPARE(m_fakePixelLib->getPixelColor(0), static_cast<uint32>(0x007F7F7F)); //WRGB
 }
 
 void LedStripControllerTest::writeCommand(std::string command) {

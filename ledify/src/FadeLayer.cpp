@@ -26,27 +26,23 @@ byte FadeLayer::interpolatedDeceleratedValue() {
     return (byte) ((timeDiffPowInv * 256) / durationMsPow);
 }
 
-void FadeLayer::setParams(Layer *source,
-                          Layer *destination,
-                          FadeLayer::Interpolator interpolator,
-                          uint32 startTimeMs,
-                          uint16 durationMs) {
-    m_source = source;
-    m_destination = destination;
-    m_interpolator = interpolator;
-    m_startMs = startTimeMs;
-    m_durationMs = durationMs;
-}
+FadeLayer::FadeLayer(Layer *source, Layer *destination, FadeLayer::Interpolator interpolator, uint32 startTimeMs, uint16 durationMs)
+    : m_source(source), m_destination(destination), m_interpolator(interpolator), m_startMs(startTimeMs), m_durationMs(durationMs) {}
 
-void FadeLayer::startPixel() {
+void FadeLayer::startDraw() {
+    m_source->startDraw();
+    m_destination->startDraw();
     uint32 currentTimeMs = millis();
-    if (m_startMs == 0) {
-        m_startMs = currentTimeMs;
-    }
     m_currentTimeDifferenceMs = (uint16) (currentTimeMs - m_startMs);
 }
 
-void FadeLayer::endPixel() {
+void FadeLayer::endDraw() {
+    m_source->endDraw();
+    m_destination->endDraw();
+}
+
+bool FadeLayer::finished() {
+    return m_currentTimeDifferenceMs > m_durationMs;
 }
 
 uint32 FadeLayer::pixel(uint16 position) {
@@ -71,8 +67,4 @@ uint32 FadeLayer::pixel(uint16 position) {
            ((uint32)r << 16) |
            ((uint32)g << 8) |
             b;
-}
-
-bool FadeLayer::finished() {
-    return m_currentTimeDifferenceMs > m_durationMs;
 }

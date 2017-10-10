@@ -40,10 +40,21 @@ class Layer;
 class LedStripController {
 public:
     LedStripController(Adafruit_NeoPixel *neoPixelLib);
+    ~LedStripController();
 
     CommandReader &commandReader();
     void writeChar(char c);
     void draw();
+
+    void commandSet(const char *command, byte lengthCommand);
+
+private:
+    void parseCommand();
+
+    /**
+     * @return length of startsWithString if matches
+     */
+    byte startsWith(const char *string, const char *startsWithString);
 
 private:
     CommandReader m_commandReader;
@@ -52,4 +63,5 @@ private:
     Layer *m_rootLayer;
 
     friend class LedStripControllerTest;
+    void commandColor(byte lengthCommand, const char *command);
 };

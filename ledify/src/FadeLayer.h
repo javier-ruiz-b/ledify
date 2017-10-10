@@ -11,13 +11,13 @@ public:
     };
 
 public:
-    FadeLayer() : m_startMs(0), m_interpolator(InterpolatorLinear) {}
-    void setParams(Layer *source, Layer *destination, Interpolator interpolator, uint32 startTimeMs, uint16 durationMs);
+    FadeLayer(Layer *source, Layer *destination, Interpolator interpolator, uint32 startTimeMs, uint16 durationMs);
 
-    void startPixel();
-    void endPixel();
-    uint32 pixel(uint16);
+    virtual void startDraw();
+    virtual void endDraw();
     bool finished();
+
+    uint32 pixel(uint16);
 
 private:
     inline byte interpolatedDestinationValue();

@@ -7,7 +7,7 @@ public:
 
     virtual uint32 pixel(uint16) = 0;
 
-protected:
-
+    virtual void startDraw() = 0;
+    virtual void endDraw() = 0;
 
 };

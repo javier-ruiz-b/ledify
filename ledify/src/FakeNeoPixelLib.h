@@ -33,7 +33,8 @@ private:
     uint8
       pin;           // Output pin number (-1 if not yet set)
     uint8
-      brightness,
+      brightness;      // Output pin number (-1 if not yet set)
+    uint32
      *pixels;
 };
 
