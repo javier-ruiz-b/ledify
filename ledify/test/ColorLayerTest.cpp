@@ -3,7 +3,8 @@
 #include "ColorLayer.h"
 
 void ColorLayerTest::checksPixelColor() {
-    ColorLayer tested(1, 2, 3, 4);
+    ColorLayer tested;
+    tested.setColor(1, 2, 3, 4);
     QCOMPARE(tested.pixel(0), (uint32)0x04010203);
 }
 

@@ -17,6 +17,8 @@ Adafruit_NeoPixel::~Adafruit_NeoPixel() {
     }
 }
 
+void Adafruit_NeoPixel::show() {}
+
 void Adafruit_NeoPixel::setPixelColor(uint16 n, uint32 c){
     pixels[n] = c;
 }

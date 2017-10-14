@@ -1,5 +1,9 @@
 #include "definitions.h"
 
+#ifdef DEBUG
+char logbuffer[128];
+#endif
+
 #ifndef ARDUINO
 #include <sys/time.h>
 

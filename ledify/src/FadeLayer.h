@@ -11,13 +11,17 @@ public:
     };
 
 public:
-    FadeLayer(Layer *source, Layer *destination, Interpolator interpolator, uint32 startTimeMs, uint16 durationMs);
+    FadeLayer() {}
+    ~FadeLayer();
 
-    virtual void startDraw();
-    virtual void endDraw();
+    void setParams(Layer *source, Layer *destination, Interpolator interpolator, uint32 startTimeMs, uint16 durationMs);
     bool finished();
 
-    uint32 pixel(uint16);
+    uint32 pixel(uint16 index);
+    virtual void startDraw();
+    virtual void endDraw();
+    virtual void setNewChild(Layer *currentChild, Layer *newChild);
+    virtual void setInUse(bool value);
 
 private:
     inline byte interpolatedDestinationValue();
@@ -32,4 +36,5 @@ private:
     uint16 m_durationMs;
     Interpolator m_interpolator;
 
+    friend class LedStripControllerTest;
 };

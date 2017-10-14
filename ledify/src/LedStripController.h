@@ -1,7 +1,10 @@
 #pragma once
 
 #include "definitions.h"
+#include "FPSCalculator.h"
 #include "CommandReader.h"
+#include "LayerController.h"
+#include "StartLayer.h"
 
 class Adafruit_NeoPixel;
 class Layer;
@@ -39,17 +42,19 @@ class Layer;
  */
 class LedStripController {
 public:
-    LedStripController(Adafruit_NeoPixel *neoPixelLib);
-    ~LedStripController();
+    LedStripController();
 
     CommandReader &commandReader();
     void writeChar(char c);
-    void draw();
-
-    void commandSet(const char *command, byte lengthCommand);
+    void draw(char *ledsRgbw, int numLeds);
 
 private:
     void parseCommand();
+
+    void commandSet(const char *command, byte lengthCommand);
+    void commandColor(byte lengthCommand, const char *command);
+    void commandFade(const char *command, byte lengthCommand);
+    void commandFps(byte lengthCommand, const char *command);
 
     /**
      * @return length of startsWithString if matches
@@ -57,11 +62,11 @@ private:
     byte startsWith(const char *string, const char *startsWithString);
 
 private:
-    CommandReader m_commandReader;
-    Adafruit_NeoPixel *m_neoPixelLib;
     Layer *m_availableLayers[AVAILABLE_LAYERS_NUM];
-    Layer *m_rootLayer;
+    StartLayer m_rootLayer;
+    FpsCalculator m_fpsCalculator;
+    CommandReader m_commandReader;
+    LayerController m_layerController;
 
     friend class LedStripControllerTest;
-    void commandColor(byte lengthCommand, const char *command);
 };

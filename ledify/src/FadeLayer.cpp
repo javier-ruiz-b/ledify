@@ -26,8 +26,18 @@ byte FadeLayer::interpolatedDeceleratedValue() {
     return (byte) ((timeDiffPowInv * 256) / durationMsPow);
 }
 
-FadeLayer::FadeLayer(Layer *source, Layer *destination, FadeLayer::Interpolator interpolator, uint32 startTimeMs, uint16 durationMs)
-    : m_source(source), m_destination(destination), m_interpolator(interpolator), m_startMs(startTimeMs), m_durationMs(durationMs) {}
+FadeLayer::~FadeLayer() {
+    delete m_source;
+    delete m_destination;
+}
+
+void FadeLayer::setParams(Layer *source, Layer *destination, FadeLayer::Interpolator interpolator, uint32 startTimeMs, uint16 durationMs) {
+    m_source = source;
+    m_destination = destination;
+    m_interpolator = interpolator;
+    m_startMs = startTimeMs;
+    m_durationMs = durationMs;
+}
 
 void FadeLayer::startDraw() {
     m_source->startDraw();
@@ -41,17 +51,37 @@ void FadeLayer::endDraw() {
     m_destination->endDraw();
 }
 
+void FadeLayer::setNewChild(Layer *currentChild, Layer *newChild) {
+    if (currentChild == m_source) {
+        m_source = newChild;
+    } else if (newChild == m_destination) {
+        m_destination = newChild;
+    } else {
+        logerr("Couldn't set new child: Unknown current ptr!", newChild);
+    }
+}
+
+void FadeLayer::setInUse(bool value) {
+    m_inUse = value;
+    if (!value) {
+        m_source->setInUse(false);
+        m_destination->setInUse(false);
+        m_source = nullptr;
+        m_destination = nullptr;
+    }
+}
+
 bool FadeLayer::finished() {
     return m_currentTimeDifferenceMs > m_durationMs;
 }
 
-uint32 FadeLayer::pixel(uint16 position) {
+uint32 FadeLayer::pixel(uint16 index) {
     if (m_currentTimeDifferenceMs >= m_durationMs) {
-        return m_destination->pixel(position);
+        return m_destination->pixel(index);
     }
 
-    uint32 sourcePixel = m_source->pixel(position);
-    uint32 destinationPixel = m_destination->pixel(position);
+    uint32 sourcePixel = m_source->pixel(index);
+    uint32 destinationPixel = m_destination->pixel(index);
     byte alphaDestination = interpolatedDestinationValue();
     uint16 alphaSource = 256 - alphaDestination;
 
