@@ -4,6 +4,7 @@
 class Layer {
 public:
     Layer() : m_inUse(false) {}
+    virtual ~Layer() {}
 
     virtual uint32 pixel(uint16 index) = 0;
 
@@ -18,8 +19,6 @@ public:
 
 protected:
     bool m_inUse;
-
-private:
     Layer *m_parent;
 
 };

@@ -28,8 +28,14 @@ void LedStripController::draw(char *ledsRgbw, int numLeds) {
         return;
     }
     m_rootLayer.startDraw();
+    uint32 *ledsIntPtr = (uint32 *) ledsRgbw;
+    Layer *child = m_rootLayer.child();
+    if (!child) {
+        return;
+    }
     for (uint16 i = 0; i < numLeds; i++) {
-        ((uint32 *)ledsRgbw)[i] = m_rootLayer.pixel(i);
+        *ledsIntPtr = child->pixel(i);
+        ledsIntPtr++;
     }
     m_rootLayer.endDraw();
 }
@@ -60,8 +66,13 @@ void LedStripController::commandSet(const char *command, byte lengthCommand) {
         logerr("LayerIndex out of range: %s", command);
         return;
     }
+    if (m_availableLayers[index] == nullptr) {
+        logerr("Layer doesn't exist! %i", index);
+        return;
+    }
+
     m_rootLayer.setInUse(false);
-    m_rootLayer.setChild(m_availableLayers[index]);
+    m_rootLayer.setNewChild(nullptr, m_availableLayers[index]);
     m_availableLayers[index] = nullptr;
 }
 
@@ -76,7 +87,7 @@ void LedStripController::commandFade(const char *command, byte lengthCommand) {
     Layer *from = m_availableLayers[indexFrom];
     Layer *to = m_availableLayers[indexTo];
     if ((from == nullptr) || (to == nullptr)) {
-        logerr("From(%d) or to(%d) are null", from, to);
+        logerr("From(%p) or to(%p) are null", from, to);
         return;
     }
     uint32 startTimeMs = millis() + startDelayMs;

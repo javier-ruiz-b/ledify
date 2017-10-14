@@ -1,7 +1,7 @@
 #pragma once
 
 #include "definitions.h"
-#include "FPSCalculator.h"
+#include "FpsCalculator.h"
 #include "CommandReader.h"
 #include "LayerController.h"
 #include "StartLayer.h"

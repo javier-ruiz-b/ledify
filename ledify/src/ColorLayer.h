@@ -11,7 +11,7 @@ public:
 
     virtual void startDraw() {}
     virtual void endDraw() {}
-    virtual void setNewChild(Layer *currentChild, Layer *newChild) {}
+    virtual void setNewChild(Layer *currentChild, Layer *newChild);
     virtual void setInUse(bool value);
 
 private:

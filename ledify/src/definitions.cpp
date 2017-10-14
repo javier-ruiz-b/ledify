@@ -17,14 +17,14 @@ void setMockedTime(bool mockedTime) {
 uint32 getRealTimeMicroseconds() {
     struct timeval tv;
     gettimeofday(&tv,NULL);
-    return 1000000 * tv.tv_sec + tv.tv_usec;
+    return (uint32) (1000000 * tv.tv_sec + tv.tv_usec);
 }
 
 uint32 micros() {
     if (m_mockTime) {
         return m_mockedTimeUs;
     } else {
-        getRealTimeMicroseconds();
+        return getRealTimeMicroseconds();
     }
 }
 
@@ -32,7 +32,7 @@ uint32 millis() {
     if (m_mockTime) {
         return m_mockedTimeUs/1000;
     } else {
-        getRealTimeMicroseconds()/1000;
+        return getRealTimeMicroseconds()/1000;
     }
 }
 

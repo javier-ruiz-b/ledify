@@ -5,7 +5,6 @@ class StartLayer : Layer {
 public:
     StartLayer() : m_child(nullptr) {}
 
-    void setChild(Layer *child);
     Layer *child() const;
 
     virtual uint32 pixel(uint16 index);

@@ -1,27 +1,29 @@
 #include "StartLayer.h"
 
-void StartLayer::setChild(Layer *child) {
-    m_child = child;
-}
-
 Layer *StartLayer::child() const {
     return m_child;
 }
 
 uint32 StartLayer::pixel(uint16 index) {
-    return m_child->pixel(index);
+//    if (m_child)
+        return m_child->pixel(index);
+//    else
+//        return 0;
 }
 
 void StartLayer::startDraw() {
-    m_child->startDraw();
+//    if (m_child)
+        m_child->startDraw();
 }
 
 void StartLayer::endDraw() {
-    m_child->endDraw();
+//    if (m_child)
+        m_child->endDraw();
 }
 
 void StartLayer::setNewChild(Layer *, Layer *newChild) {
     m_child = newChild;
+    m_child->setParent(this);
 }
 
 void StartLayer::setInUse(bool value) {

@@ -12,8 +12,10 @@ typedef signed long int int32;
 typedef unsigned short uint16;
 typedef signed short int16;
 #ifndef __PIC32MX__
+#ifndef __linux
     /* chipKIT-specific code goes here */
 typedef unsigned int size_t;
+#endif
 #endif
 
 #ifndef nullptr

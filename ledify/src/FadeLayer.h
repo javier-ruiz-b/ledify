@@ -12,7 +12,6 @@ public:
 
 public:
     FadeLayer() {}
-    ~FadeLayer();
 
     void setParams(Layer *source, Layer *destination, Interpolator interpolator, uint32 startTimeMs, uint16 durationMs);
     bool finished();
@@ -37,4 +36,5 @@ private:
     Interpolator m_interpolator;
 
     friend class LedStripControllerTest;
+    void recalculateTimeDifference();
 };

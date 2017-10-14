@@ -26,24 +26,30 @@ byte FadeLayer::interpolatedDeceleratedValue() {
     return (byte) ((timeDiffPowInv * 256) / durationMsPow);
 }
 
-FadeLayer::~FadeLayer() {
-    delete m_source;
-    delete m_destination;
-}
-
 void FadeLayer::setParams(Layer *source, Layer *destination, FadeLayer::Interpolator interpolator, uint32 startTimeMs, uint16 durationMs) {
     m_source = source;
     m_destination = destination;
     m_interpolator = interpolator;
     m_startMs = startTimeMs;
     m_durationMs = durationMs;
+    m_source->setParent(this);
+    m_destination->setParent(this);
+}
+
+void FadeLayer::recalculateTimeDifference() {
+    uint32 currentTimeMs = millis();
+    m_currentTimeDifferenceMs = (uint16) (currentTimeMs - m_startMs);
 }
 
 void FadeLayer::startDraw() {
     m_source->startDraw();
     m_destination->startDraw();
-    uint32 currentTimeMs = millis();
-    m_currentTimeDifferenceMs = (uint16) (currentTimeMs - m_startMs);
+    recalculateTimeDifference();
+    if (finished()) {
+        m_parent->setNewChild(this, m_destination);
+        m_destination = nullptr;
+        setInUse(false);
+    }
 }
 
 void FadeLayer::endDraw() {
@@ -52,20 +58,25 @@ void FadeLayer::endDraw() {
 }
 
 void FadeLayer::setNewChild(Layer *currentChild, Layer *newChild) {
+    newChild->setParent(this);
     if (currentChild == m_source) {
         m_source = newChild;
     } else if (newChild == m_destination) {
         m_destination = newChild;
     } else {
-        logerr("Couldn't set new child: Unknown current ptr!", newChild);
+        logerr("Couldn't set new child: Unknown current ptr!: %p", currentChild);
     }
 }
 
 void FadeLayer::setInUse(bool value) {
     m_inUse = value;
     if (!value) {
-        m_source->setInUse(false);
-        m_destination->setInUse(false);
+        if (m_source) {
+            m_source->setInUse(false);
+        }
+        if (m_destination) {
+            m_destination->setInUse(false);
+        }
         m_source = nullptr;
         m_destination = nullptr;
     }

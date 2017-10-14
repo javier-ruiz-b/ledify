@@ -1,6 +1,8 @@
 # CMake build directories
 /build-*
 
+CMakeLists.txt.user
+
 # Prerequisites
 *.d
 

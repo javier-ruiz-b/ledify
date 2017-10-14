@@ -3,13 +3,12 @@
 
 #include <iostream>
 
-const uint16 c_numLeds = 300;
-
 void LedStripControllerTest::init() {
-    m_tested = new LedStripController();
     setMockedTime(true);
     setMockMillis(0);
-    m_buffer = (char *) m_leds;
+    m_tested = new LedStripController();
+    m_leds = (int *) m_buffer;
+    memset(m_buffer, 0xFE, NUM_LED*sizeof(uint32));
 }
 
 void LedStripControllerTest::cleanup() {
@@ -90,10 +89,15 @@ void LedStripControllerTest::triesToSetAnInvalidIndex() {
 }
 
 void LedStripControllerTest::acceptanceTest() {
-    writeCommand("C+COLOR=0,255,0,0,0");
-    writeCommand("C+COLOR=1,0,255,0,0");
-    writeCommand("C+FADE=2,0,1,1,2000,30000");
-    writeCommand("C+SET=2");
+    writeCommand("C+COLOR=0,255,0,0,255");
+    writeCommand("C+COLOR=1,0,255,255,0");
+    writeCommand("C+FADE=4,0,1,1,2000,30000");
+    writeCommand("C+COLOR=0,0,255,255,255");
+    writeCommand("C+FADE=5,4,0,1,2000,10000");
+    writeCommand("C+COLOR=0,0,255,0,0");
+    writeCommand("C+FADE=6,5,0,1,8000,29000");
+    writeCommand("C+SET=6");
+    writeCommand("C+FPS=0");
 
     FadeLayer *fade = static_cast<FadeLayer *>(m_tested->m_rootLayer.child());
     ColorLayer *sourceColor = static_cast<ColorLayer *>(fade->m_source);
@@ -105,7 +109,7 @@ void LedStripControllerTest::acceptanceTest() {
         m_tested->draw(m_buffer, NUM_LED);
     }
 
-    QCOMPARE(m_leds[0], 0x007F7F00); //WRGB
+    QCOMPARE(m_leds[0], 0x0000FF00); //WRGB
     QCOMPARE(fade->m_inUse, false);
     QCOMPARE(sourceColor->m_inUse, false);
     QCOMPARE(destinationColor->m_inUse, true);

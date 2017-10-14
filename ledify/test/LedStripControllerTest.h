@@ -1,6 +1,7 @@
 #pragma once
 
 #include <QtTest>
+#include "definitions.h"
 
 #define NUM_LED 100
 
@@ -10,7 +11,9 @@ class LedStripControllerTest : public QObject {
     Q_OBJECT
 
 public:
-    CommandReaderTest() {}
+    LedStripControllerTest() {
+        m_tested = nullptr;
+    }
 
 private slots:
     void init();
@@ -29,8 +32,8 @@ private:
     void writeCommand(std::string command);
 
 private:
-    const int m_numLeds = NUM_LED;
-    int m_leds[NUM_LED];
-    char *m_buffer;
     LedStripController *m_tested;
+    const int m_numLeds = NUM_LED;
+    int *m_leds;
+    char m_buffer[NUM_LED*sizeof(uint32)];
 };
