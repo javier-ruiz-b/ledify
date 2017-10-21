@@ -7,6 +7,7 @@ add_library (StartLayer StartLayer.cpp StartLayer.h)
 add_library (FPSCalculator FpsCalculator.cpp FpsCalculator.h)
 add_library (LayerController LayerController.cpp LayerController.h)
 add_library (LedStripController LedStripController.cpp LedStripController.h)
+add_library (rpi_ws281x rpi_ws281x/dma.c rpi_ws281x/mailbox.c rpi_ws281x/pcm.c rpi_ws281x/pwm.c rpi_ws281x/rpihw.c rpi_ws281x/ws2811.c)
 
 #add_library (ColorConversion ColorConversion.cpp ColorConversion.h)
 target_link_libraries(FPSCalculator definitions)
