@@ -16,26 +16,26 @@ CommandReader &LedStripController::commandReader() {
     return m_commandReader;
 }
 
-void LedStripController::writeChar(char c) {
+bool LedStripController::writeChar(char c) {
     if (m_commandReader.writeChar(c)) {
-        parseCommand();
+        return parseCommand();
     }
+    return false;
 }
 
-void LedStripController::draw(char *ledsRgbw, int numLeds) {
+void LedStripController::draw(uint32 *ledsRgbw, int numLeds) {
     m_fpsCalculator.tick();
     if (m_rootLayer.child() == nullptr) {
         return;
     }
     m_rootLayer.startDraw();
-    uint32 *ledsIntPtr = (uint32 *) ledsRgbw;
     Layer *child = m_rootLayer.child();
     if (!child) {
         return;
     }
     for (uint16 i = 0; i < numLeds; i++) {
-        *ledsIntPtr = child->pixel(i);
-        ledsIntPtr++;
+        *ledsRgbw = child->pixel(i);
+        ledsRgbw++;
     }
     m_rootLayer.endDraw();
 }
@@ -45,7 +45,7 @@ void LedStripController::commandColor(byte lengthCommand, const char *command) {
     const char *value = &command[lengthCommand + 1];
     sscanf(value, "%hu,%hu,%hu,%hu,%hu", &index, &r, &g, &b, &w);
     if (index >= AVAILABLE_LAYERS_NUM) {
-        logerr("LayerIndex out of range: %s", command);
+        logerr("Index range: %s", command);
         return;
     }
     if (m_availableLayers[index]) {
@@ -63,11 +63,11 @@ void LedStripController::commandSet(const char *command, byte lengthCommand) {
     const char *value = &command[lengthCommand + 1];
     sscanf(value, "%hu", &index);
     if (index >= AVAILABLE_LAYERS_NUM) {
-        logerr("LayerIndex out of range: %s", command);
+        logerr("Index range: %s", command);
         return;
     }
     if (m_availableLayers[index] == nullptr) {
-        logerr("Layer doesn't exist! %i", index);
+        logerr("Doesn't exist %i", index);
         return;
     }
 
@@ -81,13 +81,13 @@ void LedStripController::commandFade(const char *command, byte lengthCommand) {
     const char *value = &command[lengthCommand + 1];
     sscanf(value, "%hu,%hu,%hu,%hu,%hu,%hu", &myIndex, &indexFrom, &indexTo, &interpolator, &startDelayMs,  &durationMs);
     if ((indexFrom >= AVAILABLE_LAYERS_NUM) || (indexTo >= AVAILABLE_LAYERS_NUM)) {
-        logerr("LayerIndex out of range: %s", command);
+        logerr("Index range: %s", command);
         return;
     }
     Layer *from = m_availableLayers[indexFrom];
     Layer *to = m_availableLayers[indexTo];
     if ((from == nullptr) || (to == nullptr)) {
-        logerr("From(%p) or to(%p) are null", from, to);
+        logerr("%p or %p are null", from, to);
         return;
     }
     uint32 startTimeMs = millis() + startDelayMs;
@@ -110,7 +110,7 @@ void LedStripController::commandFps(byte lengthCommand, const char *command) {
     m_fpsCalculator.setEnabled(enabledInt != 0);
 }
 
-void LedStripController::parseCommand() {
+bool LedStripController::parseCommand() {
     const char *command = m_commandReader.command();
     byte lengthCommand = 0;
     if ((lengthCommand = startsWith(command, "SET")) != 0) {
@@ -121,12 +121,16 @@ void LedStripController::parseCommand() {
         commandFade(command, lengthCommand);
     } else if ((lengthCommand = startsWith(command, "FPS")) != 0) {
         commandFps(lengthCommand, command);
+    } else if ((lengthCommand = startsWith(command, "TIME")) != 0) {
+        print("%lu", (uint32) millis());
     } else {
-        logerr("Not recognized: %s", command);
+        logerr("Unknown: %s", command);
+        return false;
     }
     if (lengthCommand != 0) {
-        logdebug("Processed: %s", command);
+        print("OK: %s", command);
     }
+    return true;
 }
 
 byte LedStripController::startsWith(const char *string, const char *startsWithString) {

@@ -1,6 +1,6 @@
 #include "FpsCalculator.h"
 
-#define SHOW_EVERY_MS 5000
+#define SHOW_EVERY_MS 2000
 
 FpsCalculator::FpsCalculator() {
     m_startTimeMs = 0;
@@ -16,7 +16,7 @@ void FpsCalculator::check() {
     if (diff > SHOW_EVERY_MS) {
         uint32 fps = m_ticks / diff ;
         uint32 fpsDec = ((m_ticks * 10 / diff) % 10);
-        logdebug("FPS: %lu.%lu, ticks: %lu", fps, fpsDec, m_ticks);
+        print("FPS: %lu.%lu, ticks: %lu", fps, fpsDec, m_ticks);
         m_ticks = 0;
         m_startTimeMs = 0;
     }

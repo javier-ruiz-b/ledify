@@ -1,5 +1,6 @@
 #pragma once
 #include <stdio.h>
+#include <string.h>
 #define DEBUG
 
 
@@ -39,21 +40,28 @@ void setMockMicros(uint32 timeUs);
 void setMockMillis(uint32 timeMs);
 #endif
 
+extern char logbuffer[64];
 #ifdef DEBUG
 #ifdef ARDUINO
-extern char logbuffer[128];
 #define logdebug(format, ...) sprintf (logbuffer, format, __VA_ARGS__); Serial.println(logbuffer)
-#define logerr(format, ...) sprintf (logbuffer, format, __VA_ARGS__); Serial.print("ERR: "); Serial.println(logbuffer)
+#define logerr(format, ...) sprintf (logbuffer, format, __VA_ARGS__); Serial.println(logbuffer)
 #else
 #define logdebug(format, ...) printf("    "); printf (format, __VA_ARGS__); printf("\n")
 #define logerr(format, ...) printf("  "); fprintf (stderr, format, __VA_ARGS__); printf("\n")
 #endif
 #else
-//#ifdef ARDUINO
-//#define logerr(format, ...) sprintf (logbuffer, format, __VA_ARGS__); Serial.println(logbuffer)
-//#else
-//#define logerr(format, ...) printf("  "); fprintf (stderr, format, __VA_ARGS__); printf("\n")
-//#endif
-#define logdebug(format, ...)
-#define logerr(format, ...)
+#ifdef ARDUINO
+#define logerr(format, ...) sprintf (logbuffer, format, __VA_ARGS__); Serial.println(logbuffer)
+#else
+#define logerr(format, ...) printf("  "); fprintf (stderr, format, __VA_ARGS__); printf("\n")
 #endif
+#define logdebug(format, ...)
+//#define logerr(format, ...)
+#endif
+
+#ifdef ARDUINO
+#define print(format, ...) sprintf (logbuffer, format, __VA_ARGS__); Serial.print(logbuffer)
+#else
+#define print(format, ...) fprintf (stderr, format, __VA_ARGS__)
+#endif
+

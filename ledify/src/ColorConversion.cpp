@@ -1,10 +1,5 @@
 #include "ColorConversion.h"
 
-uint32 ColorConversion::rgbaToWrgb(uint32 rgba)
-{
-
-}
-
 uint32 ColorConversion::argbToRgb(uint32 argb) {
     byte alpha = (byte)(argb >> 24);
     byte r = (byte)(argb >> 16);

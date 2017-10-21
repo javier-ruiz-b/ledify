@@ -45,11 +45,11 @@ public:
     LedStripController();
 
     CommandReader &commandReader();
-    void writeChar(char c);
-    void draw(char *ledsRgbw, int numLeds);
+    bool writeChar(char c);
+    void draw(uint32 *ledsRgbw, int numLeds);
 
 private:
-    void parseCommand();
+    bool parseCommand();
 
     void commandSet(const char *command, byte lengthCommand);
     void commandColor(byte lengthCommand, const char *command);

@@ -19,4 +19,5 @@ Layer *LayerController::getLayer(LayerController::LayerType type) {
     case Fade:
         return findFreeLayer(m_fade, type, NUM_FADE);
     }
+    return nullptr;
 }
