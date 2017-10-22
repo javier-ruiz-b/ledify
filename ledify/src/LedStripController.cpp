@@ -122,7 +122,7 @@ bool LedStripController::parseCommand() {
     } else if ((lengthCommand = startsWith(command, "FPS")) != 0) {
         commandFps(lengthCommand, command);
     } else if ((lengthCommand = startsWith(command, "TIME")) != 0) {
-        print("%lu", (uint32) millis());
+        print("%u", (unsigned int)(millis()));
     } else {
         logerr("Unknown: %s", command);
         return false;

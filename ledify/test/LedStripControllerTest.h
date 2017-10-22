@@ -34,6 +34,5 @@ private:
 private:
     LedStripController *m_tested;
     const int m_numLeds = NUM_LED;
-    int *m_leds;
-    char m_buffer[NUM_LED*sizeof(uint32)];
+    int m_leds[NUM_LED];
 };

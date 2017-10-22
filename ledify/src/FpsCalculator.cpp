@@ -16,7 +16,7 @@ void FpsCalculator::check() {
     if (diff > SHOW_EVERY_MS) {
         uint32 fps = m_ticks / diff ;
         uint32 fpsDec = ((m_ticks * 10 / diff) % 10);
-        print("FPS: %lu.%lu, ticks: %lu", fps, fpsDec, m_ticks);
+        print("FPS: %u.%u, ticks: %u", fps, fpsDec, m_ticks);
         m_ticks = 0;
         m_startTimeMs = 0;
     }

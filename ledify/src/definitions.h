@@ -1,17 +1,18 @@
 #pragma once
 #include <stdio.h>
+#include <stdint.h>
 #include <string.h>
 #define DEBUG
 
 
-typedef unsigned char byte;
-typedef unsigned char uint8;
-typedef unsigned long long int uint64;
-typedef signed long long int int64;
-typedef unsigned long int uint32;
-typedef signed long int int32;
-typedef unsigned short uint16;
-typedef signed short int16;
+typedef uint8_t byte;
+typedef uint8_t uint8;
+typedef uint64_t uint64;
+typedef int64_t int64;
+typedef uint32_t uint32;
+typedef int32_t int32;
+typedef uint16_t uint16;
+typedef int16_t int16;
 #ifndef __PIC32MX__
 #ifndef __linux
     /* chipKIT-specific code goes here */
@@ -47,7 +48,7 @@ extern char logbuffer[64];
 #define logerr(format, ...) sprintf (logbuffer, format, __VA_ARGS__); Serial.println(logbuffer)
 #else
 #define logdebug(format, ...) printf("    "); printf (format, __VA_ARGS__); printf("\n")
-#define logerr(format, ...) printf("  "); fprintf (stderr, format, __VA_ARGS__); printf("\n")
+#define logerr(format, ...) printf("  "); fprintf (stderr, format, __VA_ARGS__); fprintf (stderr, "\n")
 #endif
 #else
 #ifdef ARDUINO
