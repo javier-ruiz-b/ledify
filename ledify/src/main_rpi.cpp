@@ -38,7 +38,6 @@ ws2811_t ledStrip {
     },
 };
 
-//ws2811_led_t array[NUM_LEDS];
 SerialPort serial;
 LedStripController controller;
 
@@ -65,16 +64,19 @@ void setup() {
         fprintf(stderr, "ws2811_init failed: %s\n", ws2811_get_return_t_str(errCode));
         return;
     }
+}
 
+void cleanup() {
+    ws2811_fini(&ledStrip);
+    printf("Finished\n");
 }
 
 void loop() {
 
-    // 15 frames /sec
-    //usleep(1000000 / 15);
-
     if (serial.available()) {
-        controller.writeChar(serial.read());
+        char c = serial.read();
+        print("%c", c);
+        controller.writeChar(c);
     }
 
     controller.draw(static_cast<uint32 *>(ledStrip.channel[0].leds), NUM_LEDS);
@@ -86,7 +88,7 @@ void loop() {
     }
 
     // 120 frames /sec
-    usleep(1000000 / 120);
+//    usleep(1000000 / 120);
 }
 
 #endif
