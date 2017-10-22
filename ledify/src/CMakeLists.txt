@@ -20,4 +20,3 @@ target_link_libraries(LedStripController CommandReader FPSCalculator FadeLayer C
 
 add_executable(${PROJECT_NAME} main_rpi.cpp)
 target_link_libraries(${PROJECT_NAME} rpi_ws281x LedStripController SerialPort)
-set_property(TARGET ${PROJECT_NAME} PROPERTY C_STANDARD 99)

@@ -14,27 +14,27 @@
 #define TARGET_FREQ     WS2811_TARGET_FREQ
 #define STRIP_TYPE      SK6812_STRIP_RGBW   // SK6812RGBW (NOT SK6812RGB)
 
-ws2811_t ledStrip =
-{
+ws2811_t ledStrip {
+    .render_wait_time = 0,
+    .device = nullptr,
+    .rpi_hw = nullptr,
     .freq = TARGET_FREQ,
     .dmanum = DMA,
     .channel =
     {
-        [0] =
         {
             .gpionum = GPIO_PIN,
+            .invert = 0,
             .count = NUM_LEDS,
-            .invert = 0,
-            .brightness = 255,
             .strip_type = STRIP_TYPE,
-        },
-        [1] =
-        {
-            .gpionum = 0,
-            .count = 0,
-            .invert = 0,
-            .brightness = 0,
-        },
+            .leds = nullptr,
+            .brightness = 255,
+            .wshift = 0,
+            .rshift = 0,
+            .gshift = 0,
+            .bshift = 0,
+            .gamma = 0
+        }
     },
 };
 
@@ -48,9 +48,8 @@ static void ctrl_c_handler(int signum) {
 }
 
 static void setup_handlers(void) {
-    struct sigaction sa = {
-        .sa_handler = ctrl_c_handler,
-    };
+    struct sigaction sa;
+    sa.sa_handler = ctrl_c_handler;
 
     sigaction(SIGINT, &sa, NULL);
     sigaction(SIGTERM, &sa, NULL);
