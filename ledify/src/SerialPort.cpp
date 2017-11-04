@@ -1,4 +1,4 @@
-#ifndef ARDUINO
+#ifdef __linux__
 #include "SerialPort.h"
 #include <errno.h>
 #include <fcntl.h>

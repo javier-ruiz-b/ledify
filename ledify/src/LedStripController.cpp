@@ -122,13 +122,12 @@ bool LedStripController::parseCommand() {
     } else if ((lengthCommand = startsWith(command, "FPS")) != 0) {
         commandFps(lengthCommand, command);
     } else if ((lengthCommand = startsWith(command, "TIME")) != 0) {
-        print("%u", (unsigned int)(millis()));
+        print("%lu\n", (unsigned long)(millis()));
+    } else if ((lengthCommand = startsWith(command, "RESET")) != 0) {
+        m_layerController.reset();
     } else {
-        logerr("Unknown: %s", command);
+        logerr("Unknown: %s\n", command);
         return false;
-    }
-    if (lengthCommand != 0) {
-        print("OK: %s", command);
     }
     return true;
 }
@@ -139,6 +138,10 @@ byte LedStripController::startsWith(const char *string, const char *startsWithSt
         if (string[i] != startsWithString[i]) {
             return 0;
         }
+    }
+
+    if (i != 0) {
+        print("Recv: %s\n", string);
     }
     return i;
 }

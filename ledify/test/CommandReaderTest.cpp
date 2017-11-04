@@ -18,6 +18,20 @@ void CommandReaderTest::parsesCommand() {
     QCOMPARE(m_tested->command(), "POWEROFF");
 }
 
+void CommandReaderTest::parsesCommandCrLf() {
+    bool result = writeCommand("C+POWEROFF\r\n");
+
+    QVERIFY(result);
+    QCOMPARE(m_tested->command(), "POWEROFF");
+}
+
+void CommandReaderTest::parsesCommandIgnoringInvalidChars() {
+    bool result = writeCommand("  \t C+POWEROFF\t \r\n\0");
+
+    QVERIFY(result);
+    QCOMPARE(m_tested->command(), "POWEROFF");
+}
+
 void CommandReaderTest::emptyCommandWhenWrittingJustC() {
     bool result = writeCommand("C\n");
 
@@ -49,7 +63,7 @@ void CommandReaderTest::failsWhenWrittingSeparatorAndNoCommand() {
 
 bool CommandReaderTest::writeCommand(std::string command) {
     bool lastResult = false;
-    for (int i = 0; i < command.length(); i++) {
+    for (unsigned int i = 0; i < command.length(); i++) {
         lastResult = m_tested->writeChar(command[i]);
     }
     return lastResult;

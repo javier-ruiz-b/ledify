@@ -1,4 +1,4 @@
-#ifndef ARDUINO
+#ifdef __linux__
 #include <signal.h>
 #include <unistd.h>
 

@@ -8,19 +8,19 @@ char logbuffer[64];
 #include <sys/time.h>
 
 bool m_mockTime = false;
-uint32 m_mockedTimeUs = 0;
+unsigned long m_mockedTimeUs = 0;
 
 void setMockedTime(bool mockedTime) {
     m_mockTime = mockedTime;
 }
 
-uint32 getRealTimeMicroseconds() {
+unsigned long getRealTimeMicroseconds() {
     struct timeval tv;
     gettimeofday(&tv,NULL);
-    return (uint32) (1000000 * tv.tv_sec + tv.tv_usec);
+    return (unsigned long) (1000000 * tv.tv_sec + tv.tv_usec);
 }
 
-uint32 micros() {
+unsigned long micros() {
     if (m_mockTime) {
         return m_mockedTimeUs;
     } else {
@@ -28,7 +28,7 @@ uint32 micros() {
     }
 }
 
-uint32 millis() {
+unsigned long millis() {
     if (m_mockTime) {
         return m_mockedTimeUs/1000;
     } else {
@@ -36,11 +36,11 @@ uint32 millis() {
     }
 }
 
-void setMockMicros(uint32 timeUs) {
+void setMockMicros(unsigned long timeUs) {
     m_mockedTimeUs = timeUs;
 }
 
-void setMockMillis(uint32 timeMs) {
+void setMockMillis(unsigned long timeMs) {
     m_mockedTimeUs = timeMs * 1000;
 }
 #endif

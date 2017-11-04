@@ -1,4 +1,4 @@
-#ifndef ARDUINO
+#ifdef __linux__
 #pragma once
 #include "definitions.h"
 

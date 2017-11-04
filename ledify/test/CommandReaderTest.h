@@ -15,6 +15,8 @@ private slots:
 
 private slots: //tests
     void parsesCommand();
+    void parsesCommandCrLf();
+    void parsesCommandIgnoringInvalidChars();
     void emptyCommandWhenWrittingJustC();
     void failsWhenCommandTooLong();
     void failsWhenWrittingCommandsWithoutPrefixes();

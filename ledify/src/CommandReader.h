@@ -5,7 +5,6 @@
 #define COMMAND_PREFIX      "C"
 #define PREFIX_SEPARATOR    '+'
 #define COMMAND_MAX_LENGTH  48
-#define COMMAND_TERMINATION '\n'
 
 /**
  * @brief Parses byte by byte the output of the serial interface.
@@ -27,6 +26,10 @@ public:
 
 private:
     void reset();
+
+private:
+    static const char s_ignoreChars[];
+    static const char s_terminateChars[];
 
 private:
     char m_bufferedCommand[COMMAND_MAX_LENGTH + 1];

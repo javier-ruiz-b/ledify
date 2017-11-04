@@ -21,3 +21,15 @@ Layer *LayerController::getLayer(LayerController::LayerType type) {
     }
     return nullptr;
 }
+
+void LayerController::reset() {
+    reset(m_color, NUM_COLOR);
+    reset(m_fade, NUM_FADE);
+}
+
+template<typename T>
+void LayerController::reset(T *layers, int numLayers) {
+    for (byte i = 0; i < numLayers; i++) {
+        layers[i].setInUse(false);
+    }
+}

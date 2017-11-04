@@ -14,7 +14,7 @@ uint32 ColorLayer::pixel(uint16) {
     return m_pixel;
 }
 
-void ColorLayer::setNewChild(Layer *currentChild, Layer *newChild) {
+void ColorLayer::setNewChild(Layer *, Layer *newChild) {
     logerr("Unexpected: ColorLayer receiving child %p", newChild);
 }
 

@@ -4,7 +4,6 @@
 #include <string.h>
 #define DEBUG
 
-
 typedef uint8_t byte;
 typedef uint8_t uint8;
 typedef uint64_t uint64;
@@ -24,6 +23,7 @@ typedef unsigned int size_t;
 #define nullptr 0
 #endif
 
+#define ARRAY_SIZE(x) (sizeof(x) / sizeof(x[0]))
 #define SIZE_OF(x) ((sizeof(x)/sizeof(0[x])) / ((size_t)(!(sizeof(x) % sizeof(0[x])))))
 #define SIZE_OF_STRING(x) (SIZE_OF(x) - 1)
 
@@ -34,11 +34,11 @@ typedef unsigned int size_t;
 #ifndef ARDUINO
 #define MOCKABLE_TIME
 void setMockedTime(bool mockedTime);
-uint32 getRealTimeMicroseconds();
-uint32 micros();
-uint32 millis();
-void setMockMicros(uint32 timeUs);
-void setMockMillis(uint32 timeMs);
+unsigned long getRealTimeMicroseconds();
+unsigned long micros();
+unsigned long millis();
+void setMockMicros(unsigned long timeUs);
+void setMockMillis(unsigned long timeMs);
 #endif
 
 extern char logbuffer[64];
