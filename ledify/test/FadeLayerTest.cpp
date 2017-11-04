@@ -92,4 +92,29 @@ void FadeLayerTest::calculatesDeceleratedFadeMiddleValue() {
     delete m_tested;
 }
 
+void FadeLayerTest::checksLinearFadeDecrease() {
+    createFadeLayer();
+    m_whiteColor->setColor(255, 150, 250, 0);
+    m_tested->setParams(m_whiteColor, m_blackColor, FadeLayer::InterpolatorLinear, 5000, 1000);
+    unsigned int previousValues[4] = {255, 255, 255, 255};
+    for (unsigned int i = 0; i <= 1000; i++) {
+        setMockMillis(5000 + i);
+        m_tested->startDraw();
+        uint32 pixel = m_tested->pixel(0);
+        unsigned int w = pixel >> 24;
+        unsigned int r = (pixel >> 16) & 0xFF;
+        unsigned int g = (pixel >> 8) & 0xFF;
+        unsigned int b = pixel & 0xFF;
+        QVERIFY(w <= previousValues[0]);
+        QVERIFY(r <= previousValues[1]);
+        QVERIFY(g <= previousValues[2]);
+        QVERIFY(b <= previousValues[3]);
+        previousValues[0] = w;
+        previousValues[1] = r;
+        previousValues[2] = g;
+        previousValues[3] = b;
+    }
+    delete m_tested;
+}
+
 QTEST_APPLESS_MAIN(FadeLayerTest)

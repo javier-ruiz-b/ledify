@@ -19,15 +19,12 @@ typedef unsigned int size_t;
 #endif
 #endif
 
-#ifndef nullptr
-#define nullptr 0
-#endif
-
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof(x[0]))
 #define SIZE_OF(x) ((sizeof(x)/sizeof(0[x])) / ((size_t)(!(sizeof(x) % sizeof(0[x])))))
 #define SIZE_OF_STRING(x) (SIZE_OF(x) - 1)
 
 #ifdef ARDUINO
+#define nullptr 0
 #include "Arduino.h"
 #endif
 
