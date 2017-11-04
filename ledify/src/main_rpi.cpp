@@ -105,8 +105,8 @@ void loop() {
         running = false;
     }
 
-    // 240 frames /sec
-    usleep(1000000 / 30);
+    // 90 frames /sec
+    usleep(1000000 / 90);
 }
 
 #endif
