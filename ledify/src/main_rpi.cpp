@@ -10,7 +10,7 @@
 #include "LedStripController.h"
 
 #define NUM_LEDS 300
-#define GPIO_PIN 18
+#define GPIO_PIN 10
 #define DMA 5
 #define TARGET_FREQ     WS2811_TARGET_FREQ
 #define STRIP_TYPE      SK6812_STRIP_RGBW   // SK6812RGBW (NOT SK6812RGB)
@@ -44,8 +44,8 @@ LedStripController controller;
 
 int main(int argc, char **argv) {
     char *virtSerial = 0;
-    if ((argc > 2) && (strcmp(argv[0], "-D"))) {
-        virtSerial = argv[1];
+    if ((argc > 2) && (strcmp(argv[1], "-D") == 0)) {
+        virtSerial = argv[2];
         print("Override serial port: %s\n", virtSerial);
     }
     setup(virtSerial);
