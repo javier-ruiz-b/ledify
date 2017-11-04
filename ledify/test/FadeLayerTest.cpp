@@ -45,6 +45,15 @@ void FadeLayerTest::showsDestinationLayer() {
     delete m_tested;
 }
 
+void FadeLayerTest::showsSourceLayerBeforeAnimationStarts() {
+    createFadeLayer();
+    m_tested->setParams(m_whiteColor, m_blackColor, FadeLayer::InterpolatorLinear, 5000, 1000);
+    setMockMillis(0);
+    m_tested->startDraw();
+    QCOMPARE(m_tested->pixel(0), (uint32)0xFFFFFFFF);
+    delete m_tested;
+}
+
 void FadeLayerTest::finishesAndReplacesStartLayerChild() {
     createFadeLayer();
     m_tested->setParams(m_whiteColor, m_blackColor, FadeLayer::InterpolatorLinear, 5000, 1000);

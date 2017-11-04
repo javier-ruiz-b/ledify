@@ -43,7 +43,11 @@ void FadeLayer::setParams(Layer *source, Layer *destination, FadeLayer::Interpol
 
 void FadeLayer::recalculateTimeDifference() {
     unsigned long currentTimeMs = millis();
-    m_currentTimeDifferenceMs = static_cast<uint16>(currentTimeMs - m_startMs);
+    if (currentTimeMs < m_startMs) { // animation didn't begin
+        m_currentTimeDifferenceMs = 0;
+    } else {
+        m_currentTimeDifferenceMs = static_cast<uint16>(currentTimeMs - m_startMs);
+    }
 }
 
 void FadeLayer::startDraw() {

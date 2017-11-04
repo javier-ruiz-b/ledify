@@ -18,6 +18,7 @@ private slots:
     void cleanup();
     void showsSourceLayer();
     void showsDestinationLayer();
+    void showsSourceLayerBeforeAnimationStarts();
     void finishesAndReplacesStartLayerChild();
     void calculatesLinearFadeMiddleValue();
     void calculatesAcceleratedFadeMiddleValue();
