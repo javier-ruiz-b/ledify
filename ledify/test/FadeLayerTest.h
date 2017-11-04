@@ -23,7 +23,7 @@ private slots:
     void calculatesLinearFadeMiddleValue();
     void calculatesAcceleratedFadeMiddleValue();
     void calculatesDeceleratedFadeMiddleValue();
-    void checksLinearFadeDecrease();
+    void checksDecelerateFade();
 
 private:
     FadeLayer *m_tested;

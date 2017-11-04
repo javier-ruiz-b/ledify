@@ -1,5 +1,8 @@
 #include "FadeLayer.h"
 
+#include <math.h>
+#define INTERPOLATOR_ACCELERATION_FACTOR 2.0
+
 byte FadeLayer::interpolatedDestinationValue() {
     switch (m_interpolator) {
     case InterpolatorAccelerate:
@@ -13,16 +16,16 @@ byte FadeLayer::interpolatedDestinationValue() {
 }
 
 byte FadeLayer::interpolatedAcceleratedValue() {
-    unsigned long timeDiffPow = (unsigned long)m_currentTimeDifferenceMs * (unsigned long)m_currentTimeDifferenceMs;
-    unsigned long durationMsPow = (unsigned long)m_durationMs * (unsigned long)m_durationMs;
+    float timeDiffPow = powf(static_cast<float>(m_currentTimeDifferenceMs), INTERPOLATOR_ACCELERATION_FACTOR);
+    float durationMsPow = powf(static_cast<float>(m_durationMs), INTERPOLATOR_ACCELERATION_FACTOR);
     return (byte) ((timeDiffPow * 256) / durationMsPow);
 }
 
 byte FadeLayer::interpolatedDeceleratedValue() {
     unsigned long timeDiffInv = m_durationMs - m_currentTimeDifferenceMs;
-    unsigned long durationMsPow = (unsigned long)m_durationMs * (unsigned long)m_durationMs;
-    unsigned long timeDiffPow = (unsigned long)timeDiffInv * (unsigned long)timeDiffInv;
-    unsigned long timeDiffPowInv = durationMsPow - timeDiffPow;
+    float durationMsPow = powf(static_cast<float>(m_durationMs), INTERPOLATOR_ACCELERATION_FACTOR);
+    float timeDiffPow = powf(static_cast<float>(timeDiffInv), INTERPOLATOR_ACCELERATION_FACTOR);
+    float timeDiffPowInv = durationMsPow - timeDiffPow;
     return (byte) ((timeDiffPowInv * 256) / durationMsPow);
 }
 
