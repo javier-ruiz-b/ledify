@@ -11,8 +11,8 @@ add_library (LedStripController LedStripController.cpp LedStripController.h)
 target_link_libraries(FPSCalculator definitions)
 target_link_libraries(Layer definitions)
 target_link_libraries(FadeLayer Layer definitions)
-target_link_libraries(LayerController Layer)
-target_link_libraries(LedStripController CommandReader FPSCalculator FadeLayer ColorLayer StartLayer LayerController)
+target_link_libraries(LayerController Layer FadeLayer ColorLayer StartLayer)
+target_link_libraries(LedStripController CommandReader FPSCalculator LayerController)
 
 #raspberry pi
 if (UNIX)

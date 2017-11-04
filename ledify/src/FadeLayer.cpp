@@ -8,37 +8,42 @@ byte FadeLayer::interpolatedDestinationValue() {
         return interpolatedDeceleratedValue();
     case InterpolatorLinear:
     default:
-        return (byte) (((uint32)m_currentTimeDifferenceMs * 256) / (uint32)m_durationMs);
+        return (byte) (((unsigned long)m_currentTimeDifferenceMs * 256) / (unsigned long)m_durationMs);
     }
 }
 
 byte FadeLayer::interpolatedAcceleratedValue() {
-    uint32 timeDiffPow = (uint32)m_currentTimeDifferenceMs * (uint32)m_currentTimeDifferenceMs;
-    uint32 durationMsPow = (uint32)m_durationMs * (uint32)m_durationMs;
+    unsigned long timeDiffPow = (unsigned long)m_currentTimeDifferenceMs * (unsigned long)m_currentTimeDifferenceMs;
+    unsigned long durationMsPow = (unsigned long)m_durationMs * (unsigned long)m_durationMs;
     return (byte) ((timeDiffPow * 256) / durationMsPow);
 }
 
 byte FadeLayer::interpolatedDeceleratedValue() {
-    uint32 timeDiffInv = m_durationMs - m_currentTimeDifferenceMs;
-    uint32 durationMsPow = (uint32)m_durationMs * (uint32)m_durationMs;
-    uint32 timeDiffPow = (uint32)timeDiffInv * (uint32)timeDiffInv;
-    uint32 timeDiffPowInv = durationMsPow - timeDiffPow;
+    unsigned long timeDiffInv = m_durationMs - m_currentTimeDifferenceMs;
+    unsigned long durationMsPow = (unsigned long)m_durationMs * (unsigned long)m_durationMs;
+    unsigned long timeDiffPow = (unsigned long)timeDiffInv * (unsigned long)timeDiffInv;
+    unsigned long timeDiffPowInv = durationMsPow - timeDiffPow;
     return (byte) ((timeDiffPowInv * 256) / durationMsPow);
 }
 
-void FadeLayer::setParams(Layer *source, Layer *destination, FadeLayer::Interpolator interpolator, uint32 startTimeMs, uint16 durationMs) {
+FadeLayer::FadeLayer() {
+    m_source = nullptr;
+    m_destination = nullptr;
+}
+
+void FadeLayer::setParams(Layer *source, Layer *destination, FadeLayer::Interpolator interpolator, uint16 startTimeMs, uint16 durationMs) {
     m_source = source;
     m_destination = destination;
     m_interpolator = interpolator;
-    m_startMs = startTimeMs;
+    m_startMs = millis() + startTimeMs;
     m_durationMs = durationMs;
     m_source->setParent(this);
     m_destination->setParent(this);
 }
 
 void FadeLayer::recalculateTimeDifference() {
-    uint32 currentTimeMs = millis();
-    m_currentTimeDifferenceMs = (uint16) (currentTimeMs - m_startMs);
+    unsigned long currentTimeMs = millis();
+    m_currentTimeDifferenceMs = static_cast<uint16>(currentTimeMs - m_startMs);
 }
 
 void FadeLayer::startDraw() {
@@ -46,6 +51,7 @@ void FadeLayer::startDraw() {
     m_destination->startDraw();
     recalculateTimeDifference();
     if (finished()) {
+        logdebug("FadeLayer(%p) animation finished", static_cast<void *>(this));
         m_parent->setNewChild(this, m_destination);
         m_destination = nullptr;
         setInUse(false);
@@ -58,17 +64,19 @@ void FadeLayer::endDraw() {
 }
 
 void FadeLayer::setNewChild(Layer *currentChild, Layer *newChild) {
+    logdebug("StartLayer(%p) new child %p->%p", static_cast<void *>(this), static_cast<void *>(currentChild), static_cast<void *>(newChild));
     newChild->setParent(this);
     if (currentChild == m_source) {
         m_source = newChild;
     } else if (newChild == m_destination) {
         m_destination = newChild;
     } else {
-        logerr("Couldn't set new child: Unknown current ptr!: %p", currentChild);
+        logerr("Couldn't set new child: Unknown current ptr!: %p", static_cast<void *>(currentChild));
     }
 }
 
 void FadeLayer::setInUse(bool value) {
+    logdebug("FadeLayer(%p) %d", static_cast<void *>(this), static_cast<int>(value));
     m_inUse = value;
     if (!value) {
         if (m_source) {
@@ -78,7 +86,6 @@ void FadeLayer::setInUse(bool value) {
             m_destination->setInUse(false);
         }
         m_source = nullptr;
-        m_destination = nullptr;
     }
 }
 

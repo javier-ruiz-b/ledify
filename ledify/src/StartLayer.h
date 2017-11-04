@@ -3,9 +3,10 @@
 
 class StartLayer : Layer {
 public:
-    StartLayer() : m_child(nullptr) {}
+    StartLayer();
 
     Layer *child() const;
+    void setChild(Layer *child);
 
     virtual uint32 pixel(uint16 index);
     virtual void startDraw();

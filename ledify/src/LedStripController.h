@@ -4,12 +4,10 @@
 #include "FpsCalculator.h"
 #include "CommandReader.h"
 #include "LayerController.h"
-#include "StartLayer.h"
 
 class Adafruit_NeoPixel;
 class Layer;
 
-#define AVAILABLE_LAYERS_NUM   8
 
 /**
  * @brief The LedStripController class
@@ -62,8 +60,6 @@ private:
     byte startsWith(const char *string, const char *startsWithString);
 
 private:
-    Layer *m_availableLayers[AVAILABLE_LAYERS_NUM];
-    StartLayer m_rootLayer;
     FpsCalculator m_fpsCalculator;
     CommandReader m_commandReader;
     LayerController m_layerController;

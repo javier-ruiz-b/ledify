@@ -11,5 +11,5 @@ endmacro()
 
 addQtTest(CommandReader)
 addQtTest(ColorLayer)
-addQtTest(FadeLayer ColorLayer)
+addQtTest(FadeLayer ColorLayer StartLayer)
 addQtTest(LedStripController CommandReader FadeLayer ColorLayer StartLayer)

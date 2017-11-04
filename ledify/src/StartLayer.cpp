@@ -1,19 +1,28 @@
 #include "StartLayer.h"
 
+StartLayer::StartLayer()
+    : m_child(nullptr) {
+    setInUse(true);
+}
+
 Layer *StartLayer::child() const {
     return m_child;
 }
 
+void StartLayer::setChild(Layer *child) {
+    setInUse(false);
+    setNewChild(nullptr, child);
+    setInUse(true);
+}
+
 uint32 StartLayer::pixel(uint16 index) {
-//    if (m_child)
-        return m_child->pixel(index);
-//    else
-//        return 0;
+    return m_child->pixel(index);
 }
 
 void StartLayer::startDraw() {
-//    if (m_child)
+    if (m_child != nullptr) {
         m_child->startDraw();
+    }
 }
 
 void StartLayer::endDraw() {
@@ -22,11 +31,15 @@ void StartLayer::endDraw() {
 }
 
 void StartLayer::setNewChild(Layer *, Layer *newChild) {
+    logdebug("StartLayer(%p) new child %p", static_cast<void *>(this), static_cast<void *>(newChild));
     m_child = newChild;
-    m_child->setParent(this);
+    if (m_child != nullptr) {
+        m_child->setParent(this);
+    }
 }
 
 void StartLayer::setInUse(bool value) {
+    logdebug("StartLayer(%p) %d", static_cast<void *>(this), static_cast<int>(value));
     m_inUse = value;
     if (m_child) {
         m_child->setInUse(value);

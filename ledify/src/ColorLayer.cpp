@@ -15,9 +15,10 @@ uint32 ColorLayer::pixel(uint16) {
 }
 
 void ColorLayer::setNewChild(Layer *, Layer *newChild) {
-    logerr("Unexpected: ColorLayer receiving child %p", newChild);
+    logerr("Unexpected: ColorLayer receiving child %p", static_cast<void *>(newChild));
 }
 
 void ColorLayer::setInUse(bool value) {
+    logdebug("ColorLayer(%p) %d", static_cast<void *>(this), static_cast<int>(value));
     m_inUse = value;
 }
