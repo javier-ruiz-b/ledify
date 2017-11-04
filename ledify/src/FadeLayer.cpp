@@ -51,7 +51,12 @@ void FadeLayer::startDraw() {
     m_destination->startDraw();
     recalculateTimeDifference();
     if (finished()) {
-        logdebug("FadeLayer(%p) animation finished", static_cast<void *>(this));
+        logdebug("FadeLayer(%p) finished (%u > %u). TimeDiff: %lu - %lu",
+                 static_cast<void *>(this),
+                 static_cast<unsigned int>(m_currentTimeDifferenceMs),
+                 static_cast<unsigned int>(m_durationMs),
+                 millis(),
+                 m_startMs);
         m_parent->setNewChild(this, m_destination);
         m_destination = nullptr;
         setInUse(false);
