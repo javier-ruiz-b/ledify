@@ -10,7 +10,7 @@
 #include "LedStripController.h"
 
 #define NUM_LEDS 300
-#define GPIO_PIN 10
+#define GPIO_PIN 18
 #define DMA 5
 #define TARGET_FREQ     WS2811_TARGET_FREQ
 #define STRIP_TYPE      SK6812_STRIP_RGBW   // SK6812RGBW (NOT SK6812RGB)
@@ -106,7 +106,7 @@ void loop() {
     }
 
     // 240 frames /sec
-    usleep(1000000 / 240);
+    usleep(1000000 / 30);
 }
 
 #endif
