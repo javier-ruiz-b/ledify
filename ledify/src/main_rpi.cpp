@@ -1,6 +1,7 @@
 #ifdef __linux__
 #include <signal.h>
 #include <unistd.h>
+#include <string.h>
 
 #include "definitions.h"
 #include "main_rpi.h"
@@ -41,6 +42,20 @@ ws2811_t ledStrip {
 SerialPort serial;
 LedStripController controller;
 
+int main(int argc, char **argv) {
+    char *virtSerial = 0;
+    if ((argc > 2) && (strcmp(argv[0], "-D"))) {
+        virtSerial = argv[1];
+        print("Override serial port: %s\n", virtSerial);
+    }
+    setup(virtSerial);
+    while (running) {
+        loop();
+    }
+    cleanup();
+    return 0;
+}
+
 static void ctrl_c_handler(int signum) {
     (void)(signum);
     running = false;
@@ -55,8 +70,12 @@ static void setup_handlers(void) {
 }
 
 
-void setup() {
-    serial.begin("/dev/ttyAMA0", 9600, SerialPort::ParityNone);
+void setup(char *virtSerial) {
+    if (virtSerial) {
+        serial.begin(virtSerial, 9600, SerialPort::ParityNone);
+    } else {
+        serial.begin("/dev/ttyAMA0", 9600, SerialPort::ParityNone);
+    }
 
     setup_handlers();
     ws2811_return_t errCode;
@@ -72,7 +91,6 @@ void cleanup() {
 }
 
 void loop() {
-
     if (serial.available()) {
         char c = serial.read();
         print("%c", c);
@@ -87,8 +105,9 @@ void loop() {
         running = false;
     }
 
-    // 120 frames /sec
-//    usleep(1000000 / 120);
+    // 240 frames /sec
+    usleep(1000000 / 240);
 }
 
 #endif
+
