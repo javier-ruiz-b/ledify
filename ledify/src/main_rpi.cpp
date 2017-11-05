@@ -67,6 +67,14 @@ int main(int argc, char **argv) {
 static void ctrl_c_handler(int signum) {
     (void)(signum);
     printf("Terminating...\n");
+
+    LayerController &layerControl = controller.layerController();
+    layerControl.addColorLayer(0, 60, 40, 5, 100);
+    layerControl.addColorLayer(1, 0, 0, 0, 0);
+    layerControl.addFadeLayer(2, 0, 1, 0, FadeLayer::InterpolatorDecelerate, 2000);
+    layerControl.setAsRootLayer(2);
+    sleep(2100);
+
     running = false;
 }
 
