@@ -38,7 +38,7 @@ unsigned long tempus::micros() {
 
 unsigned long tempus::millis() {
 #if defined(ARDUINO) || defined(__arm__)
-    return millis();
+    return ::millis();
 #endif
     if (m_mockTime) {
         return m_mockedTimeUs/1000;

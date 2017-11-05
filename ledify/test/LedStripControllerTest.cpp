@@ -88,6 +88,22 @@ void LedStripControllerTest::triesToSetAnInvalidIndex() {
     QCOMPARE(m_tested->m_layerController.m_rootLayer.child(), static_cast<Layer *>(nullptr));
 }
 
+void LedStripControllerTest::oneFadeWithLayerControllerInterface() {
+    LayerController &layerControl = m_tested->layerController();
+    layerControl.addColorLayer(0, 0, 0, 0, 0);
+    layerControl.addColorLayer(1, 0, 255, 0, 0);
+    layerControl.addFadeLayer(2, 0, 1, 1, FadeLayer::InterpolatorAccelerate, 8000);
+    layerControl.setAsRootLayer(2);
+    writeCommand("C+FPS=0");
+
+    for (uint32 timeMs = 0; timeMs < 9*1000; timeMs+=3) {
+        tempus::setMockMillis(timeMs);
+        m_tested->draw(reinterpret_cast<uint32 *>(m_leds), NUM_LED);
+    }
+
+    QCOMPARE(m_leds[0], 0x0000FF00); //WRGB
+}
+
 void LedStripControllerTest::acceptanceTest() {
     writeCommand("C+COLOR=0,255,0,0,255");
     writeCommand("C+COLOR=1,0,255,255,0");
@@ -105,7 +121,7 @@ void LedStripControllerTest::acceptanceTest() {
     QCOMPARE(fade->m_inUse, true);
 
     for (uint32 timeMs = 0; timeMs < 60*1000; timeMs+=3) {
-        tempus::setMockMillis(timeMs); //in the middle of the fade
+        tempus::setMockMillis(timeMs);
         m_tested->draw(reinterpret_cast<uint32 *>(m_leds), NUM_LED);
     }
 

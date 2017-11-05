@@ -26,6 +26,7 @@ private slots:
     void twoFadesAtTheSameTime();
     void triesToSetAnUnsetIndex();
     void triesToSetAnInvalidIndex();
+    void oneFadeWithLayerControllerInterface();
     void acceptanceTest();
 
 private:
