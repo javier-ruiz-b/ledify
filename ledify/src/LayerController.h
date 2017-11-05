@@ -21,7 +21,7 @@ public:
 
     void setAsRootLayer(uint16 index);
     void addFadeLayer(uint16 toIndex, uint16 indexFrom, uint16 indexTo, uint16 startDelayMs, FadeLayer::Interpolator interpolator, uint16 durationMs);
-    void addColorLayer(uint16 toIndex, uint16 b, uint16 r, uint16 w, uint16 g);
+    void addColorLayer(uint16 toIndex, uint16 r, uint16 g, uint16 b, uint16 w);
     StartLayer *rootLayer();
 
 private:

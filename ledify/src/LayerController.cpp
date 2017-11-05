@@ -57,7 +57,7 @@ void LayerController::addFadeLayer(uint16 myIndex, uint16 fromIndex, uint16 toIn
     m_availableLayers[toIndex] = nullptr;
 }
 
-void LayerController::addColorLayer(uint16 toIndex, uint16 b, uint16 r, uint16 w, uint16 g) {
+void LayerController::addColorLayer(uint16 toIndex, uint16 r, uint16 g, uint16 b, uint16 w) {
     ColorLayer *layer;
     if ((layer = static_cast<ColorLayer *>(setAvailableLayer(LayerController::Color, toIndex)))) {
         layer->setColor(static_cast<uint8>(r),

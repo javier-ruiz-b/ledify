@@ -72,7 +72,7 @@ void LedStripController::commandColor(byte lengthCommand, const char *command) {
         logerr("Index range: %s", command);
         return;
     }
-    m_layerController.addColorLayer(index, b, r, w, g);
+    m_layerController.addColorLayer(index, r, g, b, w);
 }
 
 void LedStripController::commandFade(const char *command, byte lengthCommand) {
