@@ -13,6 +13,7 @@
 #include "main_rpi.h"
 #include "SerialPort.h"
 #include "LedStripController.h"
+#include "LayerController.h"
 
 #define NUM_LEDS 300
 #define GPIO_PIN 18
@@ -53,7 +54,9 @@ int main(int argc, char **argv) {
         virtSerial = argv[2];
         print("Override serial port: %s\n", virtSerial);
     }
-    setup(virtSerial);
+    if (!setup(virtSerial)) {
+        return 1;
+    }
     while (running) {
         loop();
     }
@@ -63,6 +66,7 @@ int main(int argc, char **argv) {
 
 static void ctrl_c_handler(int signum) {
     (void)(signum);
+    printf("Terminating...\n");
     running = false;
 }
 
@@ -74,8 +78,7 @@ static void setup_handlers(void) {
     sigaction(SIGTERM, &sa, NULL);
 }
 
-
-void setup(char *virtSerial) {
+bool setup(char *virtSerial) {
     if (virtSerial) {
         serial.begin(virtSerial, 9600);
     } else {
@@ -83,17 +86,24 @@ void setup(char *virtSerial) {
     }
 
     if (wiringPiSetup () == -1) {
-      logerr("Unable to start wiringPi: %s\n", strerror (errno)) ;
-      return;
+        logerr("Unable to start wiringPi: %s\n", strerror (errno)) ;
+        return false;
     }
 
-
-    setup_handlers();
     ws2811_return_t errCode;
     if ((errCode = ws2811_init(&ledStrip)) != WS2811_SUCCESS) {
         fprintf(stderr, "ws2811_init failed: %s\n", ws2811_get_return_t_str(errCode));
-        return;
+        return false;
     }
+
+    LayerController &layerControl = controller.layerController();
+    layerControl.addColorLayer(0, 0, 0, 0, 0);
+    layerControl.addColorLayer(1, 0, 0, 0, 120);
+    layerControl.addFadeLayer(2, 0, 1, 0, FadeLayer::InterpolatorAccelerate, 8000);
+    layerControl.setAsRootLayer(2);
+
+    setup_handlers();
+    return true;
 }
 
 void cleanup() {

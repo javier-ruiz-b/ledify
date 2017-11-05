@@ -1,7 +1,7 @@
 #ifndef ARDUINO
 #pragma once
 
-void setup(char *virtSerial);
+bool setup(char *virtSerial);
 void cleanup();
 void loop();
 

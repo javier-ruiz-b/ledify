@@ -107,3 +107,7 @@ byte LedStripController::startsWith(const char *string, const char *startsWithSt
     }
     return i;
 }
+
+LayerController &LedStripController::layerController() {
+    return m_layerController;
+}

@@ -42,9 +42,11 @@ class LedStripController {
 public:
     LedStripController();
 
+    LayerController &layerController();
     CommandReader &commandReader();
     bool writeChar(char c);
     void draw(uint32 *ledsRgbw, int numLeds);
+
 
 private:
     bool parseCommand();
