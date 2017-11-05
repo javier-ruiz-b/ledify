@@ -21,9 +21,11 @@ if (UNIX)
     include_directories(rpi_ws281x)
     add_library(rpi_ws281x ${RPI_WS281X_SOURCES})
 
+    find_package (Threads)
     aux_source_directory(wiringPi/wiringPi WIRING_PI_SOURCES)
     include_directories(wiringPi wiringPi/wiringPi)
     add_library(wiringPi ${WIRING_PI_SOURCES})
+    target_link_libraries(wiringPi Threads::Threads)
 
     add_library(SerialPort SerialPort.cpp SerialPort.h)
     target_link_libraries(SerialPort wiringPi)

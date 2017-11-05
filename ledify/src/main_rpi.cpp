@@ -3,6 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdint.h>
+#include <errno.h>
 
 #include <ws2811.h>
 #include <wiringPi.h>
@@ -80,6 +81,12 @@ void setup(char *virtSerial) {
     } else {
         serial.begin("/dev/ttyAMA0", 9600);
     }
+
+    if (wiringPiSetup () == -1) {
+      logerr("Unable to start wiringPi: %s\n", strerror (errno)) ;
+      return;
+    }
+
 
     setup_handlers();
     ws2811_return_t errCode;
