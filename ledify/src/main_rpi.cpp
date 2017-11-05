@@ -20,6 +20,7 @@
 #define DMA 5
 #define TARGET_FREQ     WS2811_TARGET_FREQ
 #define STRIP_TYPE      SK6812_STRIP_GRBW
+#define TERMINATE_MS    2000
 
 ws2811_t ledStrip {
     .render_wait_time = 0,
@@ -60,6 +61,10 @@ int main(int argc, char **argv) {
     while (running) {
         loop();
     }
+    unsigned long finishMs = TERMINATE_MS + tempus::millis();
+    while (millis() < finishMs) {
+        loop();
+    }
     cleanup();
     return 0;
 }
@@ -71,9 +76,8 @@ static void ctrl_c_handler(int signum) {
     LayerController &layerControl = controller.layerController();
     layerControl.addColorLayer(0, 60, 40, 5, 100);
     layerControl.addColorLayer(1, 0, 0, 0, 0);
-    layerControl.addFadeLayer(2, 0, 1, 0, FadeLayer::InterpolatorDecelerate, 2000);
+    layerControl.addFadeLayer(2, 0, 1, 0, FadeLayer::InterpolatorDecelerate, TERMINATE_MS - 100);
     layerControl.setAsRootLayer(2);
-    sleep(2100);
 
     running = false;
 }
