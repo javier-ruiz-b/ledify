@@ -2,6 +2,7 @@
 #include <signal.h>
 #include <string.h>
 #include <unistd.h>
+#include <stdint.h>
 
 #include <ws2811.h>
 #include <wiringPi.h>
