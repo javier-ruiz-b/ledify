@@ -19,7 +19,7 @@
 #define GPIO_PIN 18
 #define DMA 5
 #define TARGET_FREQ     WS2811_TARGET_FREQ
-#define STRIP_TYPE      SK6812_STRIP_RGBW   // SK6812RGBW (NOT SK6812RGB)
+#define STRIP_TYPE      SK6812_STRIP_GRBW
 
 ws2811_t ledStrip {
     .render_wait_time = 0,
@@ -98,8 +98,8 @@ bool setup(char *virtSerial) {
 
     LayerController &layerControl = controller.layerController();
     layerControl.addColorLayer(0, 0, 0, 0, 0);
-    layerControl.addColorLayer(1, 0, 0, 0, 120);
-    layerControl.addFadeLayer(2, 0, 1, 0, FadeLayer::InterpolatorAccelerate, 8000);
+    layerControl.addColorLayer(1, 60, 40, 5, 100);
+    layerControl.addFadeLayer(2, 0, 1, 0, FadeLayer::InterpolatorAccelerate, 5000);
     layerControl.setAsRootLayer(2);
 
     setup_handlers();
