@@ -1,0 +1,8 @@
+[Unit]
+Description=Ledify
+
+[Service]
+ExecStart=/usr/local/bin/ledify
+
+[Install]
+WantedBy=multi-user.target
