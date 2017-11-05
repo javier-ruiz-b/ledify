@@ -6,6 +6,7 @@ char logbuffer[64];
 
 #ifdef __arm__
 #include <wiringPi.h>
+#include <sys/time.h>
 #elsif ARDUINO
 #else
 #include <sys/time.h>
