@@ -16,8 +16,17 @@ target_link_libraries(LedStripController CommandReader FPSCalculator LayerContro
 
 #raspberry pi
 if (UNIX)
-    add_library (rpi_ws281x rpi_ws281x/dma.c rpi_ws281x/mailbox.c rpi_ws281x/pcm.c rpi_ws281x/pwm.c rpi_ws281x/rpihw.c rpi_ws281x/ws2811.c)
-    add_library (SerialPort SerialPort.cpp SerialPort.h)
-    add_executable(${PROJECT_NAME} main_rpi.cpp)
-    target_link_libraries(${PROJECT_NAME} rpi_ws281x LedStripController SerialPort)
+    aux_source_directory(rpi_ws281x RPI_WS281X_SOURCES)
+    list(REMOVE_ITEM RPI_WS281X_SOURCES "rpi_ws281x/main.c")
+    include_directories(rpi_ws281x)
+    add_library(rpi_ws281x ${RPI_WS281X_SOURCES})
+
+    aux_source_directory(wiringPi/wiringPi WIRING_PI_SOURCES)
+    include_directories(wiringPi wiringPi/wiringPi)
+    add_library(wiringPi ${WIRING_PI_SOURCES})
+
+    add_library(SerialPort SerialPort.cpp SerialPort.h)
+
+    add_executable(${PROJECT_NAME}_rpi main_rpi.cpp)
+    target_link_libraries(${PROJECT_NAME}_rpi rpi_ws281x wiringPi LedStripController SerialPort)
 endif (UNIX)

@@ -38,14 +38,14 @@ void FadeLayer::setParams(Layer *source, Layer *destination, FadeLayer::Interpol
     m_source = source;
     m_destination = destination;
     m_interpolator = interpolator;
-    m_startMs = millis() + startTimeMs;
+    m_startMs = tempus::millis() + startTimeMs;
     m_durationMs = durationMs;
     m_source->setParent(this);
     m_destination->setParent(this);
 }
 
 void FadeLayer::recalculateTimeDifference() {
-    unsigned long currentTimeMs = millis();
+    unsigned long currentTimeMs = tempus::millis();
     if (currentTimeMs < m_startMs) { // animation didn't begin
         m_currentTimeDifferenceMs = 0;
     } else {
@@ -62,7 +62,7 @@ void FadeLayer::startDraw() {
                  static_cast<void *>(this),
                  static_cast<unsigned int>(m_currentTimeDifferenceMs),
                  static_cast<unsigned int>(m_durationMs),
-                 millis(),
+                 tempus::millis(),
                  m_startMs);
         m_parent->setNewChild(this, m_destination);
         m_destination = nullptr;

@@ -28,15 +28,15 @@ typedef unsigned int size_t;
 #include "Arduino.h"
 #endif
 
-#ifndef ARDUINO
 #define MOCKABLE_TIME
+namespace tempus {
 void setMockedTime(bool mockedTime);
 unsigned long getRealTimeMicroseconds();
 unsigned long micros();
 unsigned long millis();
 void setMockMicros(unsigned long timeUs);
 void setMockMillis(unsigned long timeMs);
-#endif
+}
 
 extern char logbuffer[64];
 #ifdef DEBUG

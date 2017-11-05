@@ -1,12 +1,15 @@
 #ifdef __linux__
 #include <signal.h>
-#include <unistd.h>
 #include <string.h>
+#include <unistd.h>
+
+#include <ws2811.h>
+#include <wiringPi.h>
+#include <wiringSerial.h>
 
 #include "definitions.h"
 #include "main_rpi.h"
 #include "SerialPort.h"
-#include "rpi_ws281x/ws2811.h"
 #include "LedStripController.h"
 
 #define NUM_LEDS 300

@@ -46,7 +46,7 @@ bool LedStripController::parseCommand() {
     } else if ((lengthCommand = startsWith(command, "FPS")) != 0) {
         commandFps(lengthCommand, command);
     } else if ((lengthCommand = startsWith(command, "TIME")) != 0) {
-        print("%lu\n", static_cast<unsigned long>(millis()));
+        print("%lu\n", static_cast<unsigned long>(tempus::millis()));
     } else if ((lengthCommand = startsWith(command, "RESET")) != 0) {
         m_layerController.reset();
     } else {

@@ -12,7 +12,7 @@ FpsCalculator::FpsCalculator() {
 }
 
 void FpsCalculator::check() {
-    uint32 diffMs = millis() - m_startTimeMs;
+    uint32 diffMs = tempus::millis() - m_startTimeMs;
     if (diffMs > SHOW_EVERY_MS) {
         uint32 fps = m_ticks / (diffMs / 1000);
         uint32 fpsDec = ((m_ticks * 10 / diffMs) % 10);
@@ -32,7 +32,7 @@ void FpsCalculator::tick() {
     m_ticks++;
 
     if (m_startTimeMs == 0) {
-        m_startTimeMs = millis();
+        m_startTimeMs = tempus::millis();
     }
 
     if ((m_ticks % 128) == 0) {

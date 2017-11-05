@@ -1,3 +1,6 @@
 [submodule "ledify/src/rpi_ws281x"]
 	path = ledify/src/rpi_ws281x
 	url = https://github.com/jgarff/rpi_ws281x.git
+[submodule "ledify/src/wiringPi"]
+	path = ledify/src/wiringPi
+	url = https://github.com/WiringPi/WiringPi
