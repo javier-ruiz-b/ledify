@@ -26,6 +26,7 @@ if (UNIX)
     add_library(wiringPi ${WIRING_PI_SOURCES})
 
     add_library(SerialPort SerialPort.cpp SerialPort.h)
+    target_link_libraries(SerialPort wiringPi)
 
     add_executable(${PROJECT_NAME}_rpi main_rpi.cpp)
     target_link_libraries(${PROJECT_NAME}_rpi rpi_ws281x wiringPi LedStripController SerialPort)

@@ -76,9 +76,9 @@ static void setup_handlers(void) {
 
 void setup(char *virtSerial) {
     if (virtSerial) {
-        serial.begin(virtSerial, 9600, SerialPort::ParityNone);
+        serial.begin(virtSerial, 9600);
     } else {
-        serial.begin("/dev/ttyAMA0", 9600, SerialPort::ParityNone);
+        serial.begin("/dev/ttyAMA0", 9600);
     }
 
     setup_handlers();
