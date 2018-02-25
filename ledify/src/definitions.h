@@ -2,7 +2,8 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
-#define DEBUG
+//#define DEBUG
+
 
 typedef uint8_t byte;
 typedef uint8_t uint8;
