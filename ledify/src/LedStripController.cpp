@@ -59,10 +59,12 @@ bool LedStripController::parseCommand() {
         m_layerController.reset();
     } else if ((lengthCommand = startsWith(command, "OFF")) != 0) {
         auto colorIndex = layerController().addColorLayer(0, 0, 0 ,0);
-        layerController().addFadeLayerFromCurrent(colorIndex, 0, FadeLayer::InterpolatorDecelerate, 1000);
+        auto fadeIndex = layerController().addFadeLayerFromCurrent(colorIndex, 0, FadeLayer::InterpolatorDecelerate, 1000);
+        layerController().setAsRootLayer(fadeIndex);
     } else if ((lengthCommand = startsWith(command, "ON")) != 0) {
         auto colorIndex = layerController().addColorLayer(60, 40, 5, 100);
-        layerController().addFadeLayerFromCurrent(colorIndex, 0, FadeLayer::InterpolatorDecelerate, 1000);
+        auto fadeIndex = layerController().addFadeLayerFromCurrent(colorIndex, 0, FadeLayer::InterpolatorDecelerate, 1000);
+        layerController().setAsRootLayer(fadeIndex);
     } else {
         qCritical() << "Unknown command:" << command;
         return false;
