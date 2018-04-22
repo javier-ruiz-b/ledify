@@ -14,6 +14,7 @@
 #include "LayerController.h"
 #include <QtDebug>
 #include <QTimer>
+#include <QString>
 
 #define NUM_LEDS        300
 #define GPIO_PIN        18
@@ -21,7 +22,7 @@
 #define TARGET_FREQ     WS2811_TARGET_FREQ
 #define STRIP_TYPE      SK6812_STRIP_GRBW
 #define TERMINATE_MS    1500
-#define FPS             35
+#define FPS             40
 
 int Ledify::sighupFd[2];
 int Ledify::sigtermFd[2];
@@ -108,7 +109,16 @@ bool Ledify::init() {
         fprintf(stderr, "ws2811_init failed: %s\n", ws2811_get_return_t_str(errCode));
         return false;
     }
+
+    connect(&restServer, &RestServer::receivedCommand, this, &Ledify::receivedRestCommand);
     return true;
+}
+
+void Ledify::receivedRestCommand(const QString &string) {
+    for(int i = 0; i < string.length(); i++) {
+        controller.writeChar(string.at(i).toLatin1());
+    }
+    controller.writeChar('\n');
 }
 
 void Ledify::cleanup() {

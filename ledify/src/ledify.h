@@ -2,6 +2,7 @@
 #include <QObject>
 #include "SerialPort.h"
 #include "LedStripController.h"
+#include "RestServer.h"
 
 class Ledify : public QObject {
     Q_OBJECT
@@ -26,6 +27,9 @@ public slots:
     void handleSigHup();
     void handleSigTerm();
 
+private slots:
+    void receivedRestCommand(const QString &string);
+
 private:
     static int sighupFd[2];
     static int sigtermFd[2];
@@ -38,6 +42,7 @@ private:
 
     SerialPort serial;
     LedStripController controller;
+    RestServer restServer;
 
     void setupUnixSignalHandlers();
     void cleanup();
@@ -45,11 +50,5 @@ private:
 };
 
 int main (int argc, char **argv);
-
-//bool setup(char *virtSerial);
-//void cleanup();
-//void loop();
-
-//static bool running = true;
 
 

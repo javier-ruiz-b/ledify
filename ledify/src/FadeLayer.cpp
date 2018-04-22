@@ -19,10 +19,11 @@ unsigned char FadeLayer::interpolatedDestinationValue() {
     case InterpolatorDecelerate:
         return interpolatedDeceleratedValue();
     case InterpolatorLinear:
-        return static_cast<unsigned char>(
-                     static_cast<unsigned long>(m_currentTimeDifferenceMs * 256) /
-                     static_cast<unsigned long>(m_durationMs));
+        ;
     }
+    return static_cast<unsigned char>(
+                 static_cast<unsigned long>(m_currentTimeDifferenceMs * 256) /
+                 static_cast<unsigned long>(m_durationMs));
 }
 
 unsigned char FadeLayer::interpolatedAcceleratedValue() {
