@@ -33,5 +33,5 @@ addLibrary (LedStripController CommandReader FpsCalculator LayerController TimeC
 addLibrary (SerialPort wiringPi)
 
 # main
-add_executable(${PROJECT_NAME}_rpi main_rpi.cpp)
-target_link_libraries(${PROJECT_NAME}_rpi rpi_ws281x wiringPi LedStripController SerialPort)
+add_executable(${PROJECT_NAME} ledify.cpp)
+target_link_libraries(${PROJECT_NAME} rpi_ws281x wiringPi LedStripController SerialPort)

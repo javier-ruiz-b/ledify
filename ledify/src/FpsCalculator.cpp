@@ -8,7 +8,7 @@ FpsCalculator::FpsCalculator() {
     m_startTimeMs = 0;
     m_ticks = 0;
     m_enabled = false;
-#ifdef DEBUG
+#ifdef QT_DEBUG
     m_enabled = true;
 #endif
     m_time = TimeControl::instance();
