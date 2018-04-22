@@ -39,9 +39,7 @@ void LayerController::setAsRootLayer(uint16_t index) {
     m_availableLayers[index] = nullptr;
 }
 
-void LayerController::addFadeLayer(uint16_t myIndex, uint16_t fromIndex, uint16_t toIndex, uint16_t startDelayMs, FadeLayer::Interpolator interpolator, uint16_t durationMs) {
-    Layer *from = m_availableLayers[fromIndex];
-    Layer *to = m_availableLayers[toIndex];
+void LayerController::addFadeLayer(Layer *from, Layer *to, uint16_t myIndex, uint16_t startDelayMs, FadeLayer::Interpolator interpolator, uint16_t durationMs) {
     if ((from == nullptr) || (to == nullptr)) {
         qCritical() << static_cast<void *>(from)
                     << "or " << static_cast<void *>(to) << "are null";
@@ -55,8 +53,33 @@ void LayerController::addFadeLayer(uint16_t myIndex, uint16_t fromIndex, uint16_
                          startDelayMs,
                          durationMs);
     }
+}
+
+void LayerController::addFadeLayer(uint16_t myIndex, uint16_t fromIndex, uint16_t toIndex, uint16_t startDelayMs, FadeLayer::Interpolator interpolator, uint16_t durationMs) {
+    Layer *from = m_availableLayers[fromIndex];
+    Layer *to = m_availableLayers[toIndex];
+    addFadeLayer(from, to, myIndex, startDelayMs, interpolator, durationMs);
     m_availableLayers[fromIndex] = nullptr;
     m_availableLayers[toIndex] = nullptr;
+}
+
+uint16_t LayerController::addFadeLayer(uint16_t indexFrom, uint16_t indexTo, uint16_t startDelayMs, FadeLayer::Interpolator interpolator, uint16_t durationMs) {
+    uint16_t index = getFreeIndex();
+    addFadeLayer(index, indexFrom, indexTo, startDelayMs, interpolator, durationMs);
+    return index;
+}
+
+void LayerController::addFadeLayerFromCurrent(uint16_t myIndex, uint16_t toIndex, uint16_t startDelayMs, FadeLayer::Interpolator interpolator, uint16_t durationMs) {
+    Layer *from = m_rootLayer.child();
+    Layer *to = m_availableLayers[toIndex];
+    addFadeLayer(from, to, myIndex, startDelayMs, interpolator, durationMs);
+    m_availableLayers[toIndex] = nullptr;
+}
+
+uint16_t LayerController::addFadeLayerFromCurrent(uint16_t toIndex, uint16_t startDelayMs, FadeLayer::Interpolator interpolator, uint16_t durationMs) {
+    uint16_t index = getFreeIndex();
+    addFadeLayerFromCurrent(index, toIndex, startDelayMs, interpolator, durationMs);
+    return index;
 }
 
 void LayerController::addColorLayer(uint16_t toIndex, uint16_t r, uint16_t g, uint16_t b, uint16_t w) {
@@ -69,8 +92,21 @@ void LayerController::addColorLayer(uint16_t toIndex, uint16_t r, uint16_t g, ui
     }
 }
 
+uint16_t LayerController::addColorLayer(uint16_t r, uint16_t g, uint16_t b, uint16_t w) {
+    uint16_t index = getFreeIndex();
+    addColorLayer(index, r, g, b, w);
+    return index;
+}
+
 StartLayer *LayerController::rootLayer() {
     return &m_rootLayer;
+}
+
+uint16_t LayerController::getFreeIndex() {
+    while(m_availableLayers[m_lastFreeIndexHint] != nullptr) {
+        m_lastFreeIndexHint = (m_lastFreeIndexHint + 1) % AVAILABLE_LAYERS_NUM;
+    }
+    return static_cast<uint16_t>(m_lastFreeIndexHint);
 }
 
 Layer *LayerController::getLayer(LayerController::LayerType type) {

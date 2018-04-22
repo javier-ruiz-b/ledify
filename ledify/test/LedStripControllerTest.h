@@ -21,6 +21,7 @@ private slots:
     void setsRedColor();
     void createsTwoColorsAndSetsSecond();
     void fadesBetweenTwoColors();
+    void fadesBetweenCurrentLayerAndAnotherColor();
     void twoFadesAtTheSameTime();
     void triesToSetAnUnsetIndex();
     void triesToSetAnInvalidIndex();

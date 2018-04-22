@@ -114,11 +114,8 @@ bool Ledify::init() {
     return true;
 }
 
-void Ledify::receivedRestCommand(const QString &string) {
-    for(int i = 0; i < string.length(); i++) {
-        controller.writeChar(string.at(i).toLatin1());
-    }
-    controller.writeChar('\n');
+void Ledify::receivedRestCommand(const QString &command) {
+    controller.writeString(command);
 }
 
 void Ledify::cleanup() {

@@ -17,6 +17,13 @@ bool LedStripController::writeChar(char c) {
     return false;
 }
 
+bool LedStripController::writeString(const QString &command) {
+    for(int i = 0; i < command.length(); i++) {
+        writeChar(command.at(i).toLatin1());
+    }
+    return writeChar('\n');
+}
+
 void LedStripController::draw(uint32_t *ledsRgbw, int numLeds) {
     m_fpsCalculator.tick();
     StartLayer *rootLayer = m_layerController.rootLayer();
@@ -40,6 +47,8 @@ bool LedStripController::parseCommand() {
         commandSet(command, lengthCommand);
     } else if ((lengthCommand = startsWith(command, "COLOR")) != 0) {
         commandColor(lengthCommand, command);
+    } else if ((lengthCommand = startsWith(command, "FADETO")) != 0) {
+        commandFadeTo(command, lengthCommand);
     } else if ((lengthCommand = startsWith(command, "FADE")) != 0) {
         commandFade(command, lengthCommand);
     } else if ((lengthCommand = startsWith(command, "FPS")) != 0) {
@@ -48,6 +57,12 @@ bool LedStripController::parseCommand() {
         qDebug() << m_time.millis();
     } else if ((lengthCommand = startsWith(command, "RESET")) != 0) {
         m_layerController.reset();
+    } else if ((lengthCommand = startsWith(command, "OFF")) != 0) {
+        auto colorIndex = layerController().addColorLayer(0, 0, 0 ,0);
+        layerController().addFadeLayerFromCurrent(colorIndex, 0, FadeLayer::InterpolatorDecelerate, 1000);
+    } else if ((lengthCommand = startsWith(command, "ON")) != 0) {
+        auto colorIndex = layerController().addColorLayer(60, 40, 5, 100);
+        layerController().addFadeLayerFromCurrent(colorIndex, 0, FadeLayer::InterpolatorDecelerate, 1000);
     } else {
         qCritical() << "Unknown command:" << command;
         return false;
@@ -84,6 +99,18 @@ void LedStripController::commandFade(const char *command, unsigned char lengthCo
     }
     FadeLayer::Interpolator interpolator = static_cast<FadeLayer::Interpolator>(interpolatorUint);
     m_layerController.addFadeLayer(myIndex, indexFrom, indexTo, startDelayMs, interpolator, durationMs);
+}
+
+void LedStripController::commandFadeTo(const char *command, unsigned char lengthCommand) {
+    uint16_t myIndex, indexTo, interpolatorUint, startDelayMs, durationMs;
+    const char *value = &command[lengthCommand + 1];
+    sscanf(value, "%hu,%hu,%hu,%hu,%hu", &myIndex, &indexTo, &interpolatorUint, &startDelayMs,  &durationMs);
+    if (indexTo >= AVAILABLE_LAYERS_NUM) {
+        qCritical() << "Index range:" << command;
+        return;
+    }
+    FadeLayer::Interpolator interpolator = static_cast<FadeLayer::Interpolator>(interpolatorUint);
+    m_layerController.addFadeLayerFromCurrent(myIndex, indexTo, startDelayMs, interpolator, durationMs);
 }
 
 void LedStripController::commandFps(unsigned char lengthCommand, const char *command) {

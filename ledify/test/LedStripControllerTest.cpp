@@ -65,6 +65,22 @@ void LedStripControllerTest::fadesBetweenTwoColors() {
     QCOMPARE(m_tested->m_layerController.m_availableLayers[2], static_cast<Layer *>(nullptr));
 }
 
+void LedStripControllerTest::fadesBetweenCurrentLayerAndAnotherColor() {
+    writeCommand("C+COLOR=0,255,0,0,0");
+    writeCommand("C+SET=0");
+    writeCommand("C+COLOR=1,0,255,0,0");
+    writeCommand("C+FADETO=2,1,0,1000,1000");
+    writeCommand("C+SET=2");
+
+    TimeControl::instance()->setMillis(1500); //in the middle of the fade
+    m_tested->draw(reinterpret_cast<uint32_t *>(m_leds), NUM_LED);
+
+    QCOMPARE(m_leds[0], 0x007F7F00); //WRGB
+    QCOMPARE(m_tested->m_layerController.m_availableLayers[0], static_cast<Layer *>(nullptr));
+    QCOMPARE(m_tested->m_layerController.m_availableLayers[1], static_cast<Layer *>(nullptr));
+    QCOMPARE(m_tested->m_layerController.m_availableLayers[2], static_cast<Layer *>(nullptr));
+}
+
 void LedStripControllerTest::twoFadesAtTheSameTime() {
     writeCommand("C+COLOR=0,255,0,0,0");
     writeCommand("C+COLOR=1,0,255,0,0");
