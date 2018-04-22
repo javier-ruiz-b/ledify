@@ -11,7 +11,7 @@ include_directories (${Qt5Core_INCLUDE_DIRS})
 
 # qHttp
 aux_source_directory(qhttp/3rdparty/http-parser HTTP_PARSER_SOURCES)
-include_directories(qhttp/src qhttp/src/private qhttp/3rdparty)
+include_directories(qhttp/src qhttp/src/private qhttp/3rdparty qhttp/3rdparty/http-parser)
 add_library(qHttp qhttp/src/qhttpabstracts.cpp qhttp/src/qhttpserverconnection.cpp qhttp/src/qhttpserverrequest.cpp qhttp/src/qhttpserverresponse.cpp qhttp/src/qhttpserver.cpp ${HTTP_PARSER_SOURCES})
 target_link_libraries(qHttp Qt5::Core Qt5::Network)
 
@@ -45,4 +45,4 @@ target_link_libraries(TestRestServer RestServer)
 
 # main
 add_executable(${PROJECT_NAME} ledify.cpp)
-target_link_libraries(${PROJECT_NAME} rpi_ws281x wiringPi LedStripController SerialPort RestServer)
+target_link_libraries(${PROJECT_NAME} rpi_ws281x wiringPi LedStripController SerialPort RestServer qHttp)
