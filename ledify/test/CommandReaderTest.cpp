@@ -35,12 +35,12 @@ void CommandReaderTest::parsesCommandIgnoringInvalidChars() {
 void CommandReaderTest::emptyCommandWhenWrittingJustC() {
     bool result = writeCommand("C\n");
 
-    QVERIFY(result);
+    QVERIFY(!result);
     QCOMPARE(m_tested->command(), "");
 }
 
 void CommandReaderTest::failsWhenCommandTooLong() {
-    bool result = writeCommand("C+012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789\n");
+    bool result = writeCommand("C+0123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789\n");
 
     QVERIFY(!result);
 }
@@ -64,7 +64,7 @@ void CommandReaderTest::failsWhenWrittingSeparatorAndNoCommand() {
 bool CommandReaderTest::writeCommand(std::string command) {
     bool lastResult = false;
     for (unsigned int i = 0; i < command.length(); i++) {
-        lastResult = m_tested->writeChar(command[i]);
+        lastResult = m_tested->receivedChar(command[i]);
     }
     return lastResult;
 }

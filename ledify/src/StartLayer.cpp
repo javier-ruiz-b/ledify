@@ -1,4 +1,5 @@
 #include "StartLayer.h"
+#include <QtDebug>
 
 StartLayer::StartLayer()
     : m_child(nullptr) {
@@ -15,7 +16,7 @@ void StartLayer::setChild(Layer *child) {
     setInUse(true);
 }
 
-uint32 StartLayer::pixel(uint16 index) {
+uint32_t StartLayer::pixel(uint16_t index) {
     return m_child->pixel(index);
 }
 
@@ -31,7 +32,7 @@ void StartLayer::endDraw() {
 }
 
 void StartLayer::setNewChild(Layer *, Layer *newChild) {
-    logdebug("StartLayer(%p) new child %p", static_cast<void *>(this), static_cast<void *>(newChild));
+    qDebug() << "StartLayer new child " << static_cast<void *>(this) << static_cast<void *>(newChild);
     m_child = newChild;
     if (m_child != nullptr) {
         m_child->setParent(this);
@@ -39,7 +40,7 @@ void StartLayer::setNewChild(Layer *, Layer *newChild) {
 }
 
 void StartLayer::setInUse(bool value) {
-    logdebug("StartLayer(%p) %d", static_cast<void *>(this), static_cast<int>(value));
+    qDebug() << "StartLayer" << static_cast<void *>(this) << static_cast<int>(value);
     m_inUse = value;
     if (m_child) {
         m_child->setInUse(value);

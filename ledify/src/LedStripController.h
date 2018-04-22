@@ -1,9 +1,9 @@
 #pragma once
 
-#include "definitions.h"
 #include "FpsCalculator.h"
 #include "CommandReader.h"
 #include "LayerController.h"
+#include "TimeControl.h"
 
 class Adafruit_NeoPixel;
 class Layer;
@@ -45,26 +45,27 @@ public:
     LayerController &layerController();
     CommandReader &commandReader();
     bool writeChar(char c);
-    void draw(uint32 *ledsRgbw, int numLeds);
+    void draw(uint32_t *ledsRgbw, int numLeds);
 
 
 private:
     bool parseCommand();
 
-    void commandSet(const char *command, byte lengthCommand);
-    void commandColor(byte lengthCommand, const char *command);
-    void commandFade(const char *command, byte lengthCommand);
-    void commandFps(byte lengthCommand, const char *command);
+    void commandSet(const char *command, unsigned char lengthCommand);
+    void commandColor(unsigned char lengthCommand, const char *command);
+    void commandFade(const char *command, unsigned char lengthCommand);
+    void commandFps(unsigned char lengthCommand, const char *command);
 
     /**
      * @return length of startsWithString if matches
      */
-    byte startsWith(const char *string, const char *startsWithString);
+    unsigned char startsWith(const char *string, const char *startsWithString);
 
 private:
     FpsCalculator m_fpsCalculator;
     CommandReader m_commandReader;
     LayerController m_layerController;
+    TimeControl m_time;
 
     friend class LedStripControllerTest;
 };

@@ -1,7 +1,9 @@
 #include "SerialPort.h"
-#include <errno.h>
+#include <cerrno>
+#include <cstring>
 #include <wiringPi.h>
 #include <wiringSerial.h>
+#include <QtDebug>
 
 
 SerialPort::SerialPort() {
@@ -12,7 +14,9 @@ SerialPort::SerialPort() {
 int SerialPort::begin(const char *portName, int speed) {
     m_fd = serialOpen(portName, speed);
     if (m_fd < 0) {
-        logerr("error %d opening %s: %s", errno, portName, strerror (errno));
+        qCritical() << "error " << errno
+                    << "opening " << portName
+                    << ":" << strerror (errno);
         return -1;
     }
 
@@ -31,7 +35,7 @@ char SerialPort::read() {
     return static_cast<char>(serialGetchar(m_fd));
 }
 
-void SerialPort::write(byte b) {
+void SerialPort::write(unsigned char b) {
     serialPutchar(m_fd, b);
 }
 

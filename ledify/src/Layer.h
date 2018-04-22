@@ -1,12 +1,12 @@
 #pragma once
-#include "definitions.h"
+#include <stdint.h>
 
 class Layer {
 public:
     Layer() : m_inUse(false) {}
     virtual ~Layer() {}
 
-    virtual uint32 pixel(uint16 index) = 0;
+    virtual uint32_t pixel(uint16_t index) = 0;
 
     virtual void startDraw() = 0;
     virtual void endDraw() = 0;

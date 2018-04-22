@@ -1,10 +1,7 @@
 #pragma once
 
-#include "definitions.h"
-
-#define COMMAND_PREFIX      "C"
-#define PREFIX_SEPARATOR    '+'
-#define COMMAND_MAX_LENGTH  48
+#include <QString>
+#include <QSet>
 
 /**
  * @brief Parses byte by byte the output of the serial interface.
@@ -22,19 +19,21 @@ public:
     const char *command() const;
 
     //! Returns true when a command is ready to be read
-    bool writeChar(char c);
+    bool receivedChar(char c);
 
 private:
-    void reset();
+    inline void reset();
+    inline int commandIndex();
 
 private:
-    static const char s_ignoreChars[];
-    static const char s_terminateChars[];
+    static const QSet<char> s_ignoreChars;
+    static const QSet<char> s_terminateChars;
+    static const QString c_prefix;
+    static const int c_maxLength = 64;
 
 private:
-    char m_bufferedCommand[COMMAND_MAX_LENGTH + 1];
-    unsigned char m_prefixIndex;
-    unsigned char m_commandIndex;
+    char m_receivedCommand[c_maxLength + 1];
+    unsigned char m_receivedIndex = 0;
 
     friend class SerialParserTest;
 };

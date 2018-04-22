@@ -9,11 +9,11 @@
 #include <wiringPi.h>
 #include <wiringSerial.h>
 
-#include "definitions.h"
 #include "main_rpi.h"
 #include "SerialPort.h"
 #include "LedStripController.h"
 #include "LayerController.h"
+#include <QtDebug>
 
 #define NUM_LEDS 300
 #define GPIO_PIN 18
@@ -50,10 +50,11 @@ SerialPort serial;
 LedStripController controller;
 
 int main(int argc, char **argv) {
-    char *virtSerial = 0;
+    char *virtSerial = nullptr;
     if ((argc > 2) && (strcmp(argv[1], "-D") == 0)) {
         virtSerial = argv[2];
-        print("Override serial port: %s\n", virtSerial);
+        qDebug() << "Override serial port: "
+                 << virtSerial;
     }
     if (!setup(virtSerial)) {
         return 1;
@@ -61,7 +62,7 @@ int main(int argc, char **argv) {
     while (running) {
         loop();
     }
-    unsigned long finishMs = TERMINATE_MS + tempus::millis();
+    unsigned long finishMs = TERMINATE_MS + millis();
     while (millis() < finishMs) {
         loop();
     }
@@ -98,7 +99,8 @@ bool setup(char *virtSerial) {
     }
 
     if (wiringPiSetup () == -1) {
-        logerr("Unable to start wiringPi: %s\n", strerror (errno)) ;
+        qCritical() << "Unable to start wiringPi:"
+                    << strerror (errno);
         return false;
     }
 
@@ -126,11 +128,11 @@ void cleanup() {
 void loop() {
     if (serial.available()) {
         char c = serial.read();
-        print("%c", c);
+        qDebug().noquote().nospace() <<"%c";
         controller.writeChar(c);
     }
 
-    controller.draw(static_cast<uint32 *>(ledStrip.channel[0].leds), NUM_LEDS);
+    controller.draw(static_cast<uint32_t *>(ledStrip.channel[0].leds), NUM_LEDS);
 
     ws2811_return_t errCode;
     if ((errCode = ws2811_render(&ledStrip)) != WS2811_SUCCESS) {

@@ -1,59 +1,48 @@
 #include "CommandReader.h"
+#include <QtCore>
 
-const char CommandReader::s_ignoreChars[] = {'\r','\0','\t',' '};
-const char CommandReader::s_terminateChars[] = {'\n',';'};
+const QSet<char> CommandReader::s_ignoreChars = {'\r','\0','\t',' '};
+const QSet<char> CommandReader::s_terminateChars = {'\n',';'};
+const QString CommandReader::c_prefix = "C+";
 
 CommandReader::CommandReader() {
     reset();
 }
 
 const char *CommandReader::command() const {
-    return m_bufferedCommand;
+    return m_receivedCommand;
 }
 
-bool CommandReader::writeChar(char c) {
-    for (unsigned char i = 0; i < sizeof(s_ignoreChars); i++) {
-        if (c == s_ignoreChars[i]) {
-            return false;
-        }
+bool CommandReader::receivedChar(char c) {
+    if (s_ignoreChars.contains(c)) {
+        return false;
     }
-    if (m_prefixIndex < SIZE_OF_STRING(COMMAND_PREFIX)) {
-        if (c == COMMAND_PREFIX[m_prefixIndex]) {
-            m_prefixIndex++;
+    if (s_terminateChars.contains(c)) {
+        int index = m_receivedIndex;
+        m_receivedCommand[commandIndex()] = '\0';
+        reset();
+        return index > c_prefix.size();
+    } else if (m_receivedIndex < c_prefix.size()) {
+        if (c == c_prefix[m_receivedIndex]) {
+            m_receivedIndex++;
             return false;
         }
-    } else if (m_prefixIndex == SIZE_OF_STRING(COMMAND_PREFIX)) {
-        if (c == PREFIX_SEPARATOR) {
-            m_prefixIndex++;
-            return false;
-        }
-
-        for (unsigned char i = 0; i < sizeof(s_terminateChars); i++) {
-            if (c == s_terminateChars[i]) {
-                m_bufferedCommand[0] = '\0';
-                reset();
-                return true;
-            }
-        }
+    } else if (commandIndex() >= c_maxLength) {
+        reset();
+        return false;
     } else {
-        for (unsigned char i = 0; i < sizeof(s_terminateChars); i++) {
-            if (c == s_terminateChars[i]) {
-                m_bufferedCommand[m_commandIndex] = '\0';
-                reset();
-                return (m_bufferedCommand[m_commandIndex] != '\0');
-            }
-        }
-        if (m_commandIndex <= COMMAND_MAX_LENGTH) {
-            m_bufferedCommand[m_commandIndex] = c;
-            m_commandIndex++;
-            return false;
-        }
+        m_receivedCommand[commandIndex()] = c;
+        m_receivedIndex++;
+        return false;
     }
     reset();
     return false;
 }
 
 void CommandReader::reset() {
-    m_prefixIndex = 0;
-    m_commandIndex = 0;
+    m_receivedIndex = 0;
+}
+
+int CommandReader::commandIndex() {
+    return qMax(m_receivedIndex - c_prefix.size(), 0);
 }

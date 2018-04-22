@@ -1,5 +1,4 @@
 #pragma once
-#include "definitions.h"
 
 class SerialPort {
 
@@ -9,12 +8,11 @@ public:
     void end();
     bool available();
     char read();
-    void write(byte b);
+    void write(unsigned char b);
     void writeString(const char *s);
 
 private:
     int m_fd;
-    char m_readByte;
     bool m_isRead;
 
 };

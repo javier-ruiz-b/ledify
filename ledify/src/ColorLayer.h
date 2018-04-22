@@ -1,13 +1,12 @@
 #pragma once
 #include "Layer.h"
-#include "definitions.h"
 
 class ColorLayer : public Layer {
 public:
     ColorLayer();
-    void setColor(byte r, byte g, byte b, byte w);
+    void setColor(unsigned char r, unsigned char g, unsigned char b, unsigned char w);
 
-    virtual uint32 pixel(uint16);
+    virtual uint32_t pixel(uint16_t);
 
     virtual void startDraw() {}
     virtual void endDraw() {}
@@ -15,7 +14,7 @@ public:
     virtual void setInUse(bool value);
 
 private:
-    uint32 m_pixel;
+    uint32_t m_pixel;
 
     friend class LedStripControllerTest;
 };

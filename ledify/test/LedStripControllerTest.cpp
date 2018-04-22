@@ -1,18 +1,19 @@
 #include "LedStripControllerTest.h"
 #include "LedStripController.h"
 
+#include <TimeControl.h>
 #include <iostream>
 
 void LedStripControllerTest::init() {
-    tempus::setMockedTime(true);
-    tempus::setMockMillis(0);
+    TimeControl::instance()->setMocked(true);
+    TimeControl::instance()->setMillis(0);
     m_tested = new LedStripController();
 //    m_buffer = (int *) m_buffer;
-    memset(m_leds, 0xFE, NUM_LED*sizeof(uint32));
+    memset(m_leds, 0xFE, NUM_LED*sizeof(uint32_t));
 }
 
 void LedStripControllerTest::cleanup() {
-    tempus::setMockedTime(false);
+    TimeControl::instance()->setMocked(false);
     delete m_tested;
 }
 
@@ -32,7 +33,7 @@ void LedStripControllerTest::setsRedColor() {
     writeCommand("C+COLOR=0,255,0,0,0");
     writeCommand("C+SET=0");
 
-    m_tested->draw(reinterpret_cast<uint32 *>(m_leds), NUM_LED);
+    m_tested->draw(reinterpret_cast<uint32_t *>(m_leds), NUM_LED);
 
     QCOMPARE(m_leds[0], 0x00FF0000); //WRGB
 }
@@ -43,7 +44,7 @@ void LedStripControllerTest::createsTwoColorsAndSetsSecond() {
     writeCommand("C+COLOR=0,0,255,0,0");
     writeCommand("C+SET=0");
 
-    m_tested->draw(reinterpret_cast<uint32 *>(m_leds), NUM_LED);
+    m_tested->draw(reinterpret_cast<uint32_t *>(m_leds), NUM_LED);
 
     QCOMPARE(m_leds[0], 0x0000FF00); //WRGB
     QCOMPARE(m_tested->m_layerController.m_availableLayers[1], static_cast<Layer *>(nullptr));
@@ -55,8 +56,8 @@ void LedStripControllerTest::fadesBetweenTwoColors() {
     writeCommand("C+FADE=2,0,1,0,1000,1000");
     writeCommand("C+SET=2");
 
-    tempus::setMockMillis(1500); //in the middle of the fade
-    m_tested->draw(reinterpret_cast<uint32 *>(m_leds), NUM_LED);
+    TimeControl::instance()->setMillis(1500); //in the middle of the fade
+    m_tested->draw(reinterpret_cast<uint32_t *>(m_leds), NUM_LED);
 
     QCOMPARE(m_leds[0], 0x007F7F00); //WRGB
     QCOMPARE(m_tested->m_layerController.m_availableLayers[0], static_cast<Layer *>(nullptr));
@@ -72,8 +73,8 @@ void LedStripControllerTest::twoFadesAtTheSameTime() {
     writeCommand("C+FADE=4,2,3,0,0,1000"); // COLOR4= 2+3 € 500ms = 127,127,127,0
     writeCommand("C+SET=4");
 
-    tempus::setMockMillis(500); //in the middle of the fade
-    m_tested->draw(reinterpret_cast<uint32 *>(m_leds), NUM_LED);
+    TimeControl::instance()->setMillis(500); //in the middle of the fade
+    m_tested->draw(reinterpret_cast<uint32_t *>(m_leds), NUM_LED);
 
     QCOMPARE(m_leds[0], 0x007F7F7F); //WRGB
 }
@@ -96,9 +97,9 @@ void LedStripControllerTest::oneFadeWithLayerControllerInterface() {
     layerControl.setAsRootLayer(2);
     writeCommand("C+FPS=0");
 
-    for (uint32 timeMs = 0; timeMs < 9*1000; timeMs+=3) {
-        tempus::setMockMillis(timeMs);
-        m_tested->draw(reinterpret_cast<uint32 *>(m_leds), NUM_LED);
+    for (uint32_t timeMs = 0; timeMs < 9*1000; timeMs+=3) {
+        TimeControl::instance()->setMillis(timeMs);
+        m_tested->draw(reinterpret_cast<uint32_t *>(m_leds), NUM_LED);
     }
 
     QCOMPARE(m_leds[0], 0x0000FF00); //WRGB
@@ -120,9 +121,9 @@ void LedStripControllerTest::acceptanceTest() {
     ColorLayer *destinationColor = static_cast<ColorLayer *>(fade->m_destination);
     QCOMPARE(fade->m_inUse, true);
 
-    for (uint32 timeMs = 0; timeMs < 60*1000; timeMs+=3) {
-        tempus::setMockMillis(timeMs);
-        m_tested->draw(reinterpret_cast<uint32 *>(m_leds), NUM_LED);
+    for (uint32_t timeMs = 0; timeMs < 60*1000; timeMs+=3) {
+        TimeControl::instance()->setMillis(timeMs);
+        m_tested->draw(reinterpret_cast<uint32_t *>(m_leds), NUM_LED);
     }
 
     QCOMPARE(m_leds[0], 0x0000FF00); //WRGB

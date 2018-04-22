@@ -1,6 +1,8 @@
 #pragma once
 #include "Layer.h"
 
+class TimeControl;
+
 class FadeLayer : public Layer {
 
 public:
@@ -13,28 +15,30 @@ public:
 public:
     FadeLayer();
 
-    void setParams(Layer *source, Layer *destination, Interpolator interpolator, uint16 startTimeMs, uint16 durationMs);
+    void setParams(Layer *source, Layer *destination, Interpolator interpolator, uint16_t startTimeMs, uint16_t durationMs);
     bool finished();
 
-    uint32 pixel(uint16 index);
+    uint32_t pixel(uint16_t index);
     virtual void startDraw();
     virtual void endDraw();
     virtual void setNewChild(Layer *currentChild, Layer *newChild);
     virtual void setInUse(bool value);
 
 private:
-    inline byte interpolatedDestinationValue();
-    inline byte interpolatedAcceleratedValue();
-    inline byte interpolatedDeceleratedValue();
+    inline unsigned char interpolatedDestinationValue();
+    inline unsigned char interpolatedAcceleratedValue();
+    inline unsigned char interpolatedDeceleratedValue();
 
 private:
+    TimeControl *m_time;
     Layer *m_source;
     Layer *m_destination;
     unsigned long m_startMs;
-    uint16 m_currentTimeDifferenceMs;
-    uint16 m_durationMs;
+    uint16_t m_currentTimeDifferenceMs;
+    uint16_t m_durationMs;
     Interpolator m_interpolator;
 
-    friend class LedStripControllerTest;
     void recalculateTimeDifference();
+
+    friend class LedStripControllerTest;
 };

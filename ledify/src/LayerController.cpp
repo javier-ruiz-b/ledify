@@ -1,14 +1,15 @@
 #include "LayerController.h"
+#include <QtDebug>
 
 template <typename T>
-T *LayerController::findFreeLayer(T *layers, LayerType type, byte numLayers) {
-    for (byte i = 0; i < numLayers; i++) {
+T *LayerController::findFreeLayer(T *layers, LayerType type, unsigned char numLayers) {
+    for (unsigned char i = 0; i < numLayers; i++) {
         if (!layers[i].isInUse()) {
             layers[i].setInUse(true);
             return &layers[i];
         }
     }
-    logerr("No available layer for %d", (int) type);
+    qCritical() << "No available layer for " << (int) type;
     return nullptr;
 }
 
@@ -19,18 +20,18 @@ LayerController::LayerController() {
 void LayerController::reset() {
     reset(m_color, NUM_COLOR);
     reset(m_fade, NUM_FADE);
-    for (byte i = 0; i < AVAILABLE_LAYERS_NUM; i++) {
+    for (unsigned char i = 0; i < AVAILABLE_LAYERS_NUM; i++) {
         m_availableLayers[i] = nullptr;
     }
 }
 
-void LayerController::setAsRootLayer(uint16 index) {
+void LayerController::setAsRootLayer(uint16_t index) {
     if (index >= AVAILABLE_LAYERS_NUM) {
-        logerr("Index range: %d", index);
+        qCritical() << "Index range:" << index;
         return;
     }
     if (m_availableLayers[index] == nullptr) {
-        logerr("Doesn't exist %i", index);
+        qCritical() << "Doesn't exist " << index;
         return;
     }
 
@@ -38,11 +39,12 @@ void LayerController::setAsRootLayer(uint16 index) {
     m_availableLayers[index] = nullptr;
 }
 
-void LayerController::addFadeLayer(uint16 myIndex, uint16 fromIndex, uint16 toIndex, uint16 startDelayMs, FadeLayer::Interpolator interpolator, uint16 durationMs) {
+void LayerController::addFadeLayer(uint16_t myIndex, uint16_t fromIndex, uint16_t toIndex, uint16_t startDelayMs, FadeLayer::Interpolator interpolator, uint16_t durationMs) {
     Layer *from = m_availableLayers[fromIndex];
     Layer *to = m_availableLayers[toIndex];
     if ((from == nullptr) || (to == nullptr)) {
-        logerr("%p or %p are null", static_cast<void *>(from), static_cast<void *>(to));
+        qCritical() << static_cast<void *>(from)
+                    << "or " << static_cast<void *>(to) << "are null";
         return;
     }
     FadeLayer *layer;
@@ -57,13 +59,13 @@ void LayerController::addFadeLayer(uint16 myIndex, uint16 fromIndex, uint16 toIn
     m_availableLayers[toIndex] = nullptr;
 }
 
-void LayerController::addColorLayer(uint16 toIndex, uint16 r, uint16 g, uint16 b, uint16 w) {
+void LayerController::addColorLayer(uint16_t toIndex, uint16_t r, uint16_t g, uint16_t b, uint16_t w) {
     ColorLayer *layer;
     if ((layer = static_cast<ColorLayer *>(setAvailableLayer(LayerController::Color, toIndex)))) {
-        layer->setColor(static_cast<uint8>(r),
-                        static_cast<uint8>(g),
-                        static_cast<uint8>(b),
-                        static_cast<uint8>(w));
+        layer->setColor(static_cast<unsigned char>(r),
+                        static_cast<unsigned char>(g),
+                        static_cast<unsigned char>(b),
+                        static_cast<unsigned char>(w));
     }
 }
 
@@ -81,7 +83,7 @@ Layer *LayerController::getLayer(LayerController::LayerType type) {
     return nullptr;
 }
 
-Layer *LayerController::setAvailableLayer(LayerController::LayerType layerType, uint16 index) {
+Layer *LayerController::setAvailableLayer(LayerController::LayerType layerType, uint16_t index) {
     Layer *layer = getLayer(layerType);
     if (layer == nullptr) {
         return nullptr;
@@ -95,7 +97,7 @@ Layer *LayerController::setAvailableLayer(LayerController::LayerType layerType, 
 
 template<typename T>
 void LayerController::reset(T *layers, int numLayers) {
-    for (byte i = 0; i < numLayers; i++) {
+    for (unsigned char i = 0; i < numLayers; i++) {
         layers[i].setInUse(false);
     }
 }

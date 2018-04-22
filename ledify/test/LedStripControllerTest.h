@@ -1,9 +1,7 @@
 #pragma once
 
-#include <QtTest>
-#include "definitions.h"
-
 #define NUM_LED 100
+#include <QTest>
 
 class LedStripController;
 class Adafruit_NeoPixel;

@@ -3,7 +3,7 @@
 
 class ColorConversion {
 public:
-    uint32 argbToRgb(uint32 argb);
+    uint32_t argbToRgb(uint32 argb);
 
 private:
     ColorConversion() {}

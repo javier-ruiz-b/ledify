@@ -1,6 +1,8 @@
 #pragma once
 
-#include "definitions.h"
+#include <QtCore>
+
+class TimeControl;
 
 class FpsCalculator {
 public:
@@ -14,6 +16,8 @@ private:
 
 private:
     bool m_enabled;
-    uint32 m_startTimeMs;
-    uint32 m_ticks;
+    uint32_t m_startTimeMs;
+    uint32_t m_ticks;
+    TimeControl *m_time;
+
 };

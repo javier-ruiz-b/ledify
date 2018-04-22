@@ -8,7 +8,7 @@ public:
     Layer *child() const;
     void setChild(Layer *child);
 
-    virtual uint32 pixel(uint16 index);
+    virtual uint32_t pixel(uint16_t index);
     virtual void startDraw();
     virtual void endDraw();
     virtual void setNewChild(Layer *currentChild, Layer *newChild);

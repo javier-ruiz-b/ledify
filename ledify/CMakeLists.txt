@@ -2,14 +2,17 @@ cmake_minimum_required(VERSION 3.1)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_AUTOMOC ON)
-set(CMAKE_CXX_FLAGS "-Wall -Wextra -pedantic")
+set(CMAKE_CXX_FLAGS "-Wall -Wextra -pedantic -fPIC")
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 project(ledify)
 add_subdirectory(src)
 
-enable_testing()
-find_package(Qt5Core)
-find_package(Qt5Test)
-add_subdirectory(test)
+option(BUILD_TESTS "Build test programs" OFF)
+
+if(BUILD_TESTS)
+    enable_testing()
+    find_package(Qt5Test)
+    add_subdirectory(test)
+endif()

@@ -1,4 +1,6 @@
 #include "FpsCalculator.h"
+#include "TimeControl.h"
+#include <QtDebug>
 
 #define SHOW_EVERY_MS 2000
 
@@ -9,17 +11,18 @@ FpsCalculator::FpsCalculator() {
 #ifdef DEBUG
     m_enabled = true;
 #endif
+    m_time = TimeControl::instance();
 }
 
 void FpsCalculator::check() {
-    uint32 diffMs = tempus::millis() - m_startTimeMs;
+    uint32_t diffMs = m_time->millis() - m_startTimeMs;
     if (diffMs > SHOW_EVERY_MS) {
-        uint32 fps = m_ticks / (diffMs / 1000);
-        uint32 fpsDec = ((m_ticks * 10 / diffMs) % 10);
-        print("FPS: %lu.%lu, ticks: %lu\n",
-              static_cast<long unsigned int>(fps),
-              static_cast<long unsigned int>(fpsDec),
-              static_cast<long unsigned int>(m_ticks));
+        uint32_t fps = m_ticks / (diffMs / 1000);
+        uint32_t fpsDec = ((m_ticks * 10 / diffMs) % 10);
+        qDebug().nospace() << "FPS: "
+              << static_cast<long unsigned int>(fps)
+              << "," << static_cast<long unsigned int>(fpsDec)
+              << ", ticks: " << static_cast<long unsigned int>(m_ticks);
         m_ticks = 0;
         m_startTimeMs = 0;
     }
@@ -32,7 +35,7 @@ void FpsCalculator::tick() {
     m_ticks++;
 
     if (m_startTimeMs == 0) {
-        m_startTimeMs = tempus::millis();
+        m_startTimeMs = m_time->millis();
     }
 
     if ((m_ticks % 128) == 0) {
