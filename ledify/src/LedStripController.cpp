@@ -6,6 +6,8 @@
 #include <wiringPi.h>
 
 LedStripController::LedStripController() {
+    m_layerController.addColorLayer(0, 0, 0, 0, 0);
+    m_layerController.setAsRootLayer(0);
     wiringPiSetup () ;
     pinMode (c_relayGpioPin, OUTPUT);
 }

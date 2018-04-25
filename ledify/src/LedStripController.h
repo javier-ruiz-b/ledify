@@ -49,6 +49,8 @@ public:
     bool writeString(const QString &command);
     void draw(uint32_t *ledsRgbw, int numLeds);
 
+    void commandOff();
+    void commandOn();
 
 private:
     bool parseCommand();
@@ -72,6 +74,4 @@ private:
     TimeControl m_time;
 
     friend class LedStripControllerTest;
-    void commandOff();
-    void commandOn();
 };

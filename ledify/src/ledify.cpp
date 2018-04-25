@@ -21,7 +21,7 @@
 #define DMA             10
 #define TARGET_FREQ     WS2811_TARGET_FREQ
 #define STRIP_TYPE      SK6812_STRIP_GRBW
-#define TERMINATE_MS    1500
+#define TERMINATE_MS    2500
 #define FPS             40
 
 int Ledify::sighupFd[2];
@@ -63,11 +63,7 @@ int main(int argc, char **argv) {
 void Ledify::terminate() {
     qDebug() << "Terminating...";
 
-    LayerController &layerControl = controller.layerController();
-    layerControl.addColorLayer(0, 60, 40, 5, 100);
-    layerControl.addColorLayer(1, 0, 0, 0, 0);
-    layerControl.addFadeLayer(2, 0, 1, 0, FadeLayer::InterpolatorDecelerate, TERMINATE_MS - 100);
-    layerControl.setAsRootLayer(2);
+    controller.commandOff();
     QTimer::singleShot(TERMINATE_MS, this, [this] {
            m_running = false;
        });
@@ -128,12 +124,7 @@ void Ledify::run() {
         return;
     }
 
-    LayerController &layerControl = controller.layerController();
-    layerControl.addColorLayer(0, 0, 0, 0, 0);
-    layerControl.addColorLayer(1, 60, 40, 5, 100);
-    layerControl.addFadeLayer(2, 0, 1, 0, FadeLayer::InterpolatorAccelerate, 5000);
-    layerControl.setAsRootLayer(2);
-
+    controller.commandOn();
     QTimer::singleShot(0, this, &Ledify::loop);
 }
 
