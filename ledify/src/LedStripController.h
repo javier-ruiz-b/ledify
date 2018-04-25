@@ -65,10 +65,13 @@ private:
     unsigned char startsWith(const char *string, const char *startsWithString);
 
 private:
+    const int c_relayGpioPin = 29;
     FpsCalculator m_fpsCalculator;
     CommandReader m_commandReader;
     LayerController m_layerController;
     TimeControl m_time;
 
     friend class LedStripControllerTest;
+    void commandOff();
+    void commandOn();
 };

@@ -2,8 +2,12 @@
 
 #include "Layer.h"
 #include <cstdio>
+#include <QTimer>
+#include <wiringPi.h>
 
 LedStripController::LedStripController() {
+    wiringPiSetup () ;
+    pinMode (c_relayGpioPin, OUTPUT);
 }
 
 CommandReader &LedStripController::commandReader() {
@@ -40,6 +44,20 @@ void LedStripController::draw(uint32_t *ledsRgbw, int numLeds) {
     rootLayer->endDraw();
 }
 
+void LedStripController::commandOff() {
+    auto colorIndex = layerController().addColorLayer(0, 0, 0 ,0);
+    auto fadeIndex = layerController().addFadeLayerFromCurrent(colorIndex, 0, FadeLayer::InterpolatorDecelerate, 1000);
+    layerController().setAsRootLayer(fadeIndex);
+    QTimer::singleShot(2000, nullptr, [this] { digitalWrite (c_relayGpioPin, LOW); });
+}
+
+void LedStripController::commandOn() {
+    digitalWrite (c_relayGpioPin, HIGH);
+    auto colorIndex = layerController().addColorLayer(60, 40, 5, 100);
+    auto fadeIndex = layerController().addFadeLayerFromCurrent(colorIndex, 2000, FadeLayer::InterpolatorDecelerate, 1000);
+    layerController().setAsRootLayer(fadeIndex);
+}
+
 bool LedStripController::parseCommand() {
     const char *command = m_commandReader.command();
     unsigned char lengthCommand = 0;
@@ -58,13 +76,9 @@ bool LedStripController::parseCommand() {
     } else if ((lengthCommand = startsWith(command, "RESET")) != 0) {
         m_layerController.reset();
     } else if ((lengthCommand = startsWith(command, "OFF")) != 0) {
-        auto colorIndex = layerController().addColorLayer(0, 0, 0 ,0);
-        auto fadeIndex = layerController().addFadeLayerFromCurrent(colorIndex, 0, FadeLayer::InterpolatorDecelerate, 1000);
-        layerController().setAsRootLayer(fadeIndex);
+        commandOff();
     } else if ((lengthCommand = startsWith(command, "ON")) != 0) {
-        auto colorIndex = layerController().addColorLayer(60, 40, 5, 100);
-        auto fadeIndex = layerController().addFadeLayerFromCurrent(colorIndex, 0, FadeLayer::InterpolatorDecelerate, 1000);
-        layerController().setAsRootLayer(fadeIndex);
+        commandOn();
     } else {
         qCritical() << "Unknown command:" << command;
         return false;
