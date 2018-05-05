@@ -1,4 +1,7 @@
 #include "LayerController.h"
+#include "ColorLayer.h"
+#include "FadeLayer.h"
+#include "RandomLayer.h"
 #include <QtDebug>
 #include <QLoggingCategory>
 
@@ -73,6 +76,17 @@ void LayerController::addColorLayer(uint16_t toIndex, uint16_t r, uint16_t g, ui
 uint16_t LayerController::addColorLayer(uint16_t r, uint16_t g, uint16_t b, uint16_t w) {
     uint16_t index = getFreeIndex();
     addColorLayer(index, r, g, b, w);
+    return index;
+}
+
+void LayerController::addRandomLayer(int toIndex) {
+    QSharedPointer<RandomLayer> layer(new RandomLayer());
+    m_indexedLayers[toIndex] = layer;
+}
+
+uint16_t LayerController::addRandomLayer() {
+    uint16_t index = getFreeIndex();
+    addRandomLayer(index);
     return index;
 }
 

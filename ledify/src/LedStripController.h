@@ -56,6 +56,7 @@ private:
     bool parseCommand();
 
     void commandSet(const char *command, unsigned char lengthCommand);
+    void commandRandom(unsigned char lengthCommand, const char *command);
     void commandColor(unsigned char lengthCommand, const char *command);
     void commandFade(const char *command, unsigned char lengthCommand);
     void commandFadeTo(const char *command, unsigned char lengthCommand);

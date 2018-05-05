@@ -67,6 +67,8 @@ bool LedStripController::parseCommand() {
     unsigned char lengthCommand = 0;
     if ((lengthCommand = startsWith(command, "SET")) != 0) {
         commandSet(command, lengthCommand);
+    } else if ((lengthCommand = startsWith(command, "RANDOM")) != 0) {
+        commandRandom(lengthCommand, command);
     } else if ((lengthCommand = startsWith(command, "COLOR")) != 0) {
         commandColor(lengthCommand, command);
     } else if ((lengthCommand = startsWith(command, "FADETO")) != 0) {
@@ -95,6 +97,14 @@ void LedStripController::commandSet(const char *command, unsigned char lengthCom
     const char *value = &command[lengthCommand + 1];
     sscanf(value, "%hu", &index);
 
+    m_layerController.setAsRootLayer(index);
+}
+
+void LedStripController::commandRandom(unsigned char, const char *) {
+    auto index = m_layerController.addRandomLayer();
+    index = m_layerController.addFadeLayerFromCurrent(index, 0, FadeLayer::InterpolatorDecelerate, 1000);
+    auto colorIndex = layerController().addColorLayer(60, 40, 5, 100);
+    index = m_layerController.addFadeLayerFromCurrent(colorIndex, 8000, FadeLayer::InterpolatorDecelerate, 1000);
     m_layerController.setAsRootLayer(index);
 }
 

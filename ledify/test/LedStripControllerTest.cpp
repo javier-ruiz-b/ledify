@@ -2,6 +2,7 @@
 #include "LedStripController.h"
 
 #include <TimeControl.h>
+#include <ColorLayer.h>
 #include <iostream>
 
 void LedStripControllerTest::init() {

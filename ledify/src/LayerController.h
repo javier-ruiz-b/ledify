@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Layer.h"
-#include "ColorLayer.h"
 #include "FadeLayer.h"
 #include "StartLayer.h"
 #include <QHash>
@@ -24,6 +23,8 @@ public:
     uint16_t addFadeLayerFromCurrent(uint16_t indexTo, uint16_t startDelayMs, FadeLayer::Interpolator interpolator, uint16_t durationMs);
     void addColorLayer(uint16_t toIndex, uint16_t r, uint16_t g, uint16_t b, uint16_t w);
     uint16_t addColorLayer(uint16_t r, uint16_t g, uint16_t b, uint16_t w);
+    void addRandomLayer(int toIndex);
+    uint16_t addRandomLayer();
     StartLayer *rootLayer();
     uint16_t getFreeIndex();
     void reset();
