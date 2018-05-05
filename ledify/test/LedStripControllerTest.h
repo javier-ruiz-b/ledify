@@ -9,9 +9,7 @@ class LedStripControllerTest : public QObject {
     Q_OBJECT
 
 public:
-    LedStripControllerTest() {
-        m_tested = nullptr;
-    }
+    LedStripControllerTest() {}
 
 private slots:
     void init();
@@ -27,12 +25,13 @@ private slots:
     void triesToSetAnInvalidIndex();
     void oneFadeWithLayerControllerInterface();
     void acceptanceTest();
+    void recursiveFades();
 
 private:
     void writeCommand(std::string command);
 
 private:
-    LedStripController *m_tested;
+    LedStripController *m_tested = nullptr;
     const int m_numLeds = NUM_LED;
     int m_leds[NUM_LED];
 };

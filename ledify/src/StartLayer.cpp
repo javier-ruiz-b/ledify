@@ -2,18 +2,18 @@
 #include <QtDebug>
 
 StartLayer::StartLayer()
-    : m_child(nullptr) {
-    setInUse(true);
+    : m_child(nullptr) {}
+
+void StartLayer::reset() {
+    m_child.clear();
 }
 
-Layer *StartLayer::child() const {
+QSharedPointer<Layer> StartLayer::child() const {
     return m_child;
 }
 
-void StartLayer::setChild(Layer *child) {
-    setInUse(false);
+void StartLayer::setChild(QSharedPointer<Layer> child) {
     setNewChild(nullptr, child);
-    setInUse(true);
 }
 
 uint32_t StartLayer::pixel(uint16_t index) {
@@ -21,7 +21,7 @@ uint32_t StartLayer::pixel(uint16_t index) {
 }
 
 void StartLayer::startDraw() {
-    if (m_child != nullptr) {
+    if (!m_child.isNull()) {
         m_child->startDraw();
     }
 }
@@ -31,21 +31,10 @@ void StartLayer::endDraw() {
         m_child->endDraw();
 }
 
-void StartLayer::setNewChild(Layer *, Layer *newChild) {
-    qDebug() << "StartLayer new child " << static_cast<void *>(this) << static_cast<void *>(newChild);
+void StartLayer::setNewChild(Layer *, QSharedPointer<Layer> newChild) {
+//    qDebug() << "StartLayer new child " << static_cast<void *>(this) << static_cast<void *>(newChild);
     m_child = newChild;
-    if (m_child != nullptr) {
+    if (!m_child.isNull()) {
         m_child->setParent(this);
-    }
-}
-
-void StartLayer::setInUse(bool value) {
-    qDebug() << "StartLayer" << static_cast<void *>(this) << static_cast<int>(value);
-    m_inUse = value;
-    if (m_child) {
-        m_child->setInUse(value);
-    }
-    if (!value) {
-        m_child = nullptr;
     }
 }

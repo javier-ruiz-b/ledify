@@ -2,13 +2,14 @@
 
 #include "TimeControl.h"
 #include <QtDebug>
+#include <QLoggingCategory>
 #include <cmath>
+
+Q_LOGGING_CATEGORY(FADE, "ledify.fade", QtWarningMsg)
 
 #define INTERPOLATOR_ACCELERATION_FACTOR 2.0
 
 FadeLayer::FadeLayer() {
-    m_source = nullptr;
-    m_destination = nullptr;
     m_time = TimeControl::instance();
 }
 
@@ -40,7 +41,7 @@ unsigned char FadeLayer::interpolatedDeceleratedValue() {
     return static_cast<unsigned char>((timeDiffPowInv * 256) / durationMsPow);
 }
 
-void FadeLayer::setParams(Layer *source, Layer *destination, FadeLayer::Interpolator interpolator, uint16_t startTimeMs, uint16_t durationMs) {
+void FadeLayer::setParams(QSharedPointer<Layer> source, QSharedPointer<Layer> destination, FadeLayer::Interpolator interpolator, uint16_t startTimeMs, uint16_t durationMs) {
     m_source = source;
     m_destination = destination;
     m_interpolator = interpolator;
@@ -64,15 +65,15 @@ void FadeLayer::startDraw() {
     m_destination->startDraw();
     recalculateTimeDifference();
     if (finished()) {
-        qDebug() << "FadeLayer"
+        qCDebug(FADE) << "FadeLayer"
                  << static_cast<void *>(this)
                  << "finished. (" << static_cast<unsigned int>(m_currentTimeDifferenceMs)
                  << ">" << static_cast<unsigned int>(m_durationMs)
                  << m_time->millis()
                  << "-" << m_startMs;
         m_parent->setNewChild(this, m_destination);
-        m_destination = nullptr;
-        setInUse(false);
+//        setInUse(false);
+//        m_destination.clear();
     }
 }
 
@@ -81,33 +82,18 @@ void FadeLayer::endDraw() {
     m_destination->endDraw();
 }
 
-void FadeLayer::setNewChild(Layer *currentChild, Layer *newChild) {
-    qDebug() <<"StartLayer new child"
+void FadeLayer::setNewChild(Layer *currentChild, QSharedPointer<Layer> newChild) {
+    qCDebug(FADE) <<"StartLayer new child"
             << static_cast<void *>(this)
             << static_cast<void *>(currentChild)
-            << static_cast<void *>(newChild);
+            << static_cast<void *>(newChild.data());
     newChild->setParent(this);
     if (currentChild == m_source) {
         m_source = newChild;
     } else if (newChild == m_destination) {
         m_destination = newChild;
     } else {
-        qCritical() << "Couldn't set new child: Unknown current ptr!:" << static_cast<void *>(currentChild);
-    }
-}
-
-void FadeLayer::setInUse(bool value) {
-    qDebug() << "FadeLayer" << static_cast<void *>(this)
-             << static_cast<int>(value);
-    m_inUse = value;
-    if (!value) {
-        if (m_source) {
-            m_source->setInUse(false);
-        }
-        if (m_destination) {
-            m_destination->setInUse(false);
-        }
-        m_source = nullptr;
+        qCCritical(FADE) << "Couldn't set new child: Unknown current ptr!:" << static_cast<void *>(currentChild);
     }
 }
 

@@ -1,19 +1,21 @@
 #pragma once
 #include "Layer.h"
+#include <QSharedPointer>
 
 class StartLayer : Layer {
 public:
     StartLayer();
 
-    Layer *child() const;
-    void setChild(Layer *child);
+    void reset();
+
+    QSharedPointer<Layer> child() const;
+    void setChild(QSharedPointer<Layer> child);
 
     virtual uint32_t pixel(uint16_t index);
     virtual void startDraw();
     virtual void endDraw();
-    virtual void setNewChild(Layer *currentChild, Layer *newChild);
-    virtual void setInUse(bool value);
+    virtual void setNewChild(Layer *currentChild, QSharedPointer<Layer> newChild);
 
 private:
-    Layer *m_child;
+    QSharedPointer<Layer> m_child;
 };

@@ -15,14 +15,13 @@ public:
 public:
     FadeLayer();
 
-    void setParams(Layer *source, Layer *destination, Interpolator interpolator, uint16_t startTimeMs, uint16_t durationMs);
+    void setParams(QSharedPointer<Layer> source, QSharedPointer<Layer> destination, Interpolator interpolator, uint16_t startTimeMs, uint16_t durationMs);
     bool finished();
 
     uint32_t pixel(uint16_t index);
     virtual void startDraw();
     virtual void endDraw();
-    virtual void setNewChild(Layer *currentChild, Layer *newChild);
-    virtual void setInUse(bool value);
+    virtual void setNewChild(Layer *currentChild, QSharedPointer<Layer> newChild);
 
 private:
     inline unsigned char interpolatedDestinationValue();
@@ -31,8 +30,8 @@ private:
 
 private:
     TimeControl *m_time;
-    Layer *m_source;
-    Layer *m_destination;
+    QSharedPointer<Layer> m_source;
+    QSharedPointer<Layer> m_destination;
     unsigned long m_startMs;
     uint16_t m_currentTimeDifferenceMs;
     uint16_t m_durationMs;

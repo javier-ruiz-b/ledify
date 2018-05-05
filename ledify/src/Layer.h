@@ -1,24 +1,21 @@
 #pragma once
 #include <stdint.h>
+#include <QSharedPointer>
 
 class Layer {
 public:
-    Layer() : m_inUse(false) {}
+    Layer() {}
     virtual ~Layer() {}
 
     virtual uint32_t pixel(uint16_t index) = 0;
 
     virtual void startDraw() = 0;
     virtual void endDraw() = 0;
-    virtual void setNewChild(Layer *currentChild, Layer *newChild) = 0;
+    virtual void setNewChild(Layer *currentChild, QSharedPointer<Layer> newChild) = 0;
 
     void setParent(Layer *parent);
 
-    bool isInUse() const;
-    virtual void setInUse(bool value) = 0;
-
 protected:
-    bool m_inUse;
     Layer *m_parent;
 
 };

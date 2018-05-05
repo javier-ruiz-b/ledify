@@ -8,9 +8,9 @@
 
 void FadeLayerTest::init() {
     m_startLayer = new StartLayer();
-    m_whiteColor = new ColorLayer();
+    m_whiteColor.reset(new ColorLayer());
     m_whiteColor->setColor(255, 255, 255, 255);
-    m_blackColor = new ColorLayer();
+    m_blackColor.reset(new ColorLayer());
     m_blackColor->setColor(0, 0, 0, 0);
 
     TimeControl::instance()->setMocked(true);
@@ -19,13 +19,13 @@ void FadeLayerTest::init() {
 
 void FadeLayerTest::cleanup() {
     TimeControl::instance()->setMocked(false);
-    delete m_whiteColor;
-    delete m_blackColor;
+    m_whiteColor.clear();
+    m_blackColor.clear();
     delete m_startLayer;
 }
 
 void FadeLayerTest::createFadeLayer() {
-    m_tested = new FadeLayer();
+    m_tested.reset(new FadeLayer());
     m_startLayer->setChild(m_tested);
 }
 
@@ -35,7 +35,6 @@ void FadeLayerTest::showsSourceLayer() {
     TimeControl::instance()->setMillis(5000);
     m_tested->startDraw();
     QCOMPARE(m_tested->pixel(0), (uint32_t)0xFFFFFFFF);
-    delete m_tested;
 }
 
 void FadeLayerTest::showsDestinationLayer() {
@@ -44,7 +43,6 @@ void FadeLayerTest::showsDestinationLayer() {
     TimeControl::instance()->setMillis(5999);
     m_tested->startDraw();
     QCOMPARE(m_tested->pixel(0), (uint32_t)0x00000000);
-    delete m_tested;
 }
 
 void FadeLayerTest::showsSourceLayerBeforeAnimationStarts() {
@@ -53,7 +51,6 @@ void FadeLayerTest::showsSourceLayerBeforeAnimationStarts() {
     TimeControl::instance()->setMillis(0);
     m_tested->startDraw();
     QCOMPARE(m_tested->pixel(0), (uint32_t)0xFFFFFFFF);
-    delete m_tested;
 }
 
 void FadeLayerTest::finishesAndReplacesStartLayerChild() {
@@ -62,9 +59,7 @@ void FadeLayerTest::finishesAndReplacesStartLayerChild() {
     TimeControl::instance()->setMillis(6001);
     m_tested->startDraw();
     QCOMPARE(m_tested->finished(), true);
-    QCOMPARE(m_tested->isInUse(), false);
     QCOMPARE(m_startLayer->pixel(0), (uint32_t)0x00000000);
-    delete m_tested;
 }
 
 void FadeLayerTest::calculatesLinearFadeMiddleValue() {
@@ -73,7 +68,6 @@ void FadeLayerTest::calculatesLinearFadeMiddleValue() {
     TimeControl::instance()->setMillis(5500);
     m_tested->startDraw();
     QCOMPARE(m_tested->pixel(0), (uint32_t)0x7F7F7F7F);
-    delete m_tested;
 }
 
 void FadeLayerTest::calculatesAcceleratedFadeMiddleValue() {
@@ -82,7 +76,6 @@ void FadeLayerTest::calculatesAcceleratedFadeMiddleValue() {
     TimeControl::instance()->setMillis(5500);
     m_tested->startDraw();
     QCOMPARE(m_tested->pixel(0), (uint32_t)0xBFBFBFBF);
-    delete m_tested;
 }
 
 void FadeLayerTest::calculatesDeceleratedFadeMiddleValue() {
@@ -91,7 +84,6 @@ void FadeLayerTest::calculatesDeceleratedFadeMiddleValue() {
     TimeControl::instance()->setMillis(5500);
     m_tested->startDraw();
     QCOMPARE(m_tested->pixel(0), (uint32_t)0x3F3F3F3F);
-    delete m_tested;
 }
 
 void FadeLayerTest::checksDecelerateFade() {
@@ -118,7 +110,6 @@ void FadeLayerTest::checksDecelerateFade() {
         previousValues[2] = g;
         previousValues[3] = b;
     }
-    delete m_tested;
 }
 
 QTEST_APPLESS_MAIN(FadeLayerTest)

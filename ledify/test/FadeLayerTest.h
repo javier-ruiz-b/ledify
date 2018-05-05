@@ -1,5 +1,6 @@
 #pragma once
 #include <QObject>
+#include <QSharedPointer>
 
 class ColorLayer;
 class FadeLayer;
@@ -26,8 +27,8 @@ private slots:
     void checksDecelerateFade();
 
 private:
-    FadeLayer *m_tested;
-    ColorLayer *m_blackColor;
-    ColorLayer *m_whiteColor;
+    QSharedPointer<FadeLayer> m_tested;
+    QSharedPointer<ColorLayer> m_blackColor;
+    QSharedPointer<ColorLayer> m_whiteColor;
     StartLayer *m_startLayer;
 };

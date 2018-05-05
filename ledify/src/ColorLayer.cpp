@@ -1,8 +1,10 @@
 #include "ColorLayer.h"
 #include <QtDebug>
+#include <QLoggingCategory>
 
-ColorLayer::ColorLayer() {
-}
+Q_LOGGING_CATEGORY(COLOR, "ledify.color", QtWarningMsg)
+
+ColorLayer::ColorLayer() {}
 
 void ColorLayer::setColor(unsigned char r, unsigned char g, unsigned char b, unsigned char w) {
     m_pixel = ((uint32_t)w << 24) |
@@ -15,11 +17,6 @@ uint32_t ColorLayer::pixel(uint16_t) {
     return m_pixel;
 }
 
-void ColorLayer::setNewChild(Layer *, Layer *newChild) {
-    qCritical() << "Unexpected: ColorLayer receiving child %p" << newChild;
-}
-
-void ColorLayer::setInUse(bool value) {
-    qDebug() << "ColorLayer " <<  static_cast<void *>(this) <<  static_cast<int>(value);
-    m_inUse = value;
+void ColorLayer::setNewChild(Layer *, QSharedPointer<Layer> newChild) {
+    qCCritical(COLOR) << "Unexpected: ColorLayer receiving child %p" << newChild;
 }

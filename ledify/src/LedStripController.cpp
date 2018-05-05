@@ -5,11 +5,13 @@
 #include <QTimer>
 #include <wiringPi.h>
 
+Q_LOGGING_CATEGORY(CONTROLLER, "ledify.controller", QtWarningMsg)
+
 LedStripController::LedStripController() {
     m_layerController.addColorLayer(0, 0, 0, 0, 0);
     m_layerController.setAsRootLayer(0);
-    wiringPiSetup () ;
     pinMode (c_relayGpioPin, OUTPUT);
+    digitalWrite (c_relayGpioPin, HIGH);
 }
 
 CommandReader &LedStripController::commandReader() {
@@ -32,11 +34,11 @@ bool LedStripController::writeString(const QString &command) {
 
 void LedStripController::draw(uint32_t *ledsRgbw, int numLeds) {
     m_fpsCalculator.tick();
-    StartLayer *rootLayer = m_layerController.rootLayer();
+    auto *rootLayer = m_layerController.rootLayer();
 
     rootLayer->startDraw();
-    Layer *child = rootLayer->child();
-    if (child == nullptr) {
+    auto child = rootLayer->child();
+    if (child.isNull()) {
         return;
     }
     for (uint16_t i = 0; i < numLeds; i++) {
@@ -74,7 +76,7 @@ bool LedStripController::parseCommand() {
     } else if ((lengthCommand = startsWith(command, "FPS")) != 0) {
         commandFps(lengthCommand, command);
     } else if ((lengthCommand = startsWith(command, "TIME")) != 0) {
-        qDebug() << m_time.millis();
+        qCDebug(CONTROLLER) << m_time.millis();
     } else if ((lengthCommand = startsWith(command, "RESET")) != 0) {
         m_layerController.reset();
     } else if ((lengthCommand = startsWith(command, "OFF")) != 0) {
@@ -82,7 +84,7 @@ bool LedStripController::parseCommand() {
     } else if ((lengthCommand = startsWith(command, "ON")) != 0) {
         commandOn();
     } else {
-        qCritical() << "Unknown command:" << command;
+        qCCritical(CONTROLLER) << "Unknown command:" << command;
         return false;
     }
     return true;
@@ -100,10 +102,6 @@ void LedStripController::commandColor(unsigned char lengthCommand, const char *c
     uint16_t r, g, b, w, index;
     const char *value = &command[lengthCommand + 1];
     sscanf(value, "%hu,%hu,%hu,%hu,%hu", &index, &r, &g, &b, &w);
-    if (index >= AVAILABLE_LAYERS_NUM) {
-        qCritical() << "Index range:" << command;
-        return;
-    }
     m_layerController.addColorLayer(index, r, g, b, w);
 }
 
@@ -111,10 +109,6 @@ void LedStripController::commandFade(const char *command, unsigned char lengthCo
     uint16_t myIndex, indexFrom, indexTo, interpolatorUint, startDelayMs, durationMs;
     const char *value = &command[lengthCommand + 1];
     sscanf(value, "%hu,%hu,%hu,%hu,%hu,%hu", &myIndex, &indexFrom, &indexTo, &interpolatorUint, &startDelayMs,  &durationMs);
-    if ((indexFrom >= AVAILABLE_LAYERS_NUM) || (indexTo >= AVAILABLE_LAYERS_NUM)) {
-        qCritical() << "Index range:" << command;
-        return;
-    }
     FadeLayer::Interpolator interpolator = static_cast<FadeLayer::Interpolator>(interpolatorUint);
     m_layerController.addFadeLayer(myIndex, indexFrom, indexTo, startDelayMs, interpolator, durationMs);
 }
@@ -123,10 +117,6 @@ void LedStripController::commandFadeTo(const char *command, unsigned char length
     uint16_t myIndex, indexTo, interpolatorUint, startDelayMs, durationMs;
     const char *value = &command[lengthCommand + 1];
     sscanf(value, "%hu,%hu,%hu,%hu,%hu", &myIndex, &indexTo, &interpolatorUint, &startDelayMs,  &durationMs);
-    if (indexTo >= AVAILABLE_LAYERS_NUM) {
-        qCritical() << "Index range:" << command;
-        return;
-    }
     FadeLayer::Interpolator interpolator = static_cast<FadeLayer::Interpolator>(interpolatorUint);
     m_layerController.addFadeLayerFromCurrent(myIndex, indexTo, startDelayMs, interpolator, durationMs);
 }
@@ -147,7 +137,7 @@ unsigned char LedStripController::startsWith(const char *string, const char *sta
     }
 
     if (i != 0) {
-        qDebug() << "Recv:" << string;
+        qCDebug(CONTROLLER) << "Recv:" << string;
     }
     return i;
 }

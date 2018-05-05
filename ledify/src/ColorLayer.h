@@ -10,8 +10,7 @@ public:
 
     virtual void startDraw() {}
     virtual void endDraw() {}
-    virtual void setNewChild(Layer *currentChild, Layer *newChild);
-    virtual void setInUse(bool value);
+    virtual void setNewChild(Layer *currentChild, QSharedPointer<Layer> newChild);
 
 private:
     uint32_t m_pixel;
