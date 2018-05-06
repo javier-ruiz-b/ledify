@@ -6,7 +6,7 @@ Q_LOGGING_CATEGORY(RANDOM, "ledify.random", QtWarningMsg)
 RandomLayer::RandomLayer() {}
 
 uint32_t RandomLayer::pixel(uint16_t) {
-    return static_cast<uint32_t>(qrand() | qrand() << 16);
+    return static_cast<uint32_t>(qrand() | (qrand() & 0xFF) << 16);
 }
 
 void RandomLayer::setNewChild(Layer *currentChild, QSharedPointer<Layer> newChild) {
