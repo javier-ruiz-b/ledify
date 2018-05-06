@@ -3,6 +3,9 @@
 #include <qhttpserver.hpp>
 #include <qhttpserverrequest.hpp>
 #include <qhttpserverresponse.hpp>
+#include <QLoggingCategory>
+
+Q_LOGGING_CATEGORY(REST, "ledify.restserver", QtWarningMsg)
 
 using namespace qhttp::server;
 
@@ -13,9 +16,9 @@ RestServer::RestServer(QObject *parent) : QObject(parent) {
     });
 
     if ( m_server->isListening() ) {
-        qDebug("Started REST server");
+        qCDebug(REST, "Started REST server");
     } else {
-        qWarning("Failed to start REST server");
+        qCWarning(REST, "Failed to start REST server");
     }
 }
 
@@ -28,9 +31,7 @@ void RestServer::requestReceived(QHttpRequest *req, QHttpResponse *res) {
         return;
     }
     auto command = urlString.mid(1);
+    qCDebug(REST) << "Received command" << command;
     res->setStatusCode(qhttp::ESTATUS_OK);
-    res->end("OK!\n");
-    qDebug() << "Received command" << command;
-
-    emit receivedCommand(command);
+    res->end(m_callback(command).toUtf8());
 }

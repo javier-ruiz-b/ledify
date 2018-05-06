@@ -106,12 +106,11 @@ bool Ledify::init() {
         return false;
     }
 
-    connect(&restServer, &RestServer::receivedCommand, this, &Ledify::receivedRestCommand);
-    return true;
-}
+    restServer.registerCallback([this] (QString &command) -> QString {
+        return controller.parseReceivedString(command);
+    });
 
-void Ledify::receivedRestCommand(const QString &command) {
-    controller.writeString(command);
+    return true;
 }
 
 void Ledify::cleanup() {

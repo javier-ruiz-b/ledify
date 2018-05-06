@@ -27,9 +27,6 @@ public slots:
     void handleSigHup();
     void handleSigTerm();
 
-private slots:
-    void receivedRestCommand(const QString &command);
-
 private:
     static int sighupFd[2];
     static int sigtermFd[2];

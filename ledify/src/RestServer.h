@@ -1,6 +1,7 @@
 #pragma once
 #include <QObject>
 #include <QString>
+#include <functional>
 
 namespace qhttp {
 namespace server {
@@ -16,14 +17,13 @@ class RestServer : public QObject {
 
 public:
     RestServer(QObject *parent = nullptr);
+    void registerCallback(std::function<QString(QString &)> callback) { m_callback = callback; }
 
 private slots:
     void requestReceived(QHttpRequest *req, QHttpResponse* res);
 
-signals:
-    void receivedCommand(const QString &string);
-
 private:
     QHttpServer *m_server = nullptr;
+    std::function<QString(QString &)> m_callback = [](QString &){return QString(); };
 
 };

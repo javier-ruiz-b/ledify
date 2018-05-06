@@ -2,8 +2,8 @@
 
 #include "FpsCalculator.h"
 #include "CommandReader.h"
+#include "CommandExecutor.h"
 #include "LayerController.h"
-#include "TimeControl.h"
 
 class QString;
 class Adafruit_NeoPixel;
@@ -46,33 +46,17 @@ public:
     LayerController &layerController();
     CommandReader &commandReader();
     bool writeChar(char c);
-    bool writeString(const QString &command);
+    QString parseReceivedString(const QString &string);
     void draw(uint32_t *ledsRgbw, int numLeds);
 
     void commandOff();
     void commandOn();
 
 private:
-    bool parseCommand();
-
-    void commandSet(const char *command, unsigned char lengthCommand);
-    void commandRandom(unsigned char lengthCommand, const char *command);
-    void commandColor(unsigned char lengthCommand, const char *command);
-    void commandFade(const char *command, unsigned char lengthCommand);
-    void commandFadeTo(const char *command, unsigned char lengthCommand);
-    void commandFps(unsigned char lengthCommand, const char *command);
-
-    /**
-     * @return length of startsWithString if matches
-     */
-    unsigned char startsWith(const char *string, const char *startsWithString);
-
-private:
-    const int c_relayGpioPin = 29;
     FpsCalculator m_fpsCalculator;
     CommandReader m_commandReader;
     LayerController m_layerController;
-    TimeControl m_time;
+    QScopedPointer<CommandExecutor> m_executor;
 
     friend class LedStripControllerTest;
 };
