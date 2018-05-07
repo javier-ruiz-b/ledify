@@ -51,10 +51,10 @@ void CommandExecutor::cColor(const QStringList &args, QString &) {
 
 void CommandExecutor::cRandom(const QStringList &, QString &) {
     auto index = m_layers->addRandomLayer();
-    index = m_layers->addFadeLayerFromCurrent(index,FadeLayer::InterpolatorDecelerate,  0, 1000);
+    index = m_layers->addFadeLayerFromCurrent(index,Interpolator::InterpolatorDecelerate,  0, 1000);
     m_layers->setAsRootLayer(index);
     auto colorIndex = m_layers->addColorLayer(60, 40, 5, 100);
-    index = m_layers->addFadeLayerFromCurrent(colorIndex, FadeLayer::InterpolatorDecelerate, 8000, 1000);
+    index = m_layers->addFadeLayerFromCurrent(colorIndex, Interpolator::InterpolatorDecelerate, 8000, 1000);
     m_layers->setAsRootLayer(index);
 }
 
@@ -62,7 +62,7 @@ void CommandExecutor::cFadeTo(const QStringList &args, QString &) {
     expects(5, args);
     m_layers->addFadeLayerFromCurrent(args[0].toUShort(),
             args[1].toUShort(),
-            static_cast<FadeLayer::Interpolator>(args[2].toUShort()),
+            static_cast<Interpolator::Type>(args[2].toUShort()),
             args[3].toUShort(),
             args[4].toUShort());
 }
@@ -72,7 +72,7 @@ void CommandExecutor::cFade(const QStringList &args, QString &) {
     m_layers->addFadeLayer(args[0].toUShort(),
             args[1].toUShort(),
             args[2].toUShort(),
-            static_cast<FadeLayer::Interpolator>(args[3].toUShort()),
+            static_cast<Interpolator::Type>(args[3].toUShort()),
             args[4].toUShort(),
             args[5].toUShort());
 }
@@ -92,7 +92,7 @@ void CommandExecutor::cReset(const QStringList &, QString &) {
 
 void CommandExecutor::cOff(const QStringList &, QString &) {
     auto colorIndex = m_layers->addColorLayer(0, 0, 0 ,0);
-    auto fadeIndex = m_layers->addFadeLayerFromCurrent(colorIndex, FadeLayer::InterpolatorDecelerate, 0, 1000);
+    auto fadeIndex = m_layers->addFadeLayerFromCurrent(colorIndex, Interpolator::InterpolatorDecelerate, 0, 1000);
     m_layers->setAsRootLayer(fadeIndex);
     QTimer::singleShot(2000, nullptr, [this] { digitalWrite (c_relayGpioPin, LOW); });
 }
@@ -100,7 +100,7 @@ void CommandExecutor::cOff(const QStringList &, QString &) {
 void CommandExecutor::cOn(const QStringList &, QString &) {
     digitalWrite (c_relayGpioPin, HIGH);
     auto colorIndex = m_layers->addColorLayer(60, 40, 5, 100);
-    auto fadeIndex = m_layers->addFadeLayerFromCurrent(colorIndex, FadeLayer::InterpolatorDecelerate, 2000, 1000);
+    auto fadeIndex = m_layers->addFadeLayerFromCurrent(colorIndex, Interpolator::InterpolatorDecelerate, 2000, 1000);
     m_layers->setAsRootLayer(fadeIndex);
 }
 

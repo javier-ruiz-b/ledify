@@ -1,21 +1,15 @@
 #pragma once
 #include "Layer.h"
+#include "Interpolator.h"
 
 class TimeControl;
 
 class FadeLayer : public Layer {
 
 public:
-    enum Interpolator {
-        InterpolatorLinear = 0,
-        InterpolatorAccelerate = 1,
-        InterpolatorDecelerate = 2
-    };
-
-public:
     FadeLayer();
 
-    void setParams(QSharedPointer<Layer> source, QSharedPointer<Layer> destination, Interpolator interpolator, uint16_t startTimeMs, uint16_t durationMs);
+    void setParams(QSharedPointer<Layer> source, QSharedPointer<Layer> destination, Interpolator::Type interpolator, uint16_t startTimeMs, uint16_t durationMs);
     bool finished();
 
     uint32_t pixel(uint16_t index);
@@ -25,8 +19,7 @@ public:
 
 private:
     inline unsigned char interpolatedDestinationValue();
-    inline unsigned char interpolatedAcceleratedValue();
-    inline unsigned char interpolatedDeceleratedValue();
+    void recalculateTimeDifference();
 
 private:
     TimeControl *m_time;
@@ -35,9 +28,8 @@ private:
     unsigned long m_startMs;
     uint16_t m_currentTimeDifferenceMs;
     uint16_t m_durationMs;
-    Interpolator m_interpolator;
-
-    void recalculateTimeDifference();
+    Interpolator::Type m_interpolator;
+    unsigned char m_alphaDestination;
 
     friend class LedStripControllerTest;
 };

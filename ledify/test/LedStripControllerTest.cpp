@@ -110,7 +110,7 @@ void LedStripControllerTest::oneFadeWithLayerControllerInterface() {
     LayerController &layerControl = m_tested->layerController();
     layerControl.addColorLayer(0, 0, 0, 0, 0);
     layerControl.addColorLayer(1, 0, 255, 0, 0);
-    layerControl.addFadeLayer(2, 0, 1, FadeLayer::InterpolatorAccelerate, 1, 100);
+    layerControl.addFadeLayer(2, 0, 1, Interpolator::InterpolatorAccelerate, 1, 100);
     layerControl.setAsRootLayer(2);
     writeCommand("C+FPS=0");
 
@@ -152,7 +152,7 @@ void LedStripControllerTest::recursiveFades() {
     m_tested->draw(reinterpret_cast<uint32_t *>(m_leds), NUM_LED);
     for (int i = 0; i < 20; i++) {
         index = m_tested->layerController().addColorLayer(i, 4, 5, 255);
-        index = m_tested->layerController().addFadeLayerFromCurrent(index, FadeLayer::InterpolatorAccelerate, 0, 5);
+        index = m_tested->layerController().addFadeLayerFromCurrent(index, Interpolator::InterpolatorAccelerate, 0, 5);
         TimeControl::instance()->setMillis(static_cast<uint32_t>(i));
         m_tested->draw(reinterpret_cast<uint32_t *>(m_leds), NUM_LED);
     }

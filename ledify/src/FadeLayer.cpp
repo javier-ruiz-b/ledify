@@ -7,41 +7,19 @@
 
 Q_LOGGING_CATEGORY(FADE, "ledify.fade", QtWarningMsg)
 
-#define INTERPOLATOR_ACCELERATION_FACTOR 2.0
-
 FadeLayer::FadeLayer() {
     m_time = TimeControl::instance();
 }
 
 unsigned char FadeLayer::interpolatedDestinationValue() {
-    switch (m_interpolator) {
-    case InterpolatorAccelerate:
-        return interpolatedAcceleratedValue();
-    case InterpolatorDecelerate:
-        return interpolatedDeceleratedValue();
-    case InterpolatorLinear:
-        ;
-    }
-    return static_cast<unsigned char>(
-                 static_cast<unsigned long>(m_currentTimeDifferenceMs * 256) /
-                 static_cast<unsigned long>(m_durationMs));
+    auto current = static_cast<float>(m_currentTimeDifferenceMs);
+    auto end = static_cast<float>(m_durationMs);
+    auto floatValue = Interpolator::value(m_interpolator, current, end);
+
+    return static_cast<unsigned char>(roundf(floatValue * 255));
 }
 
-unsigned char FadeLayer::interpolatedAcceleratedValue() {
-    float timeDiffPow = powf(static_cast<float>(m_currentTimeDifferenceMs), INTERPOLATOR_ACCELERATION_FACTOR);
-    float durationMsPow = powf(static_cast<float>(m_durationMs), INTERPOLATOR_ACCELERATION_FACTOR);
-    return static_cast<unsigned char>((timeDiffPow * 256) / durationMsPow);
-}
-
-unsigned char FadeLayer::interpolatedDeceleratedValue() {
-    unsigned long timeDiffInv = m_durationMs - m_currentTimeDifferenceMs;
-    float durationMsPow = powf(static_cast<float>(m_durationMs), INTERPOLATOR_ACCELERATION_FACTOR);
-    float timeDiffPow = powf(static_cast<float>(timeDiffInv), INTERPOLATOR_ACCELERATION_FACTOR);
-    float timeDiffPowInv = durationMsPow - timeDiffPow;
-    return static_cast<unsigned char>((timeDiffPowInv * 256) / durationMsPow);
-}
-
-void FadeLayer::setParams(QSharedPointer<Layer> source, QSharedPointer<Layer> destination, FadeLayer::Interpolator interpolator, uint16_t startTimeMs, uint16_t durationMs) {
+void FadeLayer::setParams(QSharedPointer<Layer> source, QSharedPointer<Layer> destination, Interpolator::Type interpolator, uint16_t startTimeMs, uint16_t durationMs) {
     m_source = source;
     m_destination = destination;
     m_interpolator = interpolator;
@@ -64,6 +42,7 @@ void FadeLayer::startDraw() {
     m_source->startDraw();
     m_destination->startDraw();
     recalculateTimeDifference();
+    m_alphaDestination = interpolatedDestinationValue();
     if (finished()) {
         qCDebug(FADE) << "FadeLayer"
                  << static_cast<void *>(this)
@@ -72,8 +51,6 @@ void FadeLayer::startDraw() {
                  << m_time->millis()
                  << "-" << m_startMs;
         m_parent->setNewChild(this, m_destination);
-//        setInUse(false);
-//        m_destination.clear();
     }
 }
 
@@ -108,17 +85,16 @@ uint32_t FadeLayer::pixel(uint16_t index) {
 
     uint32_t sourcePixel = m_source->pixel(index);
     uint32_t destinationPixel = m_destination->pixel(index);
-    unsigned char alphaDestination = interpolatedDestinationValue();
-    uint16_t alphaSource = 256 - alphaDestination;
+    uint16_t alphaSource = 256 - m_alphaDestination;
 
     unsigned char w = (unsigned char) (((uint16_t)(sourcePixel >> 24) * alphaSource
-                    + (uint16_t)(destinationPixel >> 24) * alphaDestination) / 256);
+                    + (uint16_t)(destinationPixel >> 24) * m_alphaDestination) / 256);
     unsigned char r = (unsigned char) (((uint16_t)((sourcePixel >> 16) & 255) * alphaSource
-                    + (uint16_t)((destinationPixel >> 16) & 255) * alphaDestination) / 256);
+                    + (uint16_t)((destinationPixel >> 16) & 255) * m_alphaDestination) / 256);
     unsigned char g = (unsigned char) (((uint16_t)((sourcePixel >> 8) & 255) * alphaSource
-                    + (uint16_t)((destinationPixel >> 8) & 255) * alphaDestination) / 256);
+                    + (uint16_t)((destinationPixel >> 8) & 255) * m_alphaDestination) / 256);
     unsigned char b = (unsigned char) (((uint16_t)(sourcePixel & 255) * alphaSource
-                    + (uint16_t)(destinationPixel & 255) * alphaDestination) / 256);
+                    + (uint16_t)(destinationPixel & 255) * m_alphaDestination) / 256);
     return ((uint32_t)w << 24) |
            ((uint32_t)r << 16) |
            ((uint32_t)g << 8) |
