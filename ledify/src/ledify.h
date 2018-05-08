@@ -38,7 +38,7 @@ private:
     void loop();
 
     SerialPort serial;
-    LedStripController controller;
+    LedStripController *controller;
     RestServer restServer;
 
     void setupUnixSignalHandlers();

@@ -63,7 +63,7 @@ int main(int argc, char **argv) {
 void Ledify::terminate() {
     qDebug() << "Terminating...";
 
-    controller.commandOff();
+    controller->commandOff();
     QTimer::singleShot(TERMINATE_MS, this, [this] {
            m_running = false;
        });
@@ -106,8 +106,9 @@ bool Ledify::init() {
         return false;
     }
 
+    controller = new LedStripController();
     restServer.registerCallback([this] (QString &command) -> QString {
-        return controller.parseReceivedString(command);
+        return controller->parseReceivedString(command);
     });
 
     return true;
@@ -123,19 +124,12 @@ void Ledify::run() {
         return;
     }
 
-    controller.commandOn();
+    controller->commandOn();
     QTimer::singleShot(0, this, &Ledify::loop);
 }
 
 void Ledify::loop() {
-//    if (serial.available()) {
-//        char c = serial.read();
-//        qDebug().noquote().nospace() <<"%c";
-//        controller.writeChar(c);
-//    }
-//    uint32_t leds[300];
-//    controller.draw(static_cast<uint32_t *>(leds), NUM_LEDS);
-    controller.draw(static_cast<uint32_t *>(ledStrip.channel[0].leds), NUM_LEDS);
+    controller->draw(static_cast<uint32_t *>(ledStrip.channel[0].leds), NUM_LEDS);
 
     ws2811_return_t errCode;
     if ((errCode = ws2811_render(&ledStrip)) != WS2811_SUCCESS) {
