@@ -62,9 +62,9 @@ void LedStripController::commandOff() {
     m_executor->cOff(QStringList(), str);
 }
 
-void LedStripController::commandOn() {
+void LedStripController::commandOnIfNight() {
     QString str;
-    m_executor->cOn(QStringList(), str);
+    m_executor->cOnIfNight(QStringList(), str);
 }
 
 LayerController &LedStripController::layerController() {

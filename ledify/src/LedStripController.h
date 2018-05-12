@@ -50,7 +50,7 @@ public:
     void draw(uint32_t *ledsRgbw, int numLeds);
 
     void commandOff();
-    void commandOn();
+    void commandOnIfNight();
 
 private:
     FpsCalculator m_fpsCalculator;

@@ -124,7 +124,7 @@ void Ledify::run() {
         return;
     }
 
-    controller->commandOn();
+    controller->commandOnIfNight();
     QTimer::singleShot(0, this, &Ledify::loop);
 }
 
