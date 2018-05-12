@@ -7,3 +7,6 @@
 [submodule "ledify/src/qhttp"]
 	path = ledify/src/qhttp
 	url = https://github.com/azadkuh/qhttp.git
+[submodule "ledify/src/Dusk2Dawn"]
+	path = ledify/src/Dusk2Dawn
+	url = https://github.com/dmkishi/Dusk2Dawn.git

@@ -9,6 +9,7 @@ Q_LOGGING_CATEGORY(EXECUTOR, "ledify.executor", QtWarningMsg)
 
 #define funcWrapper(func) [=](const QStringList &args, QString &response) { this->func(args, response); }
 #define expects(expectedArgs, args) if (args.count() != expectedArgs) { qCWarning(EXECUTOR) << "Expected" << expectedArgs << "instead of" << args.count(); return; }
+
 CommandExecutor::CommandExecutor(LayerController *layers, FpsCalculator *fpsCalculator)
     : m_layers(layers), m_fpsCalculator(fpsCalculator) {
     m_commandToFunction.insert("SET", funcWrapper(cSet));
@@ -21,6 +22,7 @@ CommandExecutor::CommandExecutor(LayerController *layers, FpsCalculator *fpsCalc
     m_commandToFunction.insert("RESET", funcWrapper(cReset));
     m_commandToFunction.insert("OFF", funcWrapper(cOff));
     m_commandToFunction.insert("ON", funcWrapper(cOn));
+    m_commandToFunction.insert("ONIFNIGHT", funcWrapper(cOnIfNight));
 
     pinMode (c_relayGpioPin, OUTPUT);
     digitalWrite (c_relayGpioPin, HIGH);
@@ -102,5 +104,13 @@ void CommandExecutor::cOn(const QStringList &, QString &) {
     auto colorIndex = m_layers->addColorLayer(60, 40, 5, 100);
     auto fadeIndex = m_layers->addFadeLayerFromCurrent(colorIndex, Interpolator::InterpolatorDecelerate, 2000, 1000);
     m_layers->setAsRootLayer(fadeIndex);
+}
+
+void CommandExecutor::cOnIfNight(const QStringList &args, QString &response) {
+    if (!m_dayTime.isDay()) {
+        cOn(args, response);
+    } else {
+        qCDebug(EXECUTOR) << "Not turning on, it's currently day.";
+    }
 }
 

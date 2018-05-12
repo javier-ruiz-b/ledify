@@ -3,6 +3,7 @@
 #include <QString>
 #include <QHash>
 #include <functional>
+#include "Daytime.h"
 
 class LayerController;
 class FpsCalculator;
@@ -14,8 +15,9 @@ public:
     bool parseCommand(const QString &command, const QStringList &args, QString &response);
 
 public:
-    void cOff(const QStringList &args, QString &);
-    void cOn(const QStringList &args, QString &);
+    void cOff(const QStringList &args, QString &response);
+    void cOn(const QStringList &args, QString &response);
+    void cOnIfNight(const QStringList &args, QString &response);
 
 private:
     void cSet(const QStringList &args, QString &response);
@@ -25,12 +27,13 @@ private:
     void cFade(const QStringList &args, QString &response);
     void cFps(const QStringList &args, QString &response);
     void cTime(const QStringList &args, QString &response);
-    void cReset(const QStringList &args, QString &);
+    void cReset(const QStringList &args, QString &response);
 
 private:
     const int c_relayGpioPin = 29;
     LayerController *m_layers;
     FpsCalculator *m_fpsCalculator;
+    Daytime m_dayTime;
 
     QHash<QString, std::function<void(const QStringList &, QString &response)>> m_commandToFunction;
 };

@@ -134,7 +134,6 @@ void LedStripControllerTest::acceptanceTest() {
     writeCommand("C+FPS=0");
 
     FadeLayer *fade = static_cast<FadeLayer *>(m_tested->m_layerController.m_rootLayer.child().data());
-    auto *sourceColor = static_cast<FadeLayer *>(fade->m_source.data());
     ColorLayer *destinationColor = static_cast<ColorLayer *>(fade->m_destination.data());
 
     for (uint32_t timeMs = 0; timeMs < 60*1000; timeMs+=3) {
