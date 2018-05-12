@@ -58,6 +58,7 @@ void LedStripControllerTest::fadesBetweenTwoColors() {
     writeCommand("C+FADE=2,0,1,0,1000,1000");
     writeCommand("C+SET=2");
 
+    m_tested->draw(reinterpret_cast<uint32_t *>(m_leds), NUM_LED);
     TimeControl::instance()->setMillis(1500); //in the middle of the fade
     m_tested->draw(reinterpret_cast<uint32_t *>(m_leds), NUM_LED);
 
@@ -74,6 +75,7 @@ void LedStripControllerTest::fadesBetweenCurrentLayerAndAnotherColor() {
     writeCommand("C+FADETO=2,1,0,1000,1000");
     writeCommand("C+SET=2");
 
+    m_tested->draw(reinterpret_cast<uint32_t *>(m_leds), NUM_LED);
     TimeControl::instance()->setMillis(1500); //in the middle of the fade
     m_tested->draw(reinterpret_cast<uint32_t *>(m_leds), NUM_LED);
 
@@ -88,6 +90,7 @@ void LedStripControllerTest::twoFadesAtTheSameTime() {
     writeCommand("C+FADE=4,2,3,0,0,1000"); // COLOR4= 2+3 € 500ms = 127,127,127,0
     writeCommand("C+SET=4");
 
+    m_tested->draw(reinterpret_cast<uint32_t *>(m_leds), NUM_LED);
     TimeControl::instance()->setMillis(500); //in the middle of the fade
     m_tested->draw(reinterpret_cast<uint32_t *>(m_leds), NUM_LED);
 

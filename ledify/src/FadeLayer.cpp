@@ -23,7 +23,7 @@ void FadeLayer::setParams(QSharedPointer<Layer> source, QSharedPointer<Layer> de
     m_source = source;
     m_destination = destination;
     m_interpolator = interpolator;
-    m_startMs = m_time->millis() + startTimeMs;
+    m_delayFromStart = startTimeMs;
     m_durationMs = durationMs;
     m_source->setParent(this);
     m_destination->setParent(this);
@@ -31,6 +31,10 @@ void FadeLayer::setParams(QSharedPointer<Layer> source, QSharedPointer<Layer> de
 
 void FadeLayer::recalculateTimeDifference() {
     unsigned long currentTimeMs = m_time->millis();
+    if (!m_startSet) {
+        m_startMs = currentTimeMs + m_delayFromStart;
+        m_startSet = true;
+    }
     if (currentTimeMs < m_startMs) { // animation didn't begin
         m_currentTimeDifferenceMs = 0;
     } else {

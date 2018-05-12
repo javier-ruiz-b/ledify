@@ -31,6 +31,13 @@ void StartLayer::endDraw() {
         m_child->endDraw();
 }
 
+bool StartLayer::animationFinished() {
+    if (!m_child.isNull()) {
+        return m_child->animationFinished();
+    }
+    return false;
+}
+
 void StartLayer::setNewChild(Layer *, QSharedPointer<Layer> newChild) {
 //    qDebug() << "StartLayer new child " << static_cast<void *>(this) << static_cast<void *>(newChild);
     m_child = newChild;

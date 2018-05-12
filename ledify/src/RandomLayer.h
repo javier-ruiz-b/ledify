@@ -9,6 +9,7 @@ public:
 
     virtual void startDraw() {}
     virtual void endDraw() {}
-    virtual void setNewChild(Layer *currentChild, QSharedPointer<Layer> newChild);
+    virtual bool animationFinished() { return false; }
+    virtual void setNewChild(Layer *, QSharedPointer<Layer> newChild);
 
 };
