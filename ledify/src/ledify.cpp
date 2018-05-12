@@ -91,6 +91,11 @@ Ledify::Ledify(const QStringList &arguments, QObject *parent) : QObject(parent) 
         }
     }
     serial.begin(serialInput.toUtf8().constData(), 9600);
+
+    m_loopTimer = new QTimer(this);
+    m_loopTimer->setSingleShot(true);
+    m_loopTimer->setInterval(5000);
+    connect(m_loopTimer, &QTimer::timeout, this, &Ledify::loop);
 }
 
 bool Ledify::init() {
@@ -108,7 +113,9 @@ bool Ledify::init() {
 
     controller = new LedStripController();
     restServer.registerCallback([this] (QString &command) -> QString {
-        return controller->parseReceivedString(command);
+        auto result = controller->parseReceivedString(command);
+        m_loopTimer->start(0);
+        return result;
     });
 
     return true;
@@ -129,6 +136,7 @@ void Ledify::run() {
 }
 
 void Ledify::loop() {
+    auto startMs = millis();
     controller->draw(static_cast<uint32_t *>(ledStrip.channel[0].leds), NUM_LEDS);
 
     ws2811_return_t errCode;
@@ -143,7 +151,13 @@ void Ledify::loop() {
         emit finished();
         return;
     }
-    QTimer::singleShot(1000 / FPS, this, &Ledify::loop);
+    if (controller->animationFinished()) {
+        m_loopTimer->start(5000);
+    } else {
+        const auto sleepMs = 1000 / FPS;
+        auto diffProcessingMs = static_cast<int>(millis() - startMs);
+        m_loopTimer->start(qMin(sleepMs - diffProcessingMs, 0));
+    }
 }
 
 int Ledify::setupStaticUnixSignalHandlers() {

@@ -46,6 +46,7 @@ public:
     LayerController &layerController();
     CommandReader &commandReader();
     bool writeChar(char c);
+    bool animationFinished();
     QString parseReceivedString(const QString &string);
     void draw(uint32_t *ledsRgbw, int numLeds);
 

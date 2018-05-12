@@ -4,6 +4,8 @@
 #include "LedStripController.h"
 #include "RestServer.h"
 
+class QTimer;
+
 class Ledify : public QObject {
     Q_OBJECT
 
@@ -40,6 +42,7 @@ private:
     SerialPort serial;
     LedStripController *controller;
     RestServer restServer;
+    QTimer *m_loopTimer;
 
     void setupUnixSignalHandlers();
     void cleanup();

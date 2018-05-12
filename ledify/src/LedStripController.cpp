@@ -24,6 +24,10 @@ bool LedStripController::writeChar(char c) {
     return false;
 }
 
+bool LedStripController::animationFinished() {
+    return m_layerController.rootLayer()->animationFinished();
+}
+
 void LedStripController::draw(uint32_t *ledsRgbw, int numLeds) {
     m_fpsCalculator.tick();
     auto *rootLayer = m_layerController.rootLayer();
