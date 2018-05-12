@@ -156,7 +156,7 @@ void Ledify::loop() {
     } else {
         const auto sleepMs = 1000 / FPS;
         auto diffProcessingMs = static_cast<int>(millis() - startMs);
-        m_loopTimer->start(qMin(sleepMs - diffProcessingMs, 0));
+        m_loopTimer->start(qMax(sleepMs - diffProcessingMs, 1));
     }
 }
 
