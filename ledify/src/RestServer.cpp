@@ -30,8 +30,13 @@ void RestServer::requestReceived(QHttpRequest *req, QHttpResponse *res) {
         res->end("Send me more!\n");
         return;
     }
-    auto command = urlString.mid(1);
-    qCDebug(REST) << "Received command" << command;
+    auto commands = urlString.mid(1);
+
+    QByteArray responses = "";
+    foreach(auto command, commands.split("+", QString::SplitBehavior::SkipEmptyParts)) {
+        qCDebug(REST) << "Received command" << command;
+        responses += m_callback(command).toUtf8() + ";";
+    }
     res->setStatusCode(qhttp::ESTATUS_OK);
-    res->end(m_callback(command).toUtf8());
+    res->end(responses);
 }
