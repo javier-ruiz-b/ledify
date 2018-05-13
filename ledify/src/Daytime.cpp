@@ -16,11 +16,18 @@ Daytime::~Daytime() {
 }
 
 bool Daytime::isDay() {
-    auto now = QDateTime::currentDateTime();
-    auto isDST = now.timeZone().isDaylightTime(now);
-    auto date = now.date();
+    return isDay(QDateTime::currentDateTime());
+}
+
+bool Daytime::isDay(const QDateTime &dateTime) {
+    auto isDST = dateTime.timeZone().isDaylightTime(dateTime);
+    auto date = dateTime.date();
     auto minsSinceMidForSunrise = m_dusk2dawn->sunrise(date.year(), date.month(), date.day(), isDST);
     auto minsSinceMidForSunset  = m_dusk2dawn->sunset(date.year(), date.month(), date.day(), isDST);
 
-    return minsSinceMidForSunset < minsSinceMidForSunrise;
+    auto time = dateTime.time();
+    auto currentMinutes = time.hour() * 60 + time.minute();
+
+    return minsSinceMidForSunrise < currentMinutes &&
+            currentMinutes < minsSinceMidForSunset;
 }
