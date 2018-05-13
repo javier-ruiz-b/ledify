@@ -58,8 +58,8 @@ void LedStripController::initialize() {
     initializeLedStrip();
     restServer.registerCallback([this] (QString &command) -> QString {
         auto result = parseReceivedString(command);
+        m_relayController.turnOn();
         if (!m_relayController.isOn()) {
-            m_relayController.turnOn();
             m_loopTimer->start(2000);
         } else {
             m_loopTimer->start(0);
