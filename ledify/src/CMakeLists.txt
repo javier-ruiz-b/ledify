@@ -43,9 +43,10 @@ addLibrary (FadeLayer Interpolator Layer)
 addLibrary (FpsCalculator)
 addLibrary (Daytime Dusk2Dawn)
 addLibrary (TimeControl wiringPi)
+addLibrary (RelayController wiringPi)
 addLibrary (LayerController Layer FadeLayer ColorLayer StartLayer RandomLayer)
 addLibrary (CommandExecutor LayerController TimeControl wiringPi Daytime)
-addLibrary (LedStripController CommandReader FpsCalculator CommandExecutor)
+addLibrary (LedStripController CommandReader FpsCalculator CommandExecutor wiringPi rpi_ws281x RestServer RelayController)
 addLibrary (SerialPort wiringPi)
 addLibrary (RestServer qHttp)
 
@@ -54,4 +55,4 @@ target_link_libraries(TestRestServer RestServer)
 
 # main
 add_executable(${PROJECT_NAME} ledify.cpp)
-target_link_libraries(${PROJECT_NAME} rpi_ws281x wiringPi LedStripController SerialPort RestServer qHttp)
+target_link_libraries(${PROJECT_NAME} LedStripController SerialPort)

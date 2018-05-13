@@ -30,7 +30,6 @@ private:
     void cReset(const QStringList &args, QString &response);
 
 private:
-    const int c_relayGpioPin = 29;
     LayerController *m_layers;
     FpsCalculator *m_fpsCalculator;
     Daytime m_dayTime;

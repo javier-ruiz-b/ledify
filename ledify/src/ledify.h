@@ -2,7 +2,6 @@
 #include <QObject>
 #include "SerialPort.h"
 #include "LedStripController.h"
-#include "RestServer.h"
 
 class QTimer;
 
@@ -28,25 +27,19 @@ public slots:
     // Qt signal handlers.
     void handleSigHup();
     void handleSigTerm();
+    void setupUnixSignalHandlers();
+    bool init();
 
 private:
     static int sighupFd[2];
     static int sigtermFd[2];
 
-    bool m_running = true;
     QSocketNotifier *snHup;
     QSocketNotifier *snTerm;
 
-    void loop();
-
     SerialPort serial;
     LedStripController *controller;
-    RestServer restServer;
-    QTimer *m_loopTimer;
 
-    void setupUnixSignalHandlers();
-    void cleanup();
-    bool init();
 };
 
 int main (int argc, char **argv);

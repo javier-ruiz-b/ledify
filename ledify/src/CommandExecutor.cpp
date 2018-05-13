@@ -23,9 +23,6 @@ CommandExecutor::CommandExecutor(LayerController *layers, FpsCalculator *fpsCalc
     m_commandToFunction.insert("OFF", funcWrapper(cOff));
     m_commandToFunction.insert("ON", funcWrapper(cOn));
     m_commandToFunction.insert("ONIFNIGHT", funcWrapper(cOnIfNight));
-
-    pinMode (c_relayGpioPin, OUTPUT);
-    digitalWrite (c_relayGpioPin, HIGH);
 }
 
 bool CommandExecutor::parseCommand(const QString &command, const QStringList &args, QString &response) {
@@ -96,11 +93,11 @@ void CommandExecutor::cOff(const QStringList &, QString &) {
     auto colorIndex = m_layers->addColorLayer(0, 0, 0 ,0);
     auto fadeIndex = m_layers->addFadeLayerFromCurrent(colorIndex, Interpolator::InterpolatorDecelerate, 0, 1000);
     m_layers->setAsRootLayer(fadeIndex);
-    QTimer::singleShot(2000, nullptr, [this] { digitalWrite (c_relayGpioPin, LOW); });
+//    QTimer::singleShot(2000, nullptr, [this] { digitalWrite (c_relayGpioPin, LOW); });
 }
 
 void CommandExecutor::cOn(const QStringList &, QString &) {
-    digitalWrite (c_relayGpioPin, HIGH);
+//    digitalWrite (c_relayGpioPin, HIGH);
     auto colorIndex = m_layers->addColorLayer(60, 40, 5, 100);
     auto fadeIndex = m_layers->addFadeLayerFromCurrent(colorIndex, Interpolator::InterpolatorDecelerate, 2000, 1000);
     m_layers->setAsRootLayer(fadeIndex);

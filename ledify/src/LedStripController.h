@@ -4,6 +4,9 @@
 #include "CommandReader.h"
 #include "CommandExecutor.h"
 #include "LayerController.h"
+#include "RelayController.h"
+#include "RestServer.h"
+#include <QObject>
 
 class QString;
 class Adafruit_NeoPixel;
@@ -39,25 +42,44 @@ class Layer;
  *
  *
  */
-class LedStripController {
+class LedStripController : public QObject {
+    Q_OBJECT
+
 public:
     LedStripController();
 
+    void initialize();
     LayerController &layerController();
-    CommandReader &commandReader();
     bool writeChar(char c);
     bool animationFinished();
     QString parseReceivedString(const QString &string);
-    void draw(uint32_t *ledsRgbw, int numLeds);
 
     void commandOff();
     void commandOnIfNight();
+    void startDrawLoop();
+    void terminate();
+
+signals:
+    void terminated();
 
 private:
+    void initializeWiringPi();
+    void initializeLedStrip();
+    void deinitialize();
+    void deinitializeLedStrip();
+    void drawLoop();
+    void draw(uint32_t *ledsRgbw, int numLeds);
+    bool isAnyLedOn();
+
+private:
+//    bool m_terminating = false;
+    RelayController m_relayController;
     FpsCalculator m_fpsCalculator;
     CommandReader m_commandReader;
     LayerController m_layerController;
+    RestServer restServer;
     QScopedPointer<CommandExecutor> m_executor;
+    QTimer *m_loopTimer;
 
     friend class LedStripControllerTest;
 };
