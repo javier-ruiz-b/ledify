@@ -14,7 +14,6 @@ Q_LOGGING_CATEGORY(CONTROLLER, "ledify.controller", QtWarningMsg)
 #define DMA             10
 #define TARGET_FREQ     WS2811_TARGET_FREQ
 #define STRIP_TYPE      SK6812_STRIP_GRBW
-#define FPS             40
 
 ws2811_t ledStrip {
     .render_wait_time = 0,
@@ -53,17 +52,21 @@ LedStripController::LedStripController() {
     connect(m_loopTimer, &QTimer::timeout, this, &LedStripController::drawLoop);
 }
 
+void LedStripController::turnOnRelayAndRefresh() {
+    m_relayController.turnOn();
+    if (!m_relayController.isOn()) {
+        m_loopTimer->start(c_trafoPowerOnDelayMs);
+    } else {
+        m_loopTimer->start(0);
+    }
+}
+
 void LedStripController::initialize() {
     initializeWiringPi();
     initializeLedStrip();
     restServer.registerCallback([this] (QString &command) -> QString {
         auto result = parseReceivedString(command);
-        m_relayController.turnOn();
-        if (!m_relayController.isOn()) {
-            m_loopTimer->start(2000);
-        } else {
-            m_loopTimer->start(0);
-        }
+        turnOnRelayAndRefresh();
         return result;
     });
 }
@@ -124,11 +127,13 @@ QString LedStripController::parseReceivedString(const QString &string) {
 void LedStripController::commandOff() {
     QString str;
     m_executor->cOff(QStringList(), str);
+    turnOnRelayAndRefresh();
 }
 
 void LedStripController::commandOnIfNight() {
     QString str;
     m_executor->cOnIfNight(QStringList(), str);
+    turnOnRelayAndRefresh();
 }
 
 void LedStripController::startDrawLoop() {
@@ -145,11 +150,10 @@ void LedStripController::terminate() {
         }
     });
     commandOff();
-    QTimer::singleShot(3000, this, [this] { //force
+    QTimer::singleShot(5000, this, [this] { //force
         m_relayController.turnOff(0);
         emit terminated();
     });
-    //    m_terminating = true;
 }
 
 void LedStripController::initializeWiringPi() {
@@ -193,14 +197,13 @@ void LedStripController::drawLoop() {
 
     if (animationFinished()) {
         if (isAnyLedOn()) {
-            m_loopTimer->start(5000);
+            m_loopTimer->start(c_drawRefreshIdleMs);
         } else {
-            m_relayController.turnOff();
+            m_relayController.turnOff(c_trafoIdlePowerOffDelayMs);
         }
     } else {
-        const auto sleepMs = 1000 / FPS;
         auto diffProcessingMs = static_cast<int>(millis() - startMs);
-        m_loopTimer->start(qMax(sleepMs - diffProcessingMs, 1));
+        m_loopTimer->start(qMax(c_drawRefreshAnimationMs - diffProcessingMs, 1));
     }
 }
 

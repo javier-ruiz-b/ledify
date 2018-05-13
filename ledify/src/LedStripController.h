@@ -54,7 +54,6 @@ public:
     bool animationFinished();
     QString parseReceivedString(const QString &string);
 
-    void commandOff();
     void commandOnIfNight();
     void startDrawLoop();
     void terminate();
@@ -70,9 +69,13 @@ private:
     void drawLoop();
     void draw(uint32_t *ledsRgbw, int numLeds);
     bool isAnyLedOn();
+    void commandOff();
 
 private:
-//    bool m_terminating = false;
+    const int c_trafoPowerOnDelayMs = 1500;
+    const int c_trafoIdlePowerOffDelayMs = 6000;
+    const int c_drawRefreshIdleMs = 3000;
+    const int c_drawRefreshAnimationMs = 1000 / 50;
     RelayController m_relayController;
     FpsCalculator m_fpsCalculator;
     CommandReader m_commandReader;
@@ -82,4 +85,5 @@ private:
     QTimer *m_loopTimer;
 
     friend class LedStripControllerTest;
+    void turnOnRelayAndRefresh();
 };
