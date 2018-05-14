@@ -7,41 +7,11 @@
 #include "RelayController.h"
 #include "RestServer.h"
 #include <QObject>
+#include "rpi_ws281x/ws2811.h"
 
 class QString;
-class Adafruit_NeoPixel;
 class Layer;
 
-
-/**
- * @brief The LedStripController class
- * Commands:
- *      C+POWEROFF
- *      C+COLOR=myIndex,R,G,B,W
- *      C+FADE=myIndex,fromIndex,toIndex,interpolator,startDelayMs,durationMs
- *      C+SET=index
- *
- * Behavior:
- *      m_availableLayers saves a list of available layers ready to be used.
- *  m_rootLayer will be used as the start point for the rendering.
- *
- *      Main loop:
- *          1. writeChar()
- *              if writeChar(c) == true
- *                  parseCommand
- *          2. draw()
- *
- *
- *      Draw:
- *          for every layer: call start
- *          for every layer:
- *              for every pixel:
- *                  call pixel
- *                  save in m_neoPixelLib
- *          for every layer: call end
- *
- *
- */
 class LedStripController : public QObject {
     Q_OBJECT
 
@@ -70,6 +40,7 @@ private:
     void draw(uint32_t *ledsRgbw, int numLeds);
     bool isAnyLedOn();
     void commandOff();
+    void turnOnRelayAndRefresh();
 
 private:
     const int c_trafoPowerOnDelayMs = 1500;
@@ -84,6 +55,8 @@ private:
     QScopedPointer<CommandExecutor> m_executor;
     QTimer *m_loopTimer;
 
+    ws2811_t m_ledStrip;
+    uint32_t *m_leds;
+
     friend class LedStripControllerTest;
-    void turnOnRelayAndRefresh();
 };

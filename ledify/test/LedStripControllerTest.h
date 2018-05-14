@@ -24,7 +24,9 @@ private slots:
     void triesToSetAnUnsetIndex();
     void triesToSetAnInvalidIndex();
     void oneFadeWithLayerControllerInterface();
-    void acceptanceTest();
+    void copiesLayer();
+    void movesLayer();
+    void fadeAcceptanceTest();
     void recursiveFades();
 
 private:

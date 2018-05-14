@@ -1,5 +1,5 @@
 #include "LedStripControllerTest.h"
-#include "LedStripController.h"
+#include <LedStripController.h>
 
 #include <TimeControl.h>
 #include <ColorLayer.h>
@@ -125,7 +125,27 @@ void LedStripControllerTest::oneFadeWithLayerControllerInterface() {
     QCOMPARE(m_leds[0], 0x0000FF00); //WRGB
 }
 
-void LedStripControllerTest::acceptanceTest() {
+void LedStripControllerTest::copiesLayer() {
+    LayerController &layerControl = m_tested->layerController();
+    layerControl.addColorLayer(1, 0, 255, 0, 0);
+    writeCommand("C+COPY=2,1");
+    layerControl.setAsRootLayer(2);
+
+    QCOMPARE(m_leds[0], 0x0000FF00); //WRGB
+}
+
+void LedStripControllerTest::movesLayer() {
+    LayerController &layerControl = m_tested->layerController();
+    layerControl.addColorLayer(1, 0, 255, 0, 0);
+    writeCommand("C+MOVE=2,1");
+    layerControl.setAsRootLayer(2);
+
+    QCOMPARE(m_leds[0], 0x0000FF00); //WRGB
+    layerControl.setAsRootLayer(1);
+    QCOMPARE(m_leds[0], 0x00000000); //WRGB
+}
+
+void LedStripControllerTest::fadeAcceptanceTest() {
     writeCommand("C+COLOR=0,255,0,0,255");
     writeCommand("C+COLOR=1,0,255,255,0");
     writeCommand("C+FADE=4,0,1,1,2000,30000");
