@@ -143,6 +143,11 @@ void LedStripController::startDrawLoop() {
 void LedStripController::terminate() {
     qCDebug(CONTROLLER) << "Terminating...";
 
+    if (!m_relayController.isOn()) {
+        emit terminated();
+        return;
+    }
+
     connect(&m_relayController, &RelayController::relayStateChanged,
             this, [this] (int, bool state) {
         if (!state) {
