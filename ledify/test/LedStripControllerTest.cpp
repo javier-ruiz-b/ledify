@@ -130,6 +130,7 @@ void LedStripControllerTest::copiesLayer() {
     layerControl.addColorLayer(1, 0, 255, 0, 0);
     writeCommand("C+COPY=2,1");
     layerControl.setAsRootLayer(2);
+    m_tested->draw(reinterpret_cast<uint32_t *>(m_leds), NUM_LED);
 
     QCOMPARE(m_leds[0], 0x0000FF00); //WRGB
 }
@@ -139,10 +140,9 @@ void LedStripControllerTest::movesLayer() {
     layerControl.addColorLayer(1, 0, 255, 0, 0);
     writeCommand("C+MOVE=2,1");
     layerControl.setAsRootLayer(2);
+    m_tested->draw(reinterpret_cast<uint32_t *>(m_leds), NUM_LED);
 
     QCOMPARE(m_leds[0], 0x0000FF00); //WRGB
-    layerControl.setAsRootLayer(1);
-    QCOMPARE(m_leds[0], 0x00000000); //WRGB
 }
 
 void LedStripControllerTest::fadeAcceptanceTest() {

@@ -23,6 +23,8 @@ CommandExecutor::CommandExecutor(LayerController *layers, FpsCalculator *fpsCalc
     m_commandToFunction.insert("OFF", funcWrapper(cOff));
     m_commandToFunction.insert("ON", funcWrapper(cOn));
     m_commandToFunction.insert("ONIFNIGHT", funcWrapper(cOnIfNight));
+    m_commandToFunction.insert("COPY", funcWrapper(cCopy));
+    m_commandToFunction.insert("MOVE", funcWrapper(cMove));
 }
 
 bool CommandExecutor::parseCommand(const QString &command, const QStringList &args, QString &response) {
@@ -87,6 +89,16 @@ void CommandExecutor::cTime(const QStringList &, QString &response) {
 
 void CommandExecutor::cReset(const QStringList &, QString &) {
     m_layers->reset();
+}
+
+void CommandExecutor::cCopy(const QStringList &args, QString &) {
+    m_layers->copyLayer(args[0].toUShort(),
+            args[1].toUShort());
+}
+
+void CommandExecutor::cMove(const QStringList &args, QString &) {
+    m_layers->moveLayer(args[0].toUShort(),
+            args[1].toUShort());
 }
 
 void CommandExecutor::cOff(const QStringList &, QString &) {

@@ -16,7 +16,7 @@ class LedStripController : public QObject {
     Q_OBJECT
 
 public:
-    LedStripController();
+    LedStripController(QObject *parent = nullptr);
 
     void initialize();
     LayerController &layerController();
@@ -32,7 +32,6 @@ signals:
     void terminated();
 
 private:
-    void initializeWiringPi();
     void initializeLedStrip();
     void deinitialize();
     void deinitializeLedStrip();

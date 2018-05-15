@@ -84,6 +84,15 @@ void LayerController::addRandomLayer(int toIndex) {
     m_indexedLayers[toIndex] = layer;
 }
 
+void LayerController::copyLayer(int toIndex, int fromIndex) {
+    m_indexedLayers[toIndex] = m_indexedLayers[fromIndex];
+}
+
+void LayerController::moveLayer(int toIndex, int fromIndex) {
+    m_indexedLayers[toIndex] = m_indexedLayers[fromIndex];
+    m_indexedLayers[fromIndex].reset();
+}
+
 uint16_t LayerController::addRandomLayer() {
     uint16_t index = getFreeIndex();
     addRandomLayer(index);

@@ -31,14 +31,14 @@ public slots:
     bool init();
 
 private:
-    static int sighupFd[2];
-    static int sigtermFd[2];
+    static int s_sighupFd[2];
+    static int s_sigtermFd[2];
 
-    QSocketNotifier *snHup;
-    QSocketNotifier *snTerm;
+    QSocketNotifier *m_snHup;
+    QSocketNotifier *m_snTerm;
 
-    SerialPort serial;
-    LedStripController *controller;
+    SerialPort m_serial;
+    LedStripController *m_controller;
 
 };
 

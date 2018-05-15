@@ -14,7 +14,7 @@ Q_LOGGING_CATEGORY(CONTROLLER, "ledify.controller", QtWarningMsg)
 #define TARGET_FREQ     WS2811_TARGET_FREQ
 #define STRIP_TYPE      SK6812_STRIP_GRBW
 
-LedStripController::LedStripController() {
+LedStripController::LedStripController(QObject *parent) : QObject(parent) {
     connect(this, &LedStripController::terminated, this, &LedStripController::deinitialize);
 
     m_layerController.addColorLayer(0, 0, 0, 0, 0);
@@ -37,13 +37,37 @@ void LedStripController::turnOnRelayAndRefresh() {
 }
 
 void LedStripController::initialize() {
-    initializeWiringPi();
     initializeLedStrip();
     restServer.registerCallback([this] (QString &command) -> QString {
         auto result = parseReceivedString(command);
         turnOnRelayAndRefresh();
         return result;
     });
+}
+
+void LedStripController::initializeLedStrip() {
+    m_ledStrip.freq = TARGET_FREQ;
+    m_ledStrip.dmanum = DMA;
+    m_ledStrip.channel[0].gpionum = GPIO_PIN;
+    m_ledStrip.channel[0].invert = 0;
+    m_ledStrip.channel[0].count = NUM_LEDS;
+    m_ledStrip.channel[0].strip_type = STRIP_TYPE;
+    m_ledStrip.channel[0].brightness = 255;
+
+    ws2811_return_t errCode;
+    if ((errCode = ws2811_init(&m_ledStrip)) != WS2811_SUCCESS) {
+        fprintf(stderr, "ws2811_init failed: %s\n", ws2811_get_return_t_str(errCode));
+        emit terminated();
+    }
+    m_leds = m_ledStrip.channel[0].leds;
+}
+
+void LedStripController::deinitialize() {
+    deinitializeLedStrip();
+}
+
+void LedStripController::deinitializeLedStrip() {
+    ws2811_fini(&m_ledStrip);
 }
 
 bool LedStripController::writeChar(char c) {
@@ -134,39 +158,6 @@ void LedStripController::terminate() {
         m_relayController.turnOff(0);
         emit terminated();
     });
-}
-
-void LedStripController::initializeWiringPi() {
-    if (wiringPiSetup() == -1) {
-        qCritical(CONTROLLER) << "Unable to start wiringPi:"
-                    << strerror (errno);
-        emit terminated();
-    }
-}
-
-void LedStripController::initializeLedStrip() {
-    m_ledStrip.freq = TARGET_FREQ;
-    m_ledStrip.dmanum = DMA;
-    m_ledStrip.channel[0].gpionum = GPIO_PIN;
-    m_ledStrip.channel[0].invert = 0;
-    m_ledStrip.channel[0].count = NUM_LEDS;
-    m_ledStrip.channel[0].strip_type = STRIP_TYPE;
-    m_ledStrip.channel[0].brightness = 255;
-
-    ws2811_return_t errCode;
-    if ((errCode = ws2811_init(&m_ledStrip)) != WS2811_SUCCESS) {
-        fprintf(stderr, "ws2811_init failed: %s\n", ws2811_get_return_t_str(errCode));
-        emit terminated();
-    }
-    m_leds = m_ledStrip.channel[0].leds;
-}
-
-void LedStripController::deinitialize() {
-    deinitializeLedStrip();
-}
-
-void LedStripController::deinitializeLedStrip() {
-    ws2811_fini(&m_ledStrip);
 }
 
 void LedStripController::drawLoop() {

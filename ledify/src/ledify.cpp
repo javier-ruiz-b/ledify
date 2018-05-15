@@ -6,13 +6,14 @@
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <wiringPi.h>
 
 #include "LayerController.h"
 #include <QtDebug>
 #include <QString>
 
-int Ledify::sighupFd[2];
-int Ledify::sigtermFd[2];
+int Ledify::s_sighupFd[2];
+int Ledify::s_sigtermFd[2];
 
 int main(int argc, char **argv) {
     QCoreApplication a(argc, argv);
@@ -32,25 +33,31 @@ Ledify::Ledify(const QStringList &arguments, QObject *parent) : QObject(parent) 
             serialInput = arguments[1];
         }
     }
-    serial.begin(serialInput.toUtf8().constData(), 9600);
+    m_serial.begin(serialInput.toUtf8().constData(), 9600);
 }
 
 void Ledify::setupUnixSignalHandlers() {
-    if (::socketpair(AF_UNIX, SOCK_STREAM, 0, sighupFd))
+    if (::socketpair(AF_UNIX, SOCK_STREAM, 0, s_sighupFd))
        qFatal("Couldn't create HUP socketpair");
-    if (::socketpair(AF_UNIX, SOCK_STREAM, 0, sigtermFd))
+    if (::socketpair(AF_UNIX, SOCK_STREAM, 0, s_sigtermFd))
        qFatal("Couldn't create TERM socketpair");
-    snHup = new QSocketNotifier(sighupFd[1], QSocketNotifier::Read, this);
-    connect(snHup, SIGNAL(activated(int)), this, SLOT(handleSigHup()));
-    snTerm = new QSocketNotifier(sigtermFd[1], QSocketNotifier::Read, this);
-    connect(snTerm, SIGNAL(activated(int)), this, SLOT(handleSigTerm()));
+    m_snHup = new QSocketNotifier(s_sighupFd[1], QSocketNotifier::Read, this);
+    connect(m_snHup, SIGNAL(activated(int)), this, SLOT(handleSigHup()));
+    m_snTerm = new QSocketNotifier(s_sigtermFd[1], QSocketNotifier::Read, this);
+    connect(m_snTerm, SIGNAL(activated(int)), this, SLOT(handleSigTerm()));
     setupStaticUnixSignalHandlers();
 }
 
 bool Ledify::init() {
-    controller = new LedStripController();
-    connect (controller, &LedStripController::terminated, this, &Ledify::finished);
-    controller->initialize();
+    if (wiringPiSetup() == -1) {
+        qCritical() << "Unable to start wiringPi:"
+                    << strerror (errno);
+        emit finished();
+        return false;
+    }
+    m_controller = new LedStripController(this);
+    connect (m_controller, &LedStripController::terminated, this, &Ledify::finished);
+    m_controller->initialize();
     return true;
 }
 
@@ -59,12 +66,12 @@ void Ledify::run() {
         emit finished();
         return;
     }
-    controller->startDrawLoop();
-    controller->commandOnIfNight();
+    m_controller->startDrawLoop();
+    m_controller->commandOnIfNight();
 }
 
 void Ledify::terminate() {
-    controller->terminate();
+    m_controller->terminate();
 }
 
 int Ledify::setupStaticUnixSignalHandlers() {
@@ -90,30 +97,30 @@ int Ledify::setupStaticUnixSignalHandlers() {
 
 void Ledify::hupSignalHandler(int) {
     char a = 1;
-    ::write(sighupFd[0], &a, sizeof(a));
+    ::write(s_sighupFd[0], &a, sizeof(a));
 }
 
 void Ledify::termSignalHandler(int) {
     char a = 1;
-    ::write(sigtermFd[0], &a, sizeof(a));
+    ::write(s_sigtermFd[0], &a, sizeof(a));
 }
 
 void Ledify::handleSigHup() {
-    snHup->setEnabled(false);
+    m_snHup->setEnabled(false);
     char tmp;
-    ::read(sighupFd[1], &tmp, sizeof(tmp));
+    ::read(s_sighupFd[1], &tmp, sizeof(tmp));
 
     terminate();
 
-    snHup->setEnabled(true);
+    m_snHup->setEnabled(true);
 }
 
 void Ledify::handleSigTerm() {
-    snTerm->setEnabled(false);
+    m_snTerm->setEnabled(false);
     char tmp;
-    ::read(sigtermFd[1], &tmp, sizeof(tmp));
+    ::read(s_sigtermFd[1], &tmp, sizeof(tmp));
 
     terminate();
 
-    snTerm->setEnabled(true);
+    m_snTerm->setEnabled(true);
 }

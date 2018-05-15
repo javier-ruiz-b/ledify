@@ -28,6 +28,8 @@ private:
     void cFps(const QStringList &args, QString &response);
     void cTime(const QStringList &args, QString &response);
     void cReset(const QStringList &args, QString &response);
+    void cCopy(const QStringList &args, QString &response);
+    void cMove(const QStringList &args, QString &response);
 
 private:
     LayerController *m_layers;
