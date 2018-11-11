@@ -1,14 +1,44 @@
-import QtQuick 2.6
+import QtQuick 2.7
+import QtQuick.Controls 2.1
 import QtQuick.Window 2.2
+import QtQuick.Controls.Material 2.1
+import ledify.simulator 1.0
 
-SimulatorForm {
+
+ApplicationWindow {
+    id: appWindow
     visible: true
-    width: 640
-    height: 480
-//    title: qsTr("Hello World")
 
-    anchors.fill: parent
-    mouseArea.onClicked: {
-        console.log(qsTr('Clicked on background. Text: "' + textEdit.text + '"'))
+    width: 900
+    height: 200
+
+    title: "Ledify Simulator"
+
+    Material.theme: Material.Dark
+    Material.accent: Material.Purple
+
+    SimulatorForm {
+        id: root
+        anchors.fill: parent
+
+        Keys.onReturnPressed: {
+            simulator.sendCommand(tfCommand.text)
+            tfCommand.text = ""
+        }
+
+    }
+
+    SimulatorController {
+        id: simulator
+        onLedDataChanged: {
+            var ledData = simulator.ledData
+            var ledColors = root.ledColors
+            for (var i = 0; (i < ledData.length) &&
+                            (i < ledColors.model); i++) {
+                var value = ledData[i] >> 8
+//                console.log("#" + value.toString(16))
+                ledColors.itemAt(i).color = "#" + value.toString(16)
+            }
+        }
     }
 }

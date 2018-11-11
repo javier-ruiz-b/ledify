@@ -36,13 +36,14 @@ void LedStripController::turnOnRelayAndRefresh() {
     }
 }
 
-void LedStripController::initialize() {
+void LedStripController::initializeDependencies() {
     initializeLedStrip();
     restServer.registerCallback([this] (QString &command) -> QString {
         auto result = parseReceivedString(command);
         turnOnRelayAndRefresh();
         return result;
     });
+    connect(this, &LedStripController::drawPixels, this, &LedStripController::drawToLedStrip);
 }
 
 void LedStripController::initializeLedStrip() {
@@ -59,7 +60,7 @@ void LedStripController::initializeLedStrip() {
         fprintf(stderr, "ws2811_init failed: %s\n", ws2811_get_return_t_str(errCode));
         emit terminated();
     }
-    m_leds = m_ledStrip.channel[0].leds;
+    m_ledBuffer = m_ledStrip.channel[0].leds;
 }
 
 void LedStripController::deinitialize() {
@@ -81,24 +82,15 @@ bool LedStripController::animationFinished() {
     return m_layerController.rootLayer()->animationFinished();
 }
 
-void LedStripController::draw(uint32_t *ledsRgbw, int numLeds) {
-    m_fpsCalculator.tick();
-    auto *rootLayer = m_layerController.rootLayer();
-
-    rootLayer->startDraw();
-    auto child = rootLayer->child();
-    if (child.isNull()) {
-        return;
-    }
-    for (uint16_t i = 0; i < numLeds; i++) {
-        ledsRgbw[i] = child->pixel(i);
-    }
-    rootLayer->endDraw();
-}
-
 bool LedStripController::isAnyLedOn() {
-    for (int i = 0; i < NUM_LEDS; i++) {
-        if (m_leds[i] != 0) {
+    auto rootLayer = m_layerController.rootLayer();
+    auto child = rootLayer->child();
+    if (!child) {
+        return false;
+    }
+
+    for (uint16_t i = 0; i < NUM_LEDS; i++) {
+        if (child->pixel(i) != 0) {
              return true;
         }
     }
@@ -160,19 +152,26 @@ void LedStripController::terminate() {
     });
 }
 
+void LedStripController::draw() {
+    m_fpsCalculator.tick();
+    auto *rootLayer = m_layerController.rootLayer();
+
+    rootLayer->startDraw();
+    auto child = rootLayer->child();
+    if (!child.isNull()) {
+        emit drawPixels(child.data());
+    }
+
+    rootLayer->endDraw();
+}
+
 void LedStripController::drawLoop() {
     auto startMs = millis();
     if (!m_relayController.isOn()) {
         return;
     }
 
-    draw(m_leds, NUM_LEDS);
-
-    ws2811_return_t errCode;
-    if ((errCode = ws2811_render(&m_ledStrip)) != WS2811_SUCCESS) {
-        fprintf(stderr, "ws2811_render failed: %s\n", ws2811_get_return_t_str(errCode));
-        terminate();
-    }
+    draw();
 
     if (animationFinished()) {
         if (isAnyLedOn()) {
@@ -183,6 +182,18 @@ void LedStripController::drawLoop() {
     } else {
         auto diffProcessingMs = static_cast<int>(millis() - startMs);
         m_loopTimer->start(qMax(c_drawRefreshAnimationMs - diffProcessingMs, 1));
+    }
+}
+
+void LedStripController::drawToLedStrip(Layer *rootLayer) {
+    for (uint16_t i = 0; i < NUM_LEDS; i++) {
+        m_ledBuffer[i] = rootLayer->pixel(i);
+    }
+
+    ws2811_return_t errCode;
+    if ((errCode = ws2811_render(&m_ledStrip)) != WS2811_SUCCESS) {
+        fprintf(stderr, "ws2811_render failed: %s\n", ws2811_get_return_t_str(errCode));
+        terminate();
     }
 }
 

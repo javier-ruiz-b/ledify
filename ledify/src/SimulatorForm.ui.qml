@@ -1,29 +1,43 @@
-import QtQuick 2.6
+import QtQuick 2.7
+import QtQuick.Layouts 1.3
+import QtQuick.Controls 2.2
+import QtQuick.Controls.Material 2.2
 
-Rectangle {
-    property alias mouseArea: mouseArea
-    property alias textEdit: textEdit
+Pane {
+    property var ledColors: lightRepeater
+    property var tfCommand: tfCommand
+    ColumnLayout {
+        spacing: 16
+        anchors.centerIn: parent
+        Row {
+            spacing: 2
+            Material.elevation: 6
+            Repeater {
+                id: lightRepeater
+                model: 32
 
-    width: 360
-    height: 360
+                Rectangle {
+                    x: 0
+                    width: 24
+                    height: 24
+                    color: "#000"
+                }
+            }
+        }
 
-    MouseArea {
-        id: mouseArea
-        anchors.fill: parent
-    }
-
-    TextEdit {
-        id: textEdit
-        text: qsTr("Enter some text...")
-        verticalAlignment: Text.AlignVCenter
-        anchors.top: parent.top
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.topMargin: 20
-        Rectangle {
-            anchors.fill: parent
-            anchors.margins: -10
-            color: "transparent"
-            border.width: 1
+        TextField {
+            id: tfCommand
+            text: qsTr("")
+            anchors.left: parent.left
+            anchors.right: parent.right
+            font.weight: Font.Bold
+            placeholderText: "Command"
         }
     }
 }
+
+
+/*##^## Designer {
+    D{i:0;autoSize:true;height:480;width:640}
+}
+ ##^##*/

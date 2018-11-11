@@ -57,7 +57,7 @@ bool Ledify::init() {
     }
     m_controller = new LedStripController(this);
     connect (m_controller, &LedStripController::terminated, this, &Ledify::finished);
-    m_controller->initialize();
+    m_controller->initializeDependencies();
     return true;
 }
 

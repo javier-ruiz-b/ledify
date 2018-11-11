@@ -11,6 +11,11 @@ void LedStripControllerTest::init() {
     m_tested = new LedStripController();
 //    m_buffer = (int *) m_buffer;
     memset(m_leds, 0xFE, NUM_LED*sizeof(uint32_t));
+    connect(m_tested, &LedStripController::drawPixels, this, [this] (Layer *rootLayer) {
+        for (uint16_t i = 0; i < NUM_LED; i++) {
+            m_leds[i] = static_cast<int>(rootLayer->pixel(i));
+        }
+    });
 }
 
 void LedStripControllerTest::cleanup() {
@@ -35,7 +40,7 @@ void LedStripControllerTest::setsRedColor() {
     writeCommand("C+COLOR=0,255,0,0,0");
     writeCommand("C+SET=0");
 
-    m_tested->draw(reinterpret_cast<uint32_t *>(m_leds), NUM_LED);
+    m_tested->draw();
 
     QCOMPARE(m_leds[0], 0x00FF0000); //WRGB
 }
@@ -46,7 +51,7 @@ void LedStripControllerTest::createsTwoColorsAndSetsSecond() {
     writeCommand("C+COLOR=0,0,255,0,0");
     writeCommand("C+SET=0");
 
-    m_tested->draw(reinterpret_cast<uint32_t *>(m_leds), NUM_LED);
+    m_tested->draw();
 
     QCOMPARE(m_leds[0], 0x0000FF00); //WRGB
     QCOMPARE(m_tested->m_layerController.m_indexedLayers.contains(1), false);
@@ -58,9 +63,9 @@ void LedStripControllerTest::fadesBetweenTwoColors() {
     writeCommand("C+FADE=2,0,1,0,1000,1000");
     writeCommand("C+SET=2");
 
-    m_tested->draw(reinterpret_cast<uint32_t *>(m_leds), NUM_LED);
+    m_tested->draw();
     TimeControl::instance()->setMillis(1500); //in the middle of the fade
-    m_tested->draw(reinterpret_cast<uint32_t *>(m_leds), NUM_LED);
+    m_tested->draw();
 
     QCOMPARE(m_leds[0], 0x007F7F00); //WRGB
     QCOMPARE(m_tested->m_layerController.m_indexedLayers.contains(0), false);
@@ -75,9 +80,9 @@ void LedStripControllerTest::fadesBetweenCurrentLayerAndAnotherColor() {
     writeCommand("C+FADETO=2,1,0,1000,1000");
     writeCommand("C+SET=2");
 
-    m_tested->draw(reinterpret_cast<uint32_t *>(m_leds), NUM_LED);
+    m_tested->draw();
     TimeControl::instance()->setMillis(1500); //in the middle of the fade
-    m_tested->draw(reinterpret_cast<uint32_t *>(m_leds), NUM_LED);
+    m_tested->draw();
 
     QCOMPARE(m_leds[0], 0x007F7F00); //WRGB
 }
@@ -90,9 +95,9 @@ void LedStripControllerTest::twoFadesAtTheSameTime() {
     writeCommand("C+FADE=4,2,3,0,0,1000"); // COLOR4= 2+3 € 500ms = 127,127,127,0
     writeCommand("C+SET=4");
 
-    m_tested->draw(reinterpret_cast<uint32_t *>(m_leds), NUM_LED);
+    m_tested->draw();
     TimeControl::instance()->setMillis(500); //in the middle of the fade
-    m_tested->draw(reinterpret_cast<uint32_t *>(m_leds), NUM_LED);
+    m_tested->draw();
 
     QCOMPARE(m_leds[0], 0x007F7F7F); //WRGB
 }
@@ -119,7 +124,7 @@ void LedStripControllerTest::oneFadeWithLayerControllerInterface() {
 
     for (uint32_t timeMs = 0; timeMs < 130; timeMs+=10) {
         TimeControl::instance()->setMillis(timeMs);
-        m_tested->draw(reinterpret_cast<uint32_t *>(m_leds), NUM_LED);
+        m_tested->draw();
     }
 
     QCOMPARE(m_leds[0], 0x0000FF00); //WRGB
@@ -130,7 +135,7 @@ void LedStripControllerTest::copiesLayer() {
     layerControl.addColorLayer(1, 0, 255, 0, 0);
     writeCommand("C+COPY=2,1");
     layerControl.setAsRootLayer(2);
-    m_tested->draw(reinterpret_cast<uint32_t *>(m_leds), NUM_LED);
+    m_tested->draw();
 
     QCOMPARE(m_leds[0], 0x0000FF00); //WRGB
 }
@@ -140,7 +145,7 @@ void LedStripControllerTest::movesLayer() {
     layerControl.addColorLayer(1, 0, 255, 0, 0);
     writeCommand("C+MOVE=2,1");
     layerControl.setAsRootLayer(2);
-    m_tested->draw(reinterpret_cast<uint32_t *>(m_leds), NUM_LED);
+    m_tested->draw();
 
     QCOMPARE(m_leds[0], 0x0000FF00); //WRGB
 }
@@ -161,7 +166,7 @@ void LedStripControllerTest::fadeAcceptanceTest() {
 
     for (uint32_t timeMs = 0; timeMs < 60*1000; timeMs+=3) {
         TimeControl::instance()->setMillis(timeMs);
-        m_tested->draw(reinterpret_cast<uint32_t *>(m_leds), NUM_LED);
+        m_tested->draw();
     }
 
     QCOMPARE(m_leds[0], 0x0000FF00); //WRGB
@@ -171,12 +176,12 @@ void LedStripControllerTest::fadeAcceptanceTest() {
 void LedStripControllerTest::recursiveFades() {
     auto index = m_tested->layerController().addColorLayer(2, 4, 5, 255);
     m_tested->layerController().setAsRootLayer(index);
-    m_tested->draw(reinterpret_cast<uint32_t *>(m_leds), NUM_LED);
+    m_tested->draw();
     for (int i = 0; i < 20; i++) {
         index = m_tested->layerController().addColorLayer(i, 4, 5, 255);
         index = m_tested->layerController().addFadeLayerFromCurrent(index, Interpolator::InterpolatorAccelerate, 0, 5);
         TimeControl::instance()->setMillis(static_cast<uint32_t>(i));
-        m_tested->draw(reinterpret_cast<uint32_t *>(m_leds), NUM_LED);
+        m_tested->draw();
     }
 }
 

@@ -12,9 +12,13 @@ project(ledify)
 add_subdirectory(src)
 
 option(BUILD_TESTS "Build test programs" OFF)
-
 if(BUILD_TESTS)
     enable_testing()
     find_package(Qt5Test)
     add_subdirectory(test)
+endif()
+
+option(QML_DEBUGGING "QML Debug" OFF)
+if(QML_DEBUGGING)
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DQT_QML_DEBUG")
 endif()

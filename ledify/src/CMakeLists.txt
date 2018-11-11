@@ -57,3 +57,12 @@ target_link_libraries(TestRestServer RestServer)
 # main
 add_executable(${PROJECT_NAME} ledify.cpp)
 target_link_libraries(${PROJECT_NAME} LedStripController SerialPort)
+
+option(BUILD_SIMULATOR "Build simulator" OFF)
+if(BUILD_SIMULATOR)
+    set(CMAKE_AUTORCC ON)
+    set(CMAKE_AUTOUIC ON)
+    find_package(Qt5 COMPONENTS Gui Qml Quick QuickControls2 Widgets)
+    add_executable(Simulator Simulator.cpp qml.qrc)
+    target_link_libraries(Simulator LedStripController Qt5::Core Qt5::Gui Qt5::Qml Qt5::Quick Qt5::QuickControls2 Qt5::Widgets)
+endif()

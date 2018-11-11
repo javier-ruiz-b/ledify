@@ -18,7 +18,7 @@ class LedStripController : public QObject {
 public:
     LedStripController(QObject *parent = nullptr);
 
-    void initialize();
+    void initializeDependencies();
     LayerController &layerController();
     bool writeChar(char c);
     bool animationFinished();
@@ -27,8 +27,10 @@ public:
     void commandOnIfNight();
     void startDrawLoop();
     void terminate();
+    void turnOnRelayAndRefresh();
 
 signals:
+    void drawPixels(Layer *rootLayer);
     void terminated();
 
 private:
@@ -36,13 +38,13 @@ private:
     void deinitialize();
     void deinitializeLedStrip();
     void drawLoop();
-    void draw(uint32_t *ledsRgbw, int numLeds);
+    void draw();
+    void drawToLedStrip(Layer *rootLayer);
     bool isAnyLedOn();
     void commandOff();
-    void turnOnRelayAndRefresh();
 
 private:
-    const int c_trafoPowerOnDelayMs = 1500;
+    const int c_trafoPowerOnDelayMs = 500;
     const int c_trafoIdlePowerOffDelayMs = 6000;
     const int c_drawRefreshIdleMs = 3000;
     const int c_drawRefreshAnimationMs = 1000 / 50;
@@ -55,7 +57,7 @@ private:
     QTimer *m_loopTimer;
 
     ws2811_t m_ledStrip;
-    uint32_t *m_leds;
+    uint32_t *m_ledBuffer;
 
     friend class LedStripControllerTest;
 };
