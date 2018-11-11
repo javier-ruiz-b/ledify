@@ -10,3 +10,6 @@
 [submodule "ledify/src/Dusk2Dawn"]
 	path = ledify/src/Dusk2Dawn
 	url = https://github.com/dmkishi/Dusk2Dawn.git
+[submodule "ledify/src/3rdParty/sanitizers-cmake"]
+	path = ledify/src/3rdParty/sanitizers-cmake
+	url = git://github.com/arsenm/sanitizers-cmake.git
