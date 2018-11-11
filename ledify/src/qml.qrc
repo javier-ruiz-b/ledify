@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Simulator.qml</file>
+        <file>SimulatorForm.ui.qml</file>
+    </qresource>
+</RCC>
