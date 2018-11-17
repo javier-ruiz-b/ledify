@@ -56,9 +56,15 @@ bool Ledify::init() {
         emit finished();
         return false;
     }
-    m_controller = new LedStripController(&m_ledStrip, NUM_LEDS, &m_wiringPi, this);
-    connect (m_controller, &LedStripController::terminated, this, &Ledify::finished);
-    m_controller->initializeDependencies();
+    auto controller = new LedStripController(&m_ledStrip, NUM_LEDS, &m_wiringPi, this);
+    connect (controller, &LedStripController::terminated, this, &Ledify::finished);
+    controller->initializeDependencies();
+    restServer.registerCallback([controller] (QString &command) -> QString {
+        auto result = controller->parseReceivedString(command);
+        controller->turnOnRelayAndRefresh();
+        return result;
+    });
+    m_controller = controller;
     return true;
 }
 

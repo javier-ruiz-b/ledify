@@ -4,6 +4,7 @@
 #include "LedStripController.h"
 #include "WiringPiWrapper.h"
 #include "Ws2811LedStrip.h"
+#include "RestServer.h"
 
 #define NUM_LEDS 300
 
@@ -46,6 +47,8 @@ private:
 
     WiringPiWrapper m_wiringPi;
     Ws2811LedStrip m_ledStrip;
+
+    RestServer restServer;
 };
 
 int main (int argc, char **argv);

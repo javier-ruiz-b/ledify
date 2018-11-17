@@ -34,11 +34,11 @@ addLibrary (FadeLayer Interpolator Layer)
 addLibrary (FpsCalculator)
 addLibrary (Daytime Dusk2Dawn)
 addLibrary (TimeControl)
-addLibrary (RelayController) #wiringPi
+addLibrary (RelayController)
 addLibrary (LayerController Layer FadeLayer ColorLayer StartLayer RandomLayer)
-addLibrary (CommandExecutor LayerController TimeControl Daytime) #wiringPi
+addLibrary (CommandExecutor LayerController TimeControl Daytime)
 addLibrary (RestServer qHttp)
-addLibrary (LedStripController CommandReader FpsCalculator CommandExecutor RestServer RelayController TimeControl) #wiringPi rpi_ws281x
+addLibrary (LedStripController CommandReader FpsCalculator CommandExecutor RelayController TimeControl)
 
 addLibrary (MockLedStrip)
 addLibrary (MockWiringPi)
@@ -63,7 +63,7 @@ if(BUILD_LEDIFY)
     addLibrary (WiringPiWrapper wiringPi)
     addLibrary (Ws2811LedStrip rpi_ws281x Layer)
     add_executable(${PROJECT_NAME} ledify.cpp)
-    target_link_libraries(${PROJECT_NAME} LedStripController SerialPort WiringPiWrapper Ws2811LedStrip)
+    target_link_libraries(${PROJECT_NAME} LedStripController SerialPort RestServer WiringPiWrapper Ws2811LedStrip)
 endif()
 
 option(BUILD_TEST_RESTSERVER "Build Test RestServer" OFF)

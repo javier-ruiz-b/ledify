@@ -4,7 +4,6 @@
 #include "CommandReader.h"
 #include "CommandExecutor.h"
 #include "LayerController.h"
-#include "RestServer.h"
 #include <QObject>
 
 class ILedStrip;
@@ -52,7 +51,6 @@ private:
     FpsCalculator m_fpsCalculator;
     CommandReader m_commandReader;
     LayerController m_layerController;
-    RestServer restServer;
     QScopedPointer<CommandExecutor> m_executor;
     QTimer *m_loopTimer;
 

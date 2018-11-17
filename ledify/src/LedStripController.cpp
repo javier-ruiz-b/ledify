@@ -38,11 +38,6 @@ void LedStripController::turnOnRelayAndRefresh() {
 
 void LedStripController::initializeDependencies() {
     m_ledStrip->initialize();
-    restServer.registerCallback([this] (QString &command) -> QString {
-        auto result = parseReceivedString(command);
-        turnOnRelayAndRefresh();
-        return result;
-    });
     connect(this, &LedStripController::drawPixels, this, &LedStripController::drawToLedStrip);
 }
 
