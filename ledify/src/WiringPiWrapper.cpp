@@ -17,11 +17,11 @@ void WiringPiWrapper::digitalWrite(int pin, int value) {
 }
 
 void WiringPiWrapper::pinMode(int pin, int mode) {
-    switch(value) {
-    case input:     value = INPUT;      break;
-    case output:    value = OUTPUT;     break;
+    switch(mode) {
+    case input:     mode = INPUT;      break;
+    case output:    mode = OUTPUT;     break;
     default:
         qCCritical(WIRING_PI) << "Unimplemented case in pinMode";
     }
-    ::pinMode(pin, value);
+    ::pinMode(pin, mode);
 }

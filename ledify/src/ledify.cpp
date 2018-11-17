@@ -24,7 +24,8 @@ int main(int argc, char **argv) {
     return a.exec();
 }
 
-Ledify::Ledify(const QStringList &arguments, QObject *parent) : QObject(parent) {
+Ledify::Ledify(const QStringList &arguments, QObject *parent)
+    : QObject(parent), m_ledStrip(300) {
     setupUnixSignalHandlers();
 
     QString serialInput = "/dev/ttyAMA0";
@@ -55,7 +56,7 @@ bool Ledify::init() {
         emit finished();
         return false;
     }
-    m_controller = new LedStripController(this);
+    m_controller = new LedStripController(&m_ledStrip, NUM_LEDS, &m_wiringPi, this);
     connect (m_controller, &LedStripController::terminated, this, &Ledify::finished);
     m_controller->initializeDependencies();
     return true;
