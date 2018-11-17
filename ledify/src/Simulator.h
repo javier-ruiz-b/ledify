@@ -3,7 +3,11 @@
 #include <QObject>
 #include <QScopedPointer>
 #include <QVariant>
-#include "LedStripController.h"
+
+#include "MockLedStrip.h"
+#include "MockWiringPi.h"
+
+class LedStripController;
 
 class Simulator : public QObject {
     Q_OBJECT
@@ -29,6 +33,8 @@ public slots:
     }
 
 private:
-    LedStripController *m_ledStrip;
+    LedStripController *m_ledController;
+    MockLedStrip m_ledStrip;
+    MockWiringPi m_wiringPi;
     QVariant m_ledData;
 };

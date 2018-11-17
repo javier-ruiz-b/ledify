@@ -3,7 +3,6 @@
 #include "LayerController.h"
 #include "FpsCalculator.h"
 #include "TimeControl.h"
-#include <wiringPi.h>
 
 Q_LOGGING_CATEGORY(EXECUTOR, "ledify.executor", QtWarningMsg)
 

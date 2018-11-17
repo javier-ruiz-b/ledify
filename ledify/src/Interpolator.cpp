@@ -8,6 +8,7 @@ float Interpolator::value(Type type, float current, float end) {
     case InterpolatorDecelerate:
         return deceleratedValue(current, end);
     case InterpolatorLinear:
+    default:
         return linearValue(current, end);
     }
 }

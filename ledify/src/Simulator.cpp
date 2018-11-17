@@ -6,8 +6,10 @@
 
 #include "Simulator.h"
 #include "Layer.h"
+#include "LedStripController.h"
 
-static QVector<int> m_colorData(64);
+static const int c_numLeds = 64;
+static QVector<int> m_colorData(c_numLeds);
 
 int main(int argc, char *argv[]) {
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
@@ -23,19 +25,19 @@ int main(int argc, char *argv[]) {
 }
 
 Simulator::Simulator(QObject *parent) : QObject(parent) {
-    m_ledStrip = new LedStripController(this);
-    connect(m_ledStrip, &LedStripController::drawPixels, this, [parent, this] (Layer *rootLayer) {
+    m_ledController = new LedStripController(&m_ledStrip, c_numLeds, &m_wiringPi, this);
+    connect(m_ledController, &LedStripController::drawPixels, this, [this] (Layer *rootLayer) {
         for (uint16_t i = 0; i < m_colorData.count(); i++) {
             m_colorData[i] = static_cast<int>(rootLayer->pixel(i));
         }
         setLedData(QVariant::fromValue<QVector<int>>(m_colorData));
     });
 
-    m_ledStrip->startDrawLoop();
-    m_ledStrip->commandOnIfNight();
+    m_ledController->startDrawLoop();
+    m_ledController->commandOnIfNight();
 }
 
 void Simulator::sendCommand(const QString &string) {
-    m_ledStrip->parseReceivedString(string);
-    m_ledStrip->turnOnRelayAndRefresh();
+    m_ledController->parseReceivedString(string);
+    m_ledController->turnOnRelayAndRefresh();
 }

@@ -3,8 +3,13 @@
 #define NUM_LED 100
 #include <QTest>
 
+#include "MockLedStrip.h"
+#include "MockWiringPi.h"
+
 class LedStripController;
 class Adafruit_NeoPixel;
+class Layer;
+
 class LedStripControllerTest : public QObject {
     Q_OBJECT
 
@@ -33,6 +38,8 @@ private:
     void writeCommand(std::string command);
 
 private:
+    MockLedStrip m_ledStrip;
+    MockWiringPi m_wiringPi;
     LedStripController *m_tested = nullptr;
     const int m_numLeds = NUM_LED;
     int m_leds[NUM_LED];
