@@ -27,7 +27,7 @@ private:
     QSharedPointer<Layer> m_source;
     QSharedPointer<Layer> m_destination;
     bool m_startSet = false;
-    uint16_t m_startMs;
+    uint32_t m_startMs;
     uint16_t m_delayFromStart;
     uint16_t m_currentTimeDifferenceMs;
     uint16_t m_durationMs;

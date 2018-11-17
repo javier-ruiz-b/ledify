@@ -23,7 +23,7 @@ uint32_t TimeControl::millis() const {
         return m_millis;
     } else {
         auto now = chrono::system_clock::now();
-        auto durationMs = now - m_programStart;
+        auto durationMs = std::chrono::duration_cast<std::chrono::milliseconds>(now - m_programStart);
         return static_cast<uint32_t>(durationMs.count());
     }
 }

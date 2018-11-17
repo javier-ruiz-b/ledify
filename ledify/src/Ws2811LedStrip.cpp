@@ -39,6 +39,5 @@ void Ws2811LedStrip::render(Layer *rootLayer) {
     ws2811_return_t errCode;
     if ((errCode = ws2811_render(&m_ledStrip)) != WS2811_SUCCESS) {
         qWarning("ws2811_render failed: %s\n", ws2811_get_return_t_str(errCode));
-//        terminate();
     }
 }

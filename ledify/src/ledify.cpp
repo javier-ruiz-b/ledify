@@ -83,14 +83,14 @@ int Ledify::setupStaticUnixSignalHandlers() {
     hup.sa_flags = 0;
     hup.sa_flags |= SA_RESTART;
 
-    if (sigaction(SIGHUP, &hup, 0))
+    if (sigaction(SIGHUP, &hup, nullptr))
        return 1;
 
     term.sa_handler = Ledify::termSignalHandler;
     sigemptyset(&term.sa_mask);
     term.sa_flags |= SA_RESTART;
 
-    if (sigaction(SIGTERM, &term, 0))
+    if (sigaction(SIGTERM, &term, nullptr))
        return 2;
 
     return 0;
