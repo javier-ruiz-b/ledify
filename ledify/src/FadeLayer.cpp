@@ -76,7 +76,8 @@ void FadeLayer::setNewChild(Layer *currentChild, QSharedPointer<Layer> newChild)
     } else if (newChild == m_destination) {
         m_destination = newChild;
     } else {
-        qCCritical(FADE) << "Couldn't set new child: Unknown current ptr!:" << static_cast<void *>(currentChild);
+        qCCritical(FADE) << "Couldn't set new child: Unknown current ptr!:"
+                         << static_cast<void *>(currentChild);
     }
 }
 
@@ -103,19 +104,10 @@ uint32_t FadeLayer::pixel(uint16_t index) {
     uint32_t destinationPixel = m_destination->pixel(index);
     uint16_t alphaSource = 256 - m_alphaDestination;
 
-    unsigned char w = pixelComponent(sourcePixel, destinationPixel, alphaSource, m_alphaDestination, 24);
-    unsigned char r = pixelComponent(sourcePixel, destinationPixel, alphaSource, m_alphaDestination, 16);
-    unsigned char g = pixelComponent(sourcePixel, destinationPixel, alphaSource, m_alphaDestination, 8);
-    unsigned char b = pixelComponent(sourcePixel, destinationPixel, alphaSource, m_alphaDestination, 0);
-
-//        unsigned char w = (unsigned char) (((uint16_t)(sourcePixel >> 24) * alphaSource
-//                        + (uint16_t)(destinationPixel >> 24) * m_alphaDestination) / 256);
-//        unsigned char r = (unsigned char) (((uint16_t)((sourcePixel >> 16) & 255) * alphaSource
-//                        + (uint16_t)((destinationPixel >> 16) & 255) * m_alphaDestination) / 256);
-//        unsigned char g = (unsigned char) (((uint16_t)((sourcePixel >> 8) & 255) * alphaSource
-//                        + (uint16_t)((destinationPixel >> 8) & 255) * m_alphaDestination) / 256);
-//        unsigned char b = (unsigned char) (((uint16_t)(sourcePixel & 255) * alphaSource
-//                        + (uint16_t)(destinationPixel & 255) * m_alphaDestination) / 256);
+    uint8_t w = pixelComponent(sourcePixel, destinationPixel, alphaSource, m_alphaDestination, 24);
+    uint8_t r = pixelComponent(sourcePixel, destinationPixel, alphaSource, m_alphaDestination, 16);
+    uint8_t g = pixelComponent(sourcePixel, destinationPixel, alphaSource, m_alphaDestination, 8);
+    uint8_t b = pixelComponent(sourcePixel, destinationPixel, alphaSource, m_alphaDestination, 0);
 
     return (static_cast<uint32_t>(w) << 24) |
            (static_cast<uint32_t>(r) << 16) |

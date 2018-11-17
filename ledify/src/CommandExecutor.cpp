@@ -107,8 +107,8 @@ void CommandExecutor::cOff(const QStringList &, QString &) {
 }
 
 void CommandExecutor::cOn(const QStringList &, QString &) {
-    auto colorIndex = m_layers->addColorLayer(60, 40, 5, 100);
-    auto fadeIndex = m_layers->addFadeLayerFromCurrent(colorIndex, Interpolator::InterpolatorDecelerate, 0, 2000);
+    auto colorIndex = m_layers->addColorLayer(203, 80, 1, 203);
+    auto fadeIndex = m_layers->addFadeLayerFromCurrent(colorIndex, Interpolator::InterpolatorAccelerate, 0, 2000);
     m_layers->setAsRootLayer(fadeIndex);
 }
 
