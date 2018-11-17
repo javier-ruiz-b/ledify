@@ -24,7 +24,8 @@ int main(int argc, char **argv) {
     return a.exec();
 }
 
-Ledify::Ledify(const QStringList &arguments, QObject *parent) : QObject(parent) {
+Ledify::Ledify(const QStringList &arguments, QObject *parent)
+    : QObject(parent), m_ledStrip(300) {
     setupUnixSignalHandlers();
 
     QString serialInput = "/dev/ttyAMA0";
@@ -55,7 +56,7 @@ bool Ledify::init() {
         emit finished();
         return false;
     }
-    m_controller = new LedStripController(this);
+    m_controller = new LedStripController(&m_ledStrip, NUM_LEDS, &m_wiringPi, this);
     connect (m_controller, &LedStripController::terminated, this, &Ledify::finished);
     m_controller->initializeDependencies();
     return true;
@@ -82,14 +83,14 @@ int Ledify::setupStaticUnixSignalHandlers() {
     hup.sa_flags = 0;
     hup.sa_flags |= SA_RESTART;
 
-    if (sigaction(SIGHUP, &hup, 0))
+    if (sigaction(SIGHUP, &hup, nullptr))
        return 1;
 
     term.sa_handler = Ledify::termSignalHandler;
     sigemptyset(&term.sa_mask);
     term.sa_flags |= SA_RESTART;
 
-    if (sigaction(SIGTERM, &term, 0))
+    if (sigaction(SIGTERM, &term, nullptr))
        return 2;
 
     return 0;

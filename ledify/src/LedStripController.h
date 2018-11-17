@@ -4,19 +4,20 @@
 #include "CommandReader.h"
 #include "CommandExecutor.h"
 #include "LayerController.h"
-#include "RelayController.h"
 #include "RestServer.h"
 #include <QObject>
-#include "rpi_ws281x/ws2811.h"
 
-class QString;
+class ILedStrip;
+class IWiringPi;
 class Layer;
+class QString;
+class RelayController;
 
 class LedStripController : public QObject {
     Q_OBJECT
 
 public:
-    LedStripController(QObject *parent = nullptr);
+    LedStripController(ILedStrip *ledStrip, int numLeds, IWiringPi *wiringPi, QObject *parent = nullptr);
 
     void initializeDependencies();
     LayerController &layerController();
@@ -34,9 +35,7 @@ signals:
     void terminated();
 
 private:
-    void initializeLedStrip();
     void deinitialize();
-    void deinitializeLedStrip();
     void drawLoop();
     void draw();
     void drawToLedStrip(Layer *rootLayer);
@@ -48,7 +47,8 @@ private:
     const int c_trafoIdlePowerOffDelayMs = 6000;
     const int c_drawRefreshIdleMs = 3000;
     const int c_drawRefreshAnimationMs = 1000 / 50;
-    RelayController m_relayController;
+
+    RelayController *m_relayController;
     FpsCalculator m_fpsCalculator;
     CommandReader m_commandReader;
     LayerController m_layerController;
@@ -56,8 +56,8 @@ private:
     QScopedPointer<CommandExecutor> m_executor;
     QTimer *m_loopTimer;
 
-    ws2811_t m_ledStrip;
-    uint32_t *m_ledBuffer;
+    int m_numLeds;
+    ILedStrip *m_ledStrip;
 
     friend class LedStripControllerTest;
 };

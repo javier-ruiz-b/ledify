@@ -2,6 +2,10 @@
 #include <QObject>
 #include "SerialPort.h"
 #include "LedStripController.h"
+#include "WiringPiWrapper.h"
+#include "Ws2811LedStrip.h"
+
+#define NUM_LEDS 300
 
 class QTimer;
 
@@ -40,6 +44,8 @@ private:
     SerialPort m_serial;
     LedStripController *m_controller;
 
+    WiringPiWrapper m_wiringPi;
+    Ws2811LedStrip m_ledStrip;
 };
 
 int main (int argc, char **argv);

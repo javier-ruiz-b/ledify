@@ -5,10 +5,11 @@
 #include <ColorLayer.h>
 #include <iostream>
 
+
 void LedStripControllerTest::init() {
     TimeControl::instance()->setMocked(true);
     TimeControl::instance()->setMillis(0);
-    m_tested = new LedStripController();
+    m_tested = new LedStripController(&m_ledStrip, NUM_LED, &m_wiringPi, this);
 //    m_buffer = (int *) m_buffer;
     memset(m_leds, 0xFE, NUM_LED*sizeof(uint32_t));
     connect(m_tested, &LedStripController::drawPixels, this, [this] (Layer *rootLayer) {
@@ -178,7 +179,7 @@ void LedStripControllerTest::recursiveFades() {
     m_tested->layerController().setAsRootLayer(index);
     m_tested->draw();
     for (int i = 0; i < 20; i++) {
-        index = m_tested->layerController().addColorLayer(i, 4, 5, 255);
+        index = m_tested->layerController().addColorLayer(static_cast<uint16_t>(i), 4, 5, 255);
         index = m_tested->layerController().addFadeLayerFromCurrent(index, Interpolator::InterpolatorAccelerate, 0, 5);
         TimeControl::instance()->setMillis(static_cast<uint32_t>(i));
         m_tested->draw();

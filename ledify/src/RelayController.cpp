@@ -2,12 +2,12 @@
 
 #include <QTimer>
 #include <QObject>
-#include <wiringPi.h>
+#include "IWiringPi.h"
 
-RelayController::RelayController(QObject *parent)
-    : QObject (parent) {
-    pinMode (c_trafoGpioPin, OUTPUT);
-    digitalWrite (c_trafoGpioPin, HIGH);
+RelayController::RelayController(IWiringPi *wiringPi, QObject *parent)
+    : QObject (parent), m_wiringPi(wiringPi) {
+    m_wiringPi->pinMode (c_trafoGpioPin, IWiringPi::output);
+    m_wiringPi->digitalWrite (c_trafoGpioPin, IWiringPi::high);
 }
 
 void RelayController::turnOff(int delayMs) {
@@ -25,7 +25,7 @@ bool RelayController::isOn() {
 void RelayController::changeRelayState(int pin, bool state, int delayMs) {
     auto timer = getTimer(pin);
     connect(timer, &QTimer::timeout, this, [this, pin, state, timer] {
-        digitalWrite (pin, state ? HIGH : LOW);
+        m_wiringPi->digitalWrite (pin, state ? IWiringPi::high : IWiringPi::low);
         m_pinState[c_trafoGpioPin] = state;
         timer->disconnect();
         emit relayStateChanged(pin, state);
