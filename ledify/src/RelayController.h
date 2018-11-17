@@ -24,7 +24,7 @@ private:
     QTimer* getTimer(int pin);
 
 private:
-    const int c_trafoGpioPin = 29;
+    const int c_trafoGpioPin = 27;
     IWiringPi *m_wiringPi;
     QMap<int, QTimer *> m_pinDelayTimers;
     QMap<int, bool> m_pinState;
