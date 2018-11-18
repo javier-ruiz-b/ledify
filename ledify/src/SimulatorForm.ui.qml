@@ -10,16 +10,15 @@ Pane {
         spacing: 16
         anchors.centerIn: parent
         Row {
-            spacing: 2
-            Material.elevation: 6
+            spacing: 0
             Repeater {
                 id: lightRepeater
-                model: 32
+                model: 300
 
                 Rectangle {
                     x: 0
-                    width: 24
-                    height: 24
+                    width: 6
+                    height: 16
                     color: "#000"
                 }
             }

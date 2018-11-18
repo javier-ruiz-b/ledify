@@ -3,6 +3,8 @@
 #include "LayerController.h"
 #include "FpsCalculator.h"
 #include "TimeControl.h"
+#include <SpotLayer.h>
+#include <Color.h>
 
 Q_LOGGING_CATEGORY(EXECUTOR, "ledify.executor", QtWarningMsg)
 
@@ -107,7 +109,10 @@ void CommandExecutor::cOff(const QStringList &, QString &) {
 }
 
 void CommandExecutor::cOn(const QStringList &, QString &) {
-    auto colorIndex = m_layers->addColorLayer(203, 80, 1, 203);
+    auto spotLayer = QSharedPointer<SpotLayer>(new SpotLayer);
+    spotLayer->setParams(Color(203, 80, 1, 203), 150, 150, Interpolator::InterpolatorDecelerate);
+    auto colorIndex = m_layers->addLayer(spotLayer);
+//    auto colorIndex = m_layers->addColorLayer(203, 80, 1, 203);
     auto fadeIndex = m_layers->addFadeLayerFromCurrent(colorIndex, Interpolator::InterpolatorAccelerate, 0, 2000);
     m_layers->setAsRootLayer(fadeIndex);
 }

@@ -20,6 +20,7 @@ public:
     void addColorLayer(uint16_t toIndex, uint16_t r, uint16_t g, uint16_t b, uint16_t w);
     uint16_t addColorLayer(uint16_t r, uint16_t g, uint16_t b, uint16_t w);
     void addRandomLayer(int toIndex);
+    uint16_t addLayer(QSharedPointer<Layer> layer);
     void copyLayer(int toIndex, int fromIndex);
     void moveLayer(int toIndex, int fromIndex);
     uint16_t addRandomLayer();

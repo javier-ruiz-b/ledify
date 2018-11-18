@@ -82,6 +82,12 @@ void LayerController::addRandomLayer(int toIndex) {
     m_indexedLayers[toIndex] = layer;
 }
 
+uint16_t LayerController::addLayer(QSharedPointer<Layer> layer) {
+    uint16_t toIndex = getFreeIndex();
+    m_indexedLayers[toIndex] = layer;
+    return toIndex;
+}
+
 void LayerController::copyLayer(int toIndex, int fromIndex) {
     m_indexedLayers[toIndex] = m_indexedLayers[fromIndex];
 }
