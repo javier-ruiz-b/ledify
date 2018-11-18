@@ -5,13 +5,14 @@
 #include "StartLayer.h"
 #include "FadeLayer.h"
 #include "ColorLayer.h"
+#include <Color.h>
 
 void FadeLayerTest::init() {
     m_startLayer = new StartLayer();
     m_whiteColor.reset(new ColorLayer());
-    m_whiteColor->setColor(255, 255, 255, 255);
+    m_whiteColor->setColor(Color(255, 255, 255, 255));
     m_blackColor.reset(new ColorLayer());
-    m_blackColor->setColor(0, 0, 0, 0);
+    m_blackColor->setColor(Color(0, 0, 0, 0));
 
     TimeControl::instance()->setMocked(true);
     TimeControl::instance()->setMillis(0);
@@ -95,8 +96,8 @@ void FadeLayerTest::calculatesDeceleratedFadeMiddleValue() {
 void FadeLayerTest::checksDecelerateFade() {
     createFadeLayer();
     TimeControl::instance()->setMillis(3536540);
-    m_blackColor->setColor(255,  0,   0,  0);
-    m_whiteColor->setColor(0,  255, 250, 40);
+    m_blackColor->setColor(Color(255,  0,   0,  0));
+    m_whiteColor->setColor(Color(0,  255, 250, 40));
     m_tested->setParams(m_blackColor, m_whiteColor, Interpolator::InterpolatorDecelerate, 0, 1000);
     unsigned int previousValues[4] = {0, 255 ,0, 0};
     for (unsigned int i = 0; i <= 1000; i++) {

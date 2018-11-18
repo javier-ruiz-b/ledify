@@ -28,7 +28,7 @@ Simulator::Simulator(QObject *parent) : QObject(parent) {
     m_ledController = new LedStripController(&m_ledStrip, c_numLeds, &m_wiringPi, this);
     connect(m_ledController, &LedStripController::drawPixels, this, [this] (Layer *rootLayer) {
         for (uint16_t i = 0; i < m_colorData.count(); i++) {
-            m_colorData[i] = static_cast<int>(rootLayer->pixel(i));
+            m_colorData[i] = static_cast<int>(rootLayer->pixel(i) >> 8);
         }
         setLedData(QVariant::fromValue<QVector<int>>(m_colorData));
     });

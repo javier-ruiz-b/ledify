@@ -1,16 +1,14 @@
 #include "ColorLayer.h"
 #include <QtDebug>
 #include <QLoggingCategory>
+#include <Color.h>
 
 Q_LOGGING_CATEGORY(COLOR, "ledify.color", QtWarningMsg)
 
 ColorLayer::ColorLayer() {}
 
-void ColorLayer::setColor(unsigned char r, unsigned char g, unsigned char b, unsigned char w) {
-    m_pixel = ((uint32_t)w << 24) |
-            ((uint32_t)r << 16) |
-            ((uint32_t)g << 8) |
-            (uint32_t)b;
+void ColorLayer::setColor(const Color &color) {
+    m_pixel = color.pixel();
 }
 
 uint32_t ColorLayer::pixel(uint16_t) {

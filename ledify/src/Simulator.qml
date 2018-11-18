@@ -35,7 +35,7 @@ ApplicationWindow {
             var ledColors = root.ledColors
             for (var i = 0; (i < ledData.length) &&
                             (i < ledColors.model); i++) {
-                var value = ledData[i] >> 8
+                var value = ledData[i]
 //                console.log("#" + value.toString(16))
                 ledColors.itemAt(i).color = "#" + value.toString(16)
             }

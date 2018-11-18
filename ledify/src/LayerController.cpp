@@ -2,6 +2,7 @@
 #include "ColorLayer.h"
 #include "FadeLayer.h"
 #include "RandomLayer.h"
+#include <Color.h>
 #include <QtDebug>
 #include <QLoggingCategory>
 
@@ -66,10 +67,7 @@ uint16_t LayerController::addFadeLayerFromCurrent(uint16_t toIndex, Interpolator
 
 void LayerController::addColorLayer(uint16_t toIndex, uint16_t r, uint16_t g, uint16_t b, uint16_t w) {
     QSharedPointer<ColorLayer> layer(new ColorLayer());
-    layer->setColor(static_cast<unsigned char>(r),
-                    static_cast<unsigned char>(g),
-                    static_cast<unsigned char>(b),
-                    static_cast<unsigned char>(w));
+    layer->setColor(Color(r, g, b, w));
     m_indexedLayers[toIndex] = layer;
 }
 

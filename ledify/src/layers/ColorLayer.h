@@ -1,13 +1,11 @@
 #pragma once
 #include "Layer.h"
+class Color;
 
 class ColorLayer : public Layer {
 public:
     ColorLayer();
-    void setColor(unsigned char r,
-                  unsigned char g,
-                  unsigned char b,
-                  unsigned char w);
+    void setColor(const Color &color);
 
     virtual uint32_t pixel(uint16_t);
 

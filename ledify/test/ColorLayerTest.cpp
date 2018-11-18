@@ -1,10 +1,11 @@
 #include "ColorLayerTest.h"
 #include <QtTest>
 #include <ColorLayer.h>
+#include <Color.h>
 
 void ColorLayerTest::checksPixelColor() {
     ColorLayer tested;
-    tested.setColor(1, 2, 3, 4);
+    tested.setColor(Color(1, 2, 3, 4));
     QCOMPARE(tested.pixel(0), (uint32_t)0x04010203);
 }
 

@@ -17,6 +17,7 @@ unsigned char FadeLayer::interpolatedDestinationValue() {
     auto floatValue = Interpolator::value(m_interpolator, current, end);
     if (floatValue < 0 || floatValue > 1)  {
         qCWarning(FADE) << "Interpolator out of bounds [0, 1]:" << floatValue;
+        floatValue = qMin(1.0f, qMax(0.0f, floatValue));
     }
     return static_cast<unsigned char>(roundf(floatValue * 255));
 }
@@ -91,8 +92,8 @@ inline uint8_t pixelComponent(uint32_t sourcePixel,
                               uint8_t alphaDestination,
                               int shift) {
     return (static_cast<uint16_t>((sourcePixel >> shift) & 255) * alphaSource
-             + static_cast<uint16_t>((destinationPixel >> shift) & 255) * alphaDestination)
-            / 256;
+           + static_cast<uint16_t>((destinationPixel >> shift) & 255) * alphaDestination)
+           / 256;
 }
 
 uint32_t FadeLayer::pixel(uint16_t index) {
