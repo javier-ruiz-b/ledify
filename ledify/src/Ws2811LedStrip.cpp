@@ -1,6 +1,6 @@
 #include "Ws2811LedStrip.h"
 #include <QtDebug>
-#include "Layer.h"
+#include <Layer.h>
 
 #define GPIO_PIN        18
 #define DMA             10

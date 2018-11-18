@@ -1,6 +1,6 @@
 #pragma once
 #include "Layer.h"
-#include "Interpolator.h"
+#include <Interpolator.h>
 
 class TimeControl;
 

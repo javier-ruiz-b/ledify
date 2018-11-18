@@ -6,7 +6,6 @@ endmacro()
 
 find_package (Threads)
 find_package(Qt5 COMPONENTS Core Network)
-#include_directories (${Qt5Core_INCLUDE_DIRS})
 
 # qHttp
 aux_source_directory(qhttp/3rdparty/http-parser HTTP_PARSER_SOURCES)
@@ -23,14 +22,10 @@ include_directories(Dusk2Dawn)
 add_library(Dusk2Dawn ${DUSK2DAWN_SOURCES})
 
 # Source libraries
+include_directories ("." "layers")
 addLibrary (CommandReader)
-addLibrary (Layer)
-addLibrary (StartLayer)
-addLibrary (ColorLayer)
-addLibrary (RandomLayer)
 addLibrary (Interpolator)
-addLibrary (CenterToEdgesAnimationLayer)
-addLibrary (FadeLayer Interpolator Layer)
+add_subdirectory(layers)
 addLibrary (FpsCalculator)
 addLibrary (Daytime Dusk2Dawn)
 addLibrary (TimeControl)

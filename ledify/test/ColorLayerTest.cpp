@@ -1,6 +1,6 @@
 #include "ColorLayerTest.h"
 #include <QtTest>
-#include "ColorLayer.h"
+#include <ColorLayer.h>
 
 void ColorLayerTest::checksPixelColor() {
     ColorLayer tested;
