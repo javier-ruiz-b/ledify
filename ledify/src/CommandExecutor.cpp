@@ -1,5 +1,6 @@
 #include "CommandExecutor.h"
 #include <QLoggingCategory>
+#include <QSharedPointer>
 #include "LayerController.h"
 #include "FpsCalculator.h"
 #include "TimeControl.h"
@@ -52,37 +53,36 @@ void CommandExecutor::cColor(const QStringList &args, QString &) {
                                          args[2].toUShort(),
                                          args[3].toUShort(),
                                          args[4].toUShort())));
-
 }
 
 void CommandExecutor::cRandom(const QStringList &, QString &) {
-//    auto currentLayer = m_layers->rootLayer();
-    auto randomIndex = m_layers->add(new RandomLayer());
-    auto fadeIndex = m_layers->addFadeLayerFromCurrent(randomIndex, Interpolator::InterpolatorDecelerate, 0, 1000);
-    m_layers->setAsRoot(fadeIndex);
-    auto colorIndex = m_layers->addColorLayer(60, 40, 5, 100);
-//    m_layers->add(new FadeLayer());
-    auto fadeBackIndex = m_layers->addFadeLayerFromCurrent(colorIndex, Interpolator::InterpolatorDecelerate, 8000, 1000);
-    m_layers->setAsRoot(fadeBackIndex);
+    auto random = QSharedPointer<Layer>(new RandomLayer());
+    QSharedPointer<Layer> firstFade(new FadeLayer(m_layers->current(), random,
+                                   Interpolator::InterpolatorDecelerate, 0, 1000));
+
+    auto fadeBack = new FadeLayer(firstFade, m_layers->current(),
+                                  Interpolator::InterpolatorDecelerate, 8000, 1000);
+    m_layers->setAsRoot(fadeBack);
 }
 
 void CommandExecutor::cFadeTo(const QStringList &args, QString &) {
     expects(5, args);
-    m_layers->addFadeLayerFromCurrent(args[0].toUShort(),
-            args[1].toUShort(),
-            static_cast<Interpolator::Type>(args[2].toUShort()),
-            args[3].toUShort(),
-            args[4].toUShort());
+    m_layers->addTo(args[0].toUShort(),
+          new FadeLayer(m_layers->current(),
+                        m_layers->at(args[1].toUShort()),
+                        static_cast<Interpolator::Type>(args[2].toUShort()),
+                        args[3].toUShort(),
+                        args[4].toUShort()));
 }
 
 void CommandExecutor::cFade(const QStringList &args, QString &) {
     expects(6, args);
-    m_layers->addFadeLayer(args[0].toUShort(),
-            args[1].toUShort(),
-            args[2].toUShort(),
-            static_cast<Interpolator::Type>(args[3].toUShort()),
-            args[4].toUShort(),
-            args[5].toUShort());
+    m_layers->addTo(args[2].toUShort(),
+                    new FadeLayer(m_layers->at(args[0].toUShort()),
+                                  m_layers->at(args[1].toUShort()),
+                                  static_cast<Interpolator::Type>(args[3].toUShort()),
+                                  args[4].toUShort(),
+                                  args[5].toUShort()));
 }
 
 void CommandExecutor::cFps(const QStringList &args, QString &) {
@@ -107,15 +107,18 @@ void CommandExecutor::cMove(const QStringList &args, QString &) {
 }
 
 void CommandExecutor::cOff(const QStringList &, QString &) {
-    auto colorIndex = m_layers->add(new ColorLayer(Color(0, 0, 0 ,0)));
-    auto fadeIndex = m_layers->addFadeLayerFromCurrent(colorIndex, Interpolator::InterpolatorDecelerate, 0, 2000);
-    m_layers->setAsRoot(fadeIndex);
+    auto fade = new FadeLayer(m_layers->current(),
+                              QSharedPointer<Layer>(new ColorLayer(Color(0, 0, 0 ,0))),
+                              Interpolator::InterpolatorDecelerate, 0, 1500);
+    m_layers->setAsRoot(fade);
 }
 
 void CommandExecutor::cOn(const QStringList &, QString &) {
-    auto spotIndex = m_layers->add(new SpotLayer(Color(203, 80, 1, 203), 150, 100, Interpolator::InterpolatorLinear));
-    auto fadeIndex = m_layers->addFadeLayerFromCurrent(spotIndex, Interpolator::InterpolatorAccelerate, 0, 2000);
-    m_layers->setAsRoot(fadeIndex);
+    QSharedPointer<Layer> spotLayer(new SpotLayer(Color(203, 80, 1, 203), 150, 150, Interpolator::InterpolatorLinear));
+    auto fade = new FadeLayer(m_layers->current(),
+                              spotLayer,
+                              Interpolator::InterpolatorAccelerate, 0, 2000);
+    m_layers->setAsRoot(fade);
 }
 
 void CommandExecutor::cOnIfNight(const QStringList &args, QString &response) {

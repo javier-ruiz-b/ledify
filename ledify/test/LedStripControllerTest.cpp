@@ -120,8 +120,10 @@ void LedStripControllerTest::oneFadeWithLayerControllerInterface() {
     LayerController &layerControl = m_tested->layerController();
     layerControl.addTo(0, new ColorLayer(Color(0, 0, 0, 0)));
     layerControl.addTo(1, new ColorLayer(Color(0, 255, 0, 0)));
-    layerControl.addFadeLayer(2, 0, 1, Interpolator::InterpolatorAccelerate, 1, 100);
-    layerControl.setAsRoot(2);
+
+    layerControl.setAsRoot(new FadeLayer(layerControl.at(0),
+                                         layerControl.at(1),
+                                         Interpolator::InterpolatorAccelerate, 1, 100));
     writeCommand("C+FPS=0");
 
     for (uint32_t timeMs = 0; timeMs < 130; timeMs+=10) {
@@ -176,12 +178,15 @@ void LedStripControllerTest::fadeAcceptanceTest() {
 }
 
 void LedStripControllerTest::recursiveFades() {
-    auto index =  m_tested->layerController().add(new ColorLayer(Color(2, 4, 5, 255)));
-    m_tested->layerController().setAsRoot(index);
+    auto &layerControl = m_tested->layerController();
+    auto index = layerControl.add(new ColorLayer(Color(2, 4, 5, 255)));
+    layerControl.setAsRoot(index);
     m_tested->draw();
     for (int i = 0; i < 20; i++) {
-        index = m_tested->layerController().add(new ColorLayer(Color(i, 4, 5, 255)));
-        index = m_tested->layerController().addFadeLayerFromCurrent(index, Interpolator::InterpolatorAccelerate, 0, 5);
+        auto colorLayer = QSharedPointer<ColorLayer>(new ColorLayer(Color(i, 4, 5, 255)));
+        index = layerControl.add(new FadeLayer(layerControl.current(),
+                                               colorLayer,
+                                               Interpolator::InterpolatorAccelerate, 0, 5));
         TimeControl::instance()->setMillis(static_cast<uint32_t>(i));
         m_tested->draw();
     }
