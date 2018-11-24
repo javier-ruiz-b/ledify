@@ -12,7 +12,7 @@ class FadeLayerTest : public QObject {
 public:
     explicit FadeLayerTest(QObject *parent = nullptr) : QObject(parent) {}
 
-    void createFadeLayer();
+    void createFadeLayer(FadeLayer *layer);
     
 private slots:
     void init();

@@ -3,6 +3,9 @@
 #include "LayerController.h"
 #include "FpsCalculator.h"
 #include "TimeControl.h"
+#include "ColorLayer.h"
+#include "FadeLayer.h"
+#include "RandomLayer.h"
 #include <SpotLayer.h>
 #include <Color.h>
 
@@ -39,25 +42,28 @@ bool CommandExecutor::parseCommand(const QString &command, const QStringList &ar
 
 void CommandExecutor::cSet(const QStringList &args, QString &) {
     expects(1, args);
-    m_layers->setAsRootLayer(args[0].toUShort());
+    m_layers->setAsRoot(args[0].toUShort());
 }
 
 void CommandExecutor::cColor(const QStringList &args, QString &) {
     expects(5, args);
-    m_layers->addColorLayer(args[0].toUShort(),
-            args[1].toUShort(),
-            args[2].toUShort(),
-            args[3].toUShort(),
-            args[4].toUShort());
+    m_layers->addTo(args[0].toUShort(),
+                    new ColorLayer(Color(args[1].toUShort(),
+                                         args[2].toUShort(),
+                                         args[3].toUShort(),
+                                         args[4].toUShort())));
+
 }
 
 void CommandExecutor::cRandom(const QStringList &, QString &) {
-    auto index = m_layers->addRandomLayer();
-    index = m_layers->addFadeLayerFromCurrent(index,Interpolator::InterpolatorDecelerate,  0, 1000);
-    m_layers->setAsRootLayer(index);
+//    auto currentLayer = m_layers->rootLayer();
+    auto randomIndex = m_layers->add(new RandomLayer());
+    auto fadeIndex = m_layers->addFadeLayerFromCurrent(randomIndex, Interpolator::InterpolatorDecelerate, 0, 1000);
+    m_layers->setAsRoot(fadeIndex);
     auto colorIndex = m_layers->addColorLayer(60, 40, 5, 100);
-    index = m_layers->addFadeLayerFromCurrent(colorIndex, Interpolator::InterpolatorDecelerate, 8000, 1000);
-    m_layers->setAsRootLayer(index);
+//    m_layers->add(new FadeLayer());
+    auto fadeBackIndex = m_layers->addFadeLayerFromCurrent(colorIndex, Interpolator::InterpolatorDecelerate, 8000, 1000);
+    m_layers->setAsRoot(fadeBackIndex);
 }
 
 void CommandExecutor::cFadeTo(const QStringList &args, QString &) {
@@ -93,28 +99,23 @@ void CommandExecutor::cReset(const QStringList &, QString &) {
 }
 
 void CommandExecutor::cCopy(const QStringList &args, QString &) {
-    m_layers->copyLayer(args[0].toUShort(),
-            args[1].toUShort());
+    m_layers->copy(args[0].toUShort(), args[1].toUShort());
 }
 
 void CommandExecutor::cMove(const QStringList &args, QString &) {
-    m_layers->moveLayer(args[0].toUShort(),
-            args[1].toUShort());
+    m_layers->move(args[0].toUShort(), args[1].toUShort());
 }
 
 void CommandExecutor::cOff(const QStringList &, QString &) {
-    auto colorIndex = m_layers->addColorLayer(0, 0, 0 ,0);
+    auto colorIndex = m_layers->add(new ColorLayer(Color(0, 0, 0 ,0)));
     auto fadeIndex = m_layers->addFadeLayerFromCurrent(colorIndex, Interpolator::InterpolatorDecelerate, 0, 2000);
-    m_layers->setAsRootLayer(fadeIndex);
+    m_layers->setAsRoot(fadeIndex);
 }
 
 void CommandExecutor::cOn(const QStringList &, QString &) {
-    auto spotLayer = QSharedPointer<SpotLayer>(new SpotLayer);
-    spotLayer->setParams(Color(203, 80, 1, 203), 150, 150, Interpolator::InterpolatorDecelerate);
-    auto colorIndex = m_layers->addLayer(spotLayer);
-//    auto colorIndex = m_layers->addColorLayer(203, 80, 1, 203);
-    auto fadeIndex = m_layers->addFadeLayerFromCurrent(colorIndex, Interpolator::InterpolatorAccelerate, 0, 2000);
-    m_layers->setAsRootLayer(fadeIndex);
+    auto spotIndex = m_layers->add(new SpotLayer(Color(203, 80, 1, 203), 150, 100, Interpolator::InterpolatorLinear));
+    auto fadeIndex = m_layers->addFadeLayerFromCurrent(spotIndex, Interpolator::InterpolatorAccelerate, 0, 2000);
+    m_layers->setAsRoot(fadeIndex);
 }
 
 void CommandExecutor::cOnIfNight(const QStringList &args, QString &response) {

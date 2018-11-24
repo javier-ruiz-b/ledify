@@ -7,10 +7,6 @@
 
 Q_LOGGING_CATEGORY(FADE, "ledify.fade", QtWarningMsg)
 
-FadeLayer::FadeLayer() {
-    m_time = TimeControl::instance();
-}
-
 unsigned char FadeLayer::interpolatedDestinationValue() {
     auto current = static_cast<float>(m_currentTimeDifferenceMs);
     auto end = static_cast<float>(m_durationMs);
@@ -22,7 +18,8 @@ unsigned char FadeLayer::interpolatedDestinationValue() {
     return static_cast<unsigned char>(roundf(floatValue * 255));
 }
 
-void FadeLayer::setParams(QSharedPointer<Layer> source, QSharedPointer<Layer> destination, Interpolator::Type interpolator, uint16_t startTimeMs, uint16_t durationMs) {
+FadeLayer::FadeLayer(QSharedPointer<Layer> source, QSharedPointer<Layer> destination, Interpolator::Type interpolator, uint16_t startTimeMs, uint16_t durationMs) {
+    m_time = TimeControl::instance();
     m_source = source;
     m_destination = destination;
     m_interpolator = interpolator;
@@ -31,6 +28,16 @@ void FadeLayer::setParams(QSharedPointer<Layer> source, QSharedPointer<Layer> de
     m_source->setParent(this);
     m_destination->setParent(this);
 }
+
+//void FadeLayer::setParams(QSharedPointer<Layer> source, QSharedPointer<Layer> destination, Interpolator::Type interpolator, uint16_t startTimeMs, uint16_t durationMs) {
+//    m_source = source;
+//    m_destination = destination;
+//    m_interpolator = interpolator;
+//    m_delayFromStart = startTimeMs;
+//    m_durationMs = durationMs;
+//    m_source->setParent(this);
+//    m_destination->setParent(this);
+//}
 
 void FadeLayer::recalculateTimeDifference() {
     uint32_t currentTimeMs = m_time->millis();

@@ -7,9 +7,11 @@ class Interpolator {
 
 public:
     enum Type {
-        InterpolatorLinear = 0,
-        InterpolatorAccelerate = 1,
-        InterpolatorDecelerate = 2
+        InterpolatorLinear,
+        InterpolatorAccelerate,
+        InterpolatorAccelerate4x,
+        InterpolatorDecelerate,
+        InterpolatorDecelerate4x
     };
 
 public:

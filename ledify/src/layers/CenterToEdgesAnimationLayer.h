@@ -6,9 +6,7 @@ class TimeControl;
 
 class CenterToEdgesAnimationLayer : public Layer {
 public:
-    CenterToEdgesAnimationLayer();
-
-    void setParams(QSharedPointer<Layer> background, Interpolator::Type interpolator, uint32_t color, uint16_t pixels, uint16_t durationMs, float endDistance);
+    CenterToEdgesAnimationLayer(QSharedPointer<Layer> background, Interpolator::Type interpolator, uint32_t color, uint16_t pixels, uint16_t durationMs, float endDistance);
 
     uint32_t pixel(uint16_t index) override;
     virtual void startDraw() override;

@@ -4,7 +4,7 @@ class Color;
 
 class ColorLayer : public Layer {
 public:
-    ColorLayer();
+    ColorLayer(const Color &color);
     void setColor(const Color &color);
 
     virtual uint32_t pixel(uint16_t);

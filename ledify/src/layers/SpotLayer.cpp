@@ -2,15 +2,14 @@
 #include <Color.h>
 #include <QtDebug>
 
-SpotLayer::SpotLayer() {}
-
-void SpotLayer::setParams(const Color &color, float position, float size, Interpolator::Type interpolator) {
+SpotLayer::SpotLayer(const Color &color, float position, float size, Interpolator::Type interpolator) {
     m_position = position;
     uint32_t bufferSize = 2 * static_cast<uint32_t>(size);
     m_bufferSize = bufferSize;
 
     delete m_pixelBuffer;
     m_pixelBuffer = new uint32_t[bufferSize];
+    memset(m_pixelBuffer, 0, bufferSize);
     for (uint32_t i = 0; i < m_bufferSize/2; i++) {
     //TODO:here
         auto value = Interpolator::value(interpolator, size - i, size);

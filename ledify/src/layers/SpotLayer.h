@@ -6,8 +6,7 @@ class Color;
 
 class SpotLayer : public Layer {
 public:
-    SpotLayer();
-    void setParams(const Color &color, float position, float size, Interpolator::Type interpolator);
+    SpotLayer(const Color &color, float position, float size, Interpolator::Type interpolator);
 
     virtual uint32_t pixel(uint16_t);
 

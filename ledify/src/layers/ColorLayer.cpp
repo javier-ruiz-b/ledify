@@ -5,7 +5,9 @@
 
 Q_LOGGING_CATEGORY(COLOR, "ledify.color", QtWarningMsg)
 
-ColorLayer::ColorLayer() {}
+ColorLayer::ColorLayer(const Color &color) {
+    m_pixel = color.pixel();
+}
 
 void ColorLayer::setColor(const Color &color) {
     m_pixel = color.pixel();

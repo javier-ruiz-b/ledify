@@ -7,6 +7,7 @@
 #include "Simulator.h"
 #include "Layer.h"
 #include "LedStripController.h"
+#include "Color.h"
 
 static const int c_numLeds = 300;
 static QVector<int> m_colorData(c_numLeds);
@@ -28,7 +29,13 @@ Simulator::Simulator(QObject *parent) : QObject(parent) {
     m_ledController = new LedStripController(&m_ledStrip, c_numLeds, &m_wiringPi, this);
     connect(m_ledController, &LedStripController::drawPixels, this, [this] (Layer *rootLayer) {
         for (uint16_t i = 0; i < m_colorData.count(); i++) {
-            m_colorData[i] = static_cast<int>(rootLayer->pixel(i) & 0xFFFFFF);
+            Color color(rootLayer->pixel(i));
+            //simulate white
+            int w = color.w()/3;
+            Color newColor(qMin(color.r() + w, 255),
+                           qMin(color.g() + w, 255),
+                           qMin(color.b() + w, 255), 0);
+            m_colorData[i] = static_cast<int>(newColor.pixel());
         }
         setLedData(QVariant::fromValue<QVector<int>>(m_colorData));
     });

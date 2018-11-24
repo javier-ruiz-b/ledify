@@ -5,10 +5,14 @@ float Interpolator::value(Type type, float current, float end) {
     switch (type) {
     case InterpolatorAccelerate:
         return acceleratedValue(current, end);
+    case InterpolatorAccelerate4x:
+        return acceleratedValue(current, end, 4);
     case InterpolatorDecelerate:
         return deceleratedValue(current, end);
+    case InterpolatorDecelerate4x:
+        return deceleratedValue(current, end, 4);
     case InterpolatorLinear:
-    default:
+//    default:
         return linearValue(current, end);
     }
 }

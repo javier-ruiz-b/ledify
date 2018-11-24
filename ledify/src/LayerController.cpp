@@ -1,4 +1,4 @@
-#include "LayerController.h"
+﻿#include "LayerController.h"
 #include "ColorLayer.h"
 #include "FadeLayer.h"
 #include "RandomLayer.h"
@@ -17,7 +17,7 @@ void LayerController::reset() {
     m_rootLayer.reset();
 }
 
-void LayerController::setAsRootLayer(uint16_t index) {
+void LayerController::setAsRoot(uint16_t index) {
     if (!m_indexedLayers.contains(index)) {
         qCCritical(LAYER_CONTROL) << "Doesn't exist " << index;
         return;
@@ -26,18 +26,22 @@ void LayerController::setAsRootLayer(uint16_t index) {
     m_rootLayer.setChild(m_indexedLayers.take(index));
 }
 
-void LayerController::addFadeLayer(QSharedPointer<Layer> from, QSharedPointer<Layer> to, uint16_t myIndex, Interpolator::Type interpolator, uint16_t startDelayMs, uint16_t durationMs) {
+void LayerController::addFadeLayer(QSharedPointer<Layer> from,
+                                   QSharedPointer<Layer> to,
+                                   uint16_t myIndex,
+                                   Interpolator::Type interpolator,
+                                   uint16_t startDelayMs,
+                                   uint16_t durationMs) {
     if (from.isNull() || to.isNull()) {
         qCCritical(LAYER_CONTROL) << static_cast<void *>(from.data())
                          << "or " << static_cast<void *>(to.data()) << "are null";
         return;
     }
-    QSharedPointer<FadeLayer> layer(new FadeLayer());
-    layer->setParams(from,
-                     to,
-                     interpolator,
-                     startDelayMs,
-                     durationMs);
+    QSharedPointer<FadeLayer> layer(new FadeLayer(from,
+                                                  to,
+                                                  interpolator,
+                                                  startDelayMs,
+                                                  durationMs));
     m_indexedLayers[myIndex] = layer;
 }
 
@@ -66,8 +70,7 @@ uint16_t LayerController::addFadeLayerFromCurrent(uint16_t toIndex, Interpolator
 }
 
 void LayerController::addColorLayer(uint16_t toIndex, uint16_t r, uint16_t g, uint16_t b, uint16_t w) {
-    QSharedPointer<ColorLayer> layer(new ColorLayer());
-    layer->setColor(Color(r, g, b, w));
+    QSharedPointer<ColorLayer> layer(new ColorLayer(Color(r, g, b, w)));
     m_indexedLayers[toIndex] = layer;
 }
 
@@ -77,40 +80,42 @@ uint16_t LayerController::addColorLayer(uint16_t r, uint16_t g, uint16_t b, uint
     return index;
 }
 
-void LayerController::addRandomLayer(int toIndex) {
-    QSharedPointer<RandomLayer> layer(new RandomLayer());
-    m_indexedLayers[toIndex] = layer;
+void LayerController::addTo(uint16_t toIndex, Layer *layer) {
+    m_indexedLayers[toIndex] = QSharedPointer<Layer>(layer);
 }
 
-uint16_t LayerController::addLayer(QSharedPointer<Layer> layer) {
+uint16_t LayerController::add(Layer *layer) {
+    return add(QSharedPointer<Layer>(layer));
+}
+
+uint16_t LayerController::add(QSharedPointer<Layer> layer) {
     uint16_t toIndex = getFreeIndex();
     m_indexedLayers[toIndex] = layer;
     return toIndex;
 }
 
-void LayerController::copyLayer(int toIndex, int fromIndex) {
+void LayerController::copy(int toIndex, int fromIndex) {
     m_indexedLayers[toIndex] = m_indexedLayers[fromIndex];
 }
 
-void LayerController::moveLayer(int toIndex, int fromIndex) {
+void LayerController::move(int toIndex, int fromIndex) {
     m_indexedLayers[toIndex] = m_indexedLayers[fromIndex];
     m_indexedLayers[fromIndex].reset();
 }
 
-uint16_t LayerController::addRandomLayer() {
-    uint16_t index = getFreeIndex();
-    addRandomLayer(index);
-    return index;
+QSharedPointer<Layer> LayerController::at(int index) {
+    return m_indexedLayers[index];
 }
 
-StartLayer *LayerController::rootLayer() {
-    return &m_rootLayer;
+StartLayer &LayerController::root() {
+    return m_rootLayer;
 }
 
 uint16_t LayerController::getFreeIndex() {
-    uint16_t index;
-    do {
-        index = static_cast<uint16_t>(qrand() % 65536);
-    } while (m_indexedLayers.contains(index));
-    return index;
+    for (uint16_t i = 1; i < UINT16_MAX; i++) {
+        if (m_indexedLayers.contains(i)) {
+            return i;
+        }
+    }
+    return 0;
 }

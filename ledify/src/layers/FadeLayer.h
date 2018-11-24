@@ -7,7 +7,7 @@ class TimeControl;
 class FadeLayer : public Layer {
 
 public:
-    FadeLayer();
+    FadeLayer(QSharedPointer<Layer> source, QSharedPointer<Layer> destination, Interpolator::Type interpolator, uint16_t startTimeMs, uint16_t durationMs);
 
     void setParams(QSharedPointer<Layer> source, QSharedPointer<Layer> destination, Interpolator::Type interpolator, uint16_t startTimeMs, uint16_t durationMs);
     bool finished();

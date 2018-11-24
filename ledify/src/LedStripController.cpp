@@ -4,7 +4,8 @@
 #include <chrono>
 #include <QTimer>
 #include <QString>
-//#include "IWiringPi.h"
+#include <Color.h>
+#include <ColorLayer.h>
 #include "ILedStrip.h"
 #include "Layer.h"
 #include "RelayController.h"
@@ -17,8 +18,8 @@ LedStripController::LedStripController(ILedStrip *ledStrip, int numLeds, IWiring
     connect(this, &LedStripController::terminated, this, &LedStripController::deinitialize);
 
     m_relayController = new RelayController(wiringPi, this);
-    m_layerController.addColorLayer(0, 0, 0, 0, 0);
-    m_layerController.setAsRootLayer(0);
+    auto blackColor = m_layerController.add(new ColorLayer(Color(0, 0, 0, 0)));
+    m_layerController.setAsRoot(blackColor);
     m_executor.reset(new CommandExecutor(&m_layerController, &m_fpsCalculator));
 
     m_loopTimer = new QTimer(this);
@@ -53,12 +54,12 @@ bool LedStripController::writeChar(char c) {
 }
 
 bool LedStripController::animationFinished() {
-    return m_layerController.rootLayer()->animationFinished();
+    return m_layerController.root().animationFinished();
 }
 
 bool LedStripController::isAnyLedOn() {
-    auto rootLayer = m_layerController.rootLayer();
-    auto child = rootLayer->child();
+    auto rootLayer = m_layerController.root();
+    auto child = rootLayer.child();
     if (!child) {
         return false;
     }
@@ -128,15 +129,15 @@ void LedStripController::terminate() {
 
 void LedStripController::draw() {
     m_fpsCalculator.tick();
-    auto *rootLayer = m_layerController.rootLayer();
+    auto rootLayer = m_layerController.root();
 
-    rootLayer->startDraw();
-    auto child = rootLayer->child();
+    rootLayer.startDraw();
+    auto child = rootLayer.child();
     if (!child.isNull()) {
         emit drawPixels(child.data());
     }
 
-    rootLayer->endDraw();
+    rootLayer.endDraw();
 }
 
 void LedStripController::drawLoop() {

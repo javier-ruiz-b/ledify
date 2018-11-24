@@ -27,8 +27,7 @@ void StartLayer::startDraw() {
 }
 
 void StartLayer::endDraw() {
-//    if (m_child)
-        m_child->endDraw();
+    m_child->endDraw();
 }
 
 bool StartLayer::animationFinished() {

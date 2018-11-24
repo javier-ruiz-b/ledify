@@ -9,10 +9,8 @@
 
 void FadeLayerTest::init() {
     m_startLayer = new StartLayer();
-    m_whiteColor.reset(new ColorLayer());
-    m_whiteColor->setColor(Color(255, 255, 255, 255));
-    m_blackColor.reset(new ColorLayer());
-    m_blackColor->setColor(Color(0, 0, 0, 0));
+    m_whiteColor.reset(new ColorLayer(Color(255, 255, 255, 255)));
+    m_blackColor.reset(new ColorLayer(Color(0, 0, 0, 0)));
 
     TimeControl::instance()->setMocked(true);
     TimeControl::instance()->setMillis(0);
@@ -25,80 +23,72 @@ void FadeLayerTest::cleanup() {
     delete m_startLayer;
 }
 
-void FadeLayerTest::createFadeLayer() {
-    m_tested.reset(new FadeLayer());
+void FadeLayerTest::createFadeLayer(FadeLayer *layer) {
+    m_tested.reset(layer);
     m_startLayer->setChild(m_tested);
 }
 
 void FadeLayerTest::showsSourceLayer() {
-    createFadeLayer();
-    m_tested->setParams(m_whiteColor, m_blackColor, Interpolator::InterpolatorLinear, 5000, 1000);
+    createFadeLayer(new FadeLayer(m_whiteColor, m_blackColor, Interpolator::InterpolatorLinear, 5000, 1000));
     TimeControl::instance()->setMillis(5000);
     m_tested->startDraw();
-    QCOMPARE(m_tested->pixel(0), (uint32_t)0xFFFFFFFF);
+    QCOMPARE(m_tested->pixel(0), 0xFFFFFFFF);
 }
 
 void FadeLayerTest::showsDestinationLayer() {
-    createFadeLayer();
-    m_tested->setParams(m_whiteColor, m_blackColor, Interpolator::InterpolatorLinear, 5000, 1000);
+    createFadeLayer(new FadeLayer(m_whiteColor, m_blackColor, Interpolator::InterpolatorLinear, 5000, 1000));
     m_tested->startDraw();
     TimeControl::instance()->setMillis(5999);
     m_tested->startDraw();
-    QCOMPARE(m_tested->pixel(0), (uint32_t)0x00000000);
+    QCOMPARE(m_tested->pixel(0), 0x00000000U);
 }
 
 void FadeLayerTest::showsSourceLayerBeforeAnimationStarts() {
-    createFadeLayer();
-    m_tested->setParams(m_whiteColor, m_blackColor, Interpolator::InterpolatorLinear, 5000, 1000);
+    createFadeLayer(new FadeLayer(m_whiteColor, m_blackColor, Interpolator::InterpolatorLinear, 5000, 1000));
     m_tested->startDraw();
     TimeControl::instance()->setMillis(0);
     m_tested->startDraw();
-    QCOMPARE(m_tested->pixel(0), (uint32_t)0xFFFFFFFF);
+    QCOMPARE(m_tested->pixel(0), 0xFFFFFFFF);
 }
 
 void FadeLayerTest::finishesAndReplacesStartLayerChild() {
-    createFadeLayer();
-    m_tested->setParams(m_whiteColor, m_blackColor, Interpolator::InterpolatorLinear, 5000, 1000);
+    createFadeLayer(new FadeLayer(m_whiteColor, m_blackColor, Interpolator::InterpolatorLinear, 5000, 1000));
     m_tested->startDraw();
     TimeControl::instance()->setMillis(6001);
     m_tested->startDraw();
     QCOMPARE(m_tested->finished(), true);
-    QCOMPARE(m_startLayer->pixel(0), (uint32_t)0x00000000);
+    QCOMPARE(m_startLayer->pixel(0), 0x00000000U);
 }
 
 void FadeLayerTest::calculatesLinearFadeMiddleValue() {
-    createFadeLayer();
-    m_tested->setParams(m_whiteColor, m_blackColor, Interpolator::InterpolatorLinear, 5000, 1000);
+    createFadeLayer(new FadeLayer(m_whiteColor, m_blackColor, Interpolator::InterpolatorLinear, 5000, 1000));
     m_tested->startDraw();
     TimeControl::instance()->setMillis(5500);
     m_tested->startDraw();
-    QCOMPARE(m_tested->pixel(0), (uint32_t)0x7F7F7F7F);
+    QCOMPARE(m_tested->pixel(0), 0x7F7F7F7FU);
 }
 
 void FadeLayerTest::calculatesAcceleratedFadeMiddleValue() {
-    createFadeLayer();
-    m_tested->setParams(m_whiteColor, m_blackColor, Interpolator::InterpolatorAccelerate, 5000, 1000);
+    createFadeLayer(new FadeLayer(m_whiteColor, m_blackColor, Interpolator::InterpolatorAccelerate, 5000, 1000));
     m_tested->startDraw();
     TimeControl::instance()->setMillis(5500);
     m_tested->startDraw();
-    QCOMPARE(m_tested->pixel(0), (uint32_t)0xBFBFBFBF);
+    QCOMPARE(m_tested->pixel(0), 0xBFBFBFBFU);
 }
 
 void FadeLayerTest::calculatesDeceleratedFadeMiddleValue() {
-    createFadeLayer();
-    m_tested->setParams(m_whiteColor, m_blackColor, Interpolator::InterpolatorDecelerate, 5000, 1000);
+    createFadeLayer(new FadeLayer(m_whiteColor, m_blackColor, Interpolator::InterpolatorDecelerate, 5000, 1000));
     m_tested->startDraw();
     TimeControl::instance()->setMillis(5500);
     m_tested->startDraw();
-    QCOMPARE(m_tested->pixel(0), (uint32_t)0x40404040);
+    QCOMPARE(m_tested->pixel(0), 0x40404040U);
 }
 
 void FadeLayerTest::checksDecelerateFade() {
-    createFadeLayer();
     TimeControl::instance()->setMillis(3536540);
     m_blackColor->setColor(Color(255,  0,   0,  0));
     m_whiteColor->setColor(Color(0,  255, 250, 40));
-    m_tested->setParams(m_blackColor, m_whiteColor, Interpolator::InterpolatorDecelerate, 0, 1000);
+    createFadeLayer(new FadeLayer(m_blackColor, m_whiteColor, Interpolator::InterpolatorDecelerate, 0, 1000));
     unsigned int previousValues[4] = {0, 255 ,0, 0};
     for (unsigned int i = 0; i <= 1000; i++) {
         TimeControl::instance()->setMillis(3536540 + i);
