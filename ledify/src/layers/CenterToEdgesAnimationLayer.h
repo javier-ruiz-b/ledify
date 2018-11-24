@@ -9,7 +9,9 @@ public:
     CenterToEdgesAnimationLayer(QSharedPointer<Layer> background, Interpolator::Type interpolator, uint32_t color, uint16_t pixels, uint16_t durationMs, float endDistance);
 
     uint32_t pixel(uint16_t index) override;
+
     virtual void startDraw() override;
+    virtual void draw(uint32_t *buffer, uint32_t size) override;
     virtual void endDraw() override;
     virtual bool animationFinished() override { return false; }
     virtual void setNewChild(Layer *currentChild, QSharedPointer<Layer> newChild) override;

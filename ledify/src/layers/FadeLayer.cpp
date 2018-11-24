@@ -29,15 +29,9 @@ FadeLayer::FadeLayer(QSharedPointer<Layer> source, QSharedPointer<Layer> destina
     m_destination->setParent(this);
 }
 
-//void FadeLayer::setParams(QSharedPointer<Layer> source, QSharedPointer<Layer> destination, Interpolator::Type interpolator, uint16_t startTimeMs, uint16_t durationMs) {
-//    m_source = source;
-//    m_destination = destination;
-//    m_interpolator = interpolator;
-//    m_delayFromStart = startTimeMs;
-//    m_durationMs = durationMs;
-//    m_source->setParent(this);
-//    m_destination->setParent(this);
-//}
+FadeLayer::~FadeLayer() {
+    delete[] m_tempBuffer;
+}
 
 void FadeLayer::recalculateTimeDifference() {
     uint32_t currentTimeMs = m_time->millis();
@@ -68,6 +62,64 @@ void FadeLayer::startDraw() {
     }
 }
 
+inline uint8_t pixelComponent(uint32_t sourcePixel,
+                              uint32_t destinationPixel,
+                              uint16_t alphaSource,
+                              uint8_t alphaDestination,
+                              int shift) {
+    return (static_cast<uint16_t>((sourcePixel >> shift) & 255) * alphaSource
+           + static_cast<uint16_t>((destinationPixel >> shift) & 255) * alphaDestination)
+           / 256;
+}
+
+inline uint32_t FadeLayer::drawPixel(uint32_t sourcePixel, uint32_t destinationPixel, uint16_t alphaSource) {
+    uint8_t w = pixelComponent(sourcePixel, destinationPixel, alphaSource, m_alphaDestination, 24);
+    uint8_t r = pixelComponent(sourcePixel, destinationPixel, alphaSource, m_alphaDestination, 16);
+    uint8_t g = pixelComponent(sourcePixel, destinationPixel, alphaSource, m_alphaDestination, 8);
+    uint8_t b = pixelComponent(sourcePixel, destinationPixel, alphaSource, m_alphaDestination, 0);
+
+    return (static_cast<uint32_t>(w) << 24) |
+           (static_cast<uint32_t>(r) << 16) |
+           (static_cast<uint32_t>(g) << 8) |
+           b;
+}
+
+void FadeLayer::draw(uint32_t *buffer, uint32_t size) {
+    if (m_currentTimeDifferenceMs >= m_durationMs) {
+        return m_destination->draw(buffer, size);
+    }
+
+    if (m_tempBuffer == nullptr) {
+        m_tempBuffer = new uint32_t[size];
+    }
+    auto sourceBuffer = buffer;
+    auto destinationBuffer = m_tempBuffer;
+
+    m_source->draw(sourceBuffer, size);
+    m_destination->draw(destinationBuffer, size);
+
+    uint16_t alphaSource = 256 - m_alphaDestination;
+
+    for (uint32_t i = 0; i < size; i++) {
+        buffer[i] = drawPixel(sourceBuffer[i],
+                              destinationBuffer[i],
+                              alphaSource);
+    }
+}
+
+uint32_t FadeLayer::pixel(uint16_t index) {
+    if (m_currentTimeDifferenceMs >= m_durationMs) {
+        return m_destination->pixel(index);
+    }
+
+    uint32_t sourcePixel = m_source->pixel(index);
+    uint32_t destinationPixel = m_destination->pixel(index);
+    uint16_t alphaSource = 256 - m_alphaDestination;
+
+    return drawPixel(sourcePixel, destinationPixel, alphaSource);
+}
+
+
 void FadeLayer::endDraw() {
     m_source->endDraw();
     m_destination->endDraw();
@@ -91,34 +143,4 @@ void FadeLayer::setNewChild(Layer *currentChild, QSharedPointer<Layer> newChild)
 
 bool FadeLayer::finished() {
     return m_currentTimeDifferenceMs > m_durationMs;
-}
-
-inline uint8_t pixelComponent(uint32_t sourcePixel,
-                              uint32_t destinationPixel,
-                              uint16_t alphaSource,
-                              uint8_t alphaDestination,
-                              int shift) {
-    return (static_cast<uint16_t>((sourcePixel >> shift) & 255) * alphaSource
-           + static_cast<uint16_t>((destinationPixel >> shift) & 255) * alphaDestination)
-           / 256;
-}
-
-uint32_t FadeLayer::pixel(uint16_t index) {
-    if (m_currentTimeDifferenceMs >= m_durationMs) {
-        return m_destination->pixel(index);
-    }
-
-    uint32_t sourcePixel = m_source->pixel(index);
-    uint32_t destinationPixel = m_destination->pixel(index);
-    uint16_t alphaSource = 256 - m_alphaDestination;
-
-    uint8_t w = pixelComponent(sourcePixel, destinationPixel, alphaSource, m_alphaDestination, 24);
-    uint8_t r = pixelComponent(sourcePixel, destinationPixel, alphaSource, m_alphaDestination, 16);
-    uint8_t g = pixelComponent(sourcePixel, destinationPixel, alphaSource, m_alphaDestination, 8);
-    uint8_t b = pixelComponent(sourcePixel, destinationPixel, alphaSource, m_alphaDestination, 0);
-
-    return (static_cast<uint32_t>(w) << 24) |
-           (static_cast<uint32_t>(r) << 16) |
-           (static_cast<uint32_t>(g) << 8) |
-           b;
 }

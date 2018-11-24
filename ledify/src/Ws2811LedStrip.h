@@ -6,7 +6,7 @@ class Layer;
 
 class Ws2811LedStrip : public ILedStrip {
 public:
-    Ws2811LedStrip(int numLeds);
+    Ws2811LedStrip(uint32_t numLeds);
     void initialize ();
     void deinitialize ();
     void render (Layer *buffer);
@@ -14,5 +14,5 @@ public:
 private:
     uint32_t *m_ledBuffer;
     ws2811_t m_ledStrip;
-    int m_numLeds;
+    uint32_t m_numLeds;
 };

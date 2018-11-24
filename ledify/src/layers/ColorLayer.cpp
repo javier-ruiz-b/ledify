@@ -17,6 +17,10 @@ uint32_t ColorLayer::pixel(uint16_t) {
     return m_pixel;
 }
 
+void ColorLayer::draw(uint32_t *buffer, uint32_t size) {
+    memset(buffer, static_cast<int>(m_pixel), size * sizeof(uint32_t));
+}
+
 void ColorLayer::setNewChild(Layer *, QSharedPointer<Layer> newChild) {
     qCCritical(COLOR) << "Unexpected: ColorLayer receiving child %p" << newChild;
 }

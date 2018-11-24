@@ -26,6 +26,10 @@ void StartLayer::startDraw() {
     }
 }
 
+void StartLayer::draw(uint32_t *buffer, uint32_t size) {
+    m_child->draw(buffer, size);
+}
+
 void StartLayer::endDraw() {
     m_child->endDraw();
 }
