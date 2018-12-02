@@ -79,6 +79,7 @@ void FadeLayer::draw(uint32_t *buffer, uint32_t size) {
                  << m_time->millis()
                  << "-" << m_startMs;
         m_parent->setNewChild(this, m_destination);
+        return;
     }
 
     if (m_currentTimeDifferenceMs >= m_durationMs) {

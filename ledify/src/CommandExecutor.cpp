@@ -7,6 +7,7 @@
 #include "ColorLayer.h"
 #include "FadeLayer.h"
 #include "RandomLayer.h"
+#include "SlideAnimationLayer.h"
 #include <SpotLayer.h>
 #include <Color.h>
 
@@ -30,6 +31,7 @@ CommandExecutor::CommandExecutor(LayerController *layers, FpsCalculator *fpsCalc
     m_commandToFunction.insert("ONIFNIGHT", funcWrapper(cOnIfNight));
     m_commandToFunction.insert("COPY", funcWrapper(cCopy));
     m_commandToFunction.insert("MOVE", funcWrapper(cMove));
+    m_commandToFunction.insert("SLIDE", funcWrapper(cSlideAnimation));
 }
 
 bool CommandExecutor::parseCommand(const QString &command, const QStringList &args, QString &response) {
@@ -99,11 +101,20 @@ void CommandExecutor::cReset(const QStringList &, QString &) {
 }
 
 void CommandExecutor::cCopy(const QStringList &args, QString &) {
+    expects(2, args);
     m_layers->copy(args[0].toUShort(), args[1].toUShort());
 }
 
 void CommandExecutor::cMove(const QStringList &args, QString &) {
+    expects(2, args);
     m_layers->move(args[0].toUShort(), args[1].toUShort());
+}
+
+void CommandExecutor::cSlideAnimation(const QStringList &args, QString &) {
+    expects(2, args);
+    m_layers->addTo(args[0].toUShort(),
+                    new SlideAnimationLayer(m_layers->current(),
+                                 args[1].toFloat()));
 }
 
 void CommandExecutor::cOff(const QStringList &, QString &) {

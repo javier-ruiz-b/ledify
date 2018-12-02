@@ -4,6 +4,7 @@
 class SlideAnimationLayer : public Layer {
 public:
     SlideAnimationLayer(QSharedPointer<Layer> layer, float speed);
+    virtual ~SlideAnimationLayer() override;
 
     virtual void draw(uint32_t *buffer, uint32_t size) override;
     virtual bool animationFinished() override { return false; }
@@ -11,7 +12,8 @@ public:
 
 private:
     QSharedPointer<Layer> m_layer;
-    bool m_startSet;
+    uint32_t *m_tempBuffer = nullptr;
+    bool m_startSet = false;
     uint32_t m_startMs;
     float m_speed;
 };
