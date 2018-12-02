@@ -24,7 +24,7 @@ LedStripController::LedStripController(ILedStrip *ledStrip, IWiringPi *wiringPi,
 
     m_loopTimer = new QTimer(this);
     m_loopTimer->setSingleShot(true);
-    m_loopTimer->setInterval(5000);
+    m_loopTimer->setInterval(10*1000);
     connect(m_loopTimer, &QTimer::timeout, this, &LedStripController::drawLoop);
 }
 
