@@ -56,7 +56,7 @@ bool Ledify::init() {
         emit finished();
         return false;
     }
-    auto controller = new LedStripController(&m_ledStrip, NUM_LEDS, &m_wiringPi, this);
+    auto controller = new LedStripController(&m_ledStrip, &m_wiringPi, this);
     connect (controller, &LedStripController::terminated, this, &Ledify::finished);
     controller->initializeDependencies();
     restServer.registerCallback([controller] (QString &command) -> QString {

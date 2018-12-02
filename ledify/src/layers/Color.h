@@ -20,38 +20,38 @@ public:
 
     template<class T>
     Color(T r, T g, T b, T w) {
-        m_pixel = componentsToPixel(r, g, b, w);
+        m_rgbw = componentsToPixel(r, g, b, w);
     }
 
-    Color(uint32_t pixel) : m_pixel(pixel) {}
+    Color(uint32_t rgbw) : m_rgbw(rgbw) {}
     Color(const Color &color, float multiply) {
-        m_pixel = componentsToPixel(color.r() * multiply,
+        m_rgbw = componentsToPixel(color.r() * multiply,
                                     color.g() * multiply,
                                     color.b() * multiply,
                                     color.w() * multiply);
     }
 
-    uint32_t pixel() const {
-        return m_pixel;
+    uint32_t rgbw() const {
+        return m_rgbw;
     }
 
     uint8_t w() const {
-        return static_cast<uint8_t>(m_pixel >> 24);
+        return static_cast<uint8_t>(m_rgbw >> 24);
     }
 
     uint8_t r() const {
-        return static_cast<uint8_t>((m_pixel >> 16) & 255);
+        return static_cast<uint8_t>((m_rgbw >> 16) & 255);
     }
 
     uint8_t g() const {
-        return static_cast<uint8_t>((m_pixel >> 8) & 255);
+        return static_cast<uint8_t>((m_rgbw >> 8) & 255);
     }
 
     uint8_t b() const {
-        return static_cast<uint8_t>(m_pixel & 255);
+        return static_cast<uint8_t>(m_rgbw & 255);
     }
 
 
 private:
-    uint32_t m_pixel;
+    uint32_t m_rgbw;
 };

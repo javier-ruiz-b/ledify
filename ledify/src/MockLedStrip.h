@@ -4,7 +4,8 @@
 
 class MockLedStrip : public ILedStrip {
 public:
-    void initialize () {}
-    void deinitialize () {}
-    void render (Layer *) {}
+    void initialize () override {}
+    void deinitialize () override {}
+    void render (Layer *) override {}
+    bool isAnyLedOn() override { return true; }
 };

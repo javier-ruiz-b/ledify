@@ -10,13 +10,11 @@
 void LedStripControllerTest::init() {
     TimeControl::instance()->setMocked(true);
     TimeControl::instance()->setMillis(0);
-    m_tested = new LedStripController(&m_ledStrip, NUM_LED, &m_wiringPi, this);
+    m_tested = new LedStripController(&m_ledStrip, &m_wiringPi, this);
 //    m_buffer = (int *) m_buffer;
     memset(m_leds, 0xFE, NUM_LED*sizeof(uint32_t));
     connect(m_tested, &LedStripController::drawPixels, this, [this] (Layer *rootLayer) {
-        for (uint16_t i = 0; i < NUM_LED; i++) {
-            m_leds[i] = static_cast<int>(rootLayer->pixel(i));
-        }
+        rootLayer->draw(reinterpret_cast<uint32_t *>(m_leds), NUM_LED);
     });
 }
 

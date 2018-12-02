@@ -1,12 +1,17 @@
 #pragma once
 #include "Layer.h"
 
-class RandomLayer : public Layer {
+class SlideAnimationLayer : public Layer {
 public:
-    RandomLayer();
+    SlideAnimationLayer(QSharedPointer<Layer> layer, float speed);
 
     virtual void draw(uint32_t *buffer, uint32_t size) override;
     virtual bool animationFinished() override { return false; }
     virtual void setNewChild(Layer *, QSharedPointer<Layer> newChild) override;
 
+private:
+    QSharedPointer<Layer> m_layer;
+    bool m_startSet;
+    uint32_t m_startMs;
+    float m_speed;
 };

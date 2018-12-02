@@ -19,6 +19,7 @@ public:
     void copy(int toIndex, int fromIndex);
     void move(int toIndex, int fromIndex);
     QSharedPointer<Layer> at(int index);
+    QSharedPointer<Layer> take(int index);
     StartLayer &root();
     QSharedPointer<Layer> current();
 

@@ -13,8 +13,8 @@
 
 Q_LOGGING_CATEGORY(CONTROLLER, "ledify.controller", QtWarningMsg)
 
-LedStripController::LedStripController(ILedStrip *ledStrip, int numLeds, IWiringPi *wiringPi, QObject *parent)
-    : QObject(parent), m_numLeds(numLeds), m_ledStrip(ledStrip) {
+LedStripController::LedStripController(ILedStrip *ledStrip, IWiringPi *wiringPi, QObject *parent)
+    : QObject(parent), m_ledStrip(ledStrip) {
     connect(this, &LedStripController::terminated, this, &LedStripController::deinitialize);
 
     m_relayController = new RelayController(wiringPi, this);
@@ -64,12 +64,7 @@ bool LedStripController::isAnyLedOn() {
         return false;
     }
 
-    for (uint16_t i = 0; i < static_cast<uint16_t>(m_numLeds); i++) {
-        if (child->pixel(i) != 0) {
-             return true;
-        }
-    }
-    return false;
+    return m_ledStrip->isAnyLedOn();
 }
 
 QString LedStripController::parseReceivedString(const QString &string) {
@@ -131,13 +126,10 @@ void LedStripController::draw() {
     m_fpsCalculator.tick();
     auto rootLayer = m_layerController.root();
 
-    rootLayer.startDraw();
     auto child = rootLayer.child();
     if (!child.isNull()) {
         emit drawPixels(child.data());
     }
-
-    rootLayer.endDraw();
 }
 
 void LedStripController::drawLoop() {

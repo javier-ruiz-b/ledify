@@ -46,22 +46,6 @@ void FadeLayer::recalculateTimeDifference() {
     }
 }
 
-void FadeLayer::startDraw() {
-    m_source->startDraw();
-    m_destination->startDraw();
-    recalculateTimeDifference();
-    m_alphaDestination = interpolatedDestinationValue();
-    if (finished()) {
-        qCDebug(FADE) << "FadeLayer"
-                 << static_cast<void *>(this)
-                 << "finished. (" << static_cast<unsigned int>(m_currentTimeDifferenceMs)
-                 << ">" << static_cast<unsigned int>(m_durationMs)
-                 << m_time->millis()
-                 << "-" << m_startMs;
-        m_parent->setNewChild(this, m_destination);
-    }
-}
-
 inline uint8_t pixelComponent(uint32_t sourcePixel,
                               uint32_t destinationPixel,
                               uint16_t alphaSource,
@@ -85,6 +69,18 @@ inline uint32_t FadeLayer::drawPixel(uint32_t sourcePixel, uint32_t destinationP
 }
 
 void FadeLayer::draw(uint32_t *buffer, uint32_t size) {
+    recalculateTimeDifference();
+    m_alphaDestination = interpolatedDestinationValue();
+    if (finished()) {
+        qCDebug(FADE) << "FadeLayer"
+                 << static_cast<void *>(this)
+                 << "finished. (" << static_cast<unsigned int>(m_currentTimeDifferenceMs)
+                 << ">" << static_cast<unsigned int>(m_durationMs)
+                 << m_time->millis()
+                 << "-" << m_startMs;
+        m_parent->setNewChild(this, m_destination);
+    }
+
     if (m_currentTimeDifferenceMs >= m_durationMs) {
         return m_destination->draw(buffer, size);
     }
@@ -105,24 +101,6 @@ void FadeLayer::draw(uint32_t *buffer, uint32_t size) {
                               destinationBuffer[i],
                               alphaSource);
     }
-}
-
-uint32_t FadeLayer::pixel(uint16_t index) {
-    if (m_currentTimeDifferenceMs >= m_durationMs) {
-        return m_destination->pixel(index);
-    }
-
-    uint32_t sourcePixel = m_source->pixel(index);
-    uint32_t destinationPixel = m_destination->pixel(index);
-    uint16_t alphaSource = 256 - m_alphaDestination;
-
-    return drawPixel(sourcePixel, destinationPixel, alphaSource);
-}
-
-
-void FadeLayer::endDraw() {
-    m_source->endDraw();
-    m_destination->endDraw();
 }
 
 void FadeLayer::setNewChild(Layer *currentChild, QSharedPointer<Layer> newChild) {

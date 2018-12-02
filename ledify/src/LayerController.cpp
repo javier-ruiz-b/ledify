@@ -50,7 +50,11 @@ void LayerController::move(int toIndex, int fromIndex) {
 }
 
 QSharedPointer<Layer> LayerController::at(int index) {
-    return m_indexedLayers[index];
+    return m_indexedLayers.value(index);
+}
+
+QSharedPointer<Layer> LayerController::take(int index) {
+    return m_indexedLayers.take(index);
 }
 
 StartLayer &LayerController::root() {

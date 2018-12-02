@@ -32,12 +32,22 @@ void Ws2811LedStrip::deinitialize() {
 }
 
 void Ws2811LedStrip::render(Layer *rootLayer) {
-//    for (uint16_t i = 0; i < m_numLeds; i++) {
-//        m_ledBuffer[i] = rootLayer->pixel(i);
-//    }
     rootLayer->draw(m_ledBuffer, m_numLeds);
     ws2811_return_t errCode;
     if ((errCode = ws2811_render(&m_ledStrip)) != WS2811_SUCCESS) {
         qWarning("ws2811_render failed: %s\n", ws2811_get_return_t_str(errCode));
     }
+}
+
+bool Ws2811LedStrip::isAnyLedOn() {
+    if (!m_ledBuffer) {
+        return false;
+    }
+
+    for (uint16_t i = 0; i < static_cast<uint16_t>(m_numLeds); i++) {
+        if (m_ledBuffer[i] != 0) {
+             return true;
+        }
+    }
+    return false;
 }

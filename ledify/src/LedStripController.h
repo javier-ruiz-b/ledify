@@ -16,7 +16,7 @@ class LedStripController : public QObject {
     Q_OBJECT
 
 public:
-    LedStripController(ILedStrip *ledStrip, int numLeds, IWiringPi *wiringPi, QObject *parent = nullptr);
+    LedStripController(ILedStrip *ledStrip, IWiringPi *wiringPi, QObject *parent = nullptr);
 
     void initializeDependencies();
     LayerController &layerController();
@@ -54,7 +54,6 @@ private:
     QScopedPointer<CommandExecutor> m_executor;
     QTimer *m_loopTimer;
 
-    int m_numLeds;
     ILedStrip *m_ledStrip;
 
     friend class LedStripControllerTest;

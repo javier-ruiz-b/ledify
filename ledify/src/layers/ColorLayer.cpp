@@ -6,19 +6,17 @@
 Q_LOGGING_CATEGORY(COLOR, "ledify.color", QtWarningMsg)
 
 ColorLayer::ColorLayer(const Color &color) {
-    m_pixel = color.pixel();
+    m_pixel = color.rgbw();
 }
 
 void ColorLayer::setColor(const Color &color) {
-    m_pixel = color.pixel();
-}
-
-uint32_t ColorLayer::pixel(uint16_t) {
-    return m_pixel;
+    m_pixel = color.rgbw();
 }
 
 void ColorLayer::draw(uint32_t *buffer, uint32_t size) {
-    memset(buffer, static_cast<int>(m_pixel), size * sizeof(uint32_t));
+    for(uint32_t i = 0; i < size; i++)  {
+        buffer[i] = m_pixel;
+    }
 }
 
 void ColorLayer::setNewChild(Layer *, QSharedPointer<Layer> newChild) {

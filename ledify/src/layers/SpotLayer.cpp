@@ -14,20 +14,9 @@ SpotLayer::SpotLayer(const Color &color, float position, float size, Interpolato
     //TODO:here
         auto value = Interpolator::value(interpolator, size - i, size);
         Color resultingColor(color, value);
-        m_pixelBuffer[m_bufferSize/2 - i] = resultingColor.pixel();
-        m_pixelBuffer[m_bufferSize/2 + i] = resultingColor.pixel();
+        m_pixelBuffer[m_bufferSize/2 - i] = resultingColor.rgbw();
+        m_pixelBuffer[m_bufferSize/2 + i] = resultingColor.rgbw();
     }
-}
-
-void SpotLayer::startDraw() {}
-
-uint32_t SpotLayer::pixel(uint16_t index) {
-    int start = static_cast<int>(m_position - m_bufferSize/2);
-    int end = static_cast<int>(m_position + m_bufferSize/2);
-    if ((start <= index) && (index < end)) {
-        return m_pixelBuffer[index - start];
-    }
-    return 0;
 }
 
 
@@ -37,7 +26,6 @@ void SpotLayer::draw(uint32_t *buffer, uint32_t size) {
 
     memset(buffer, 0, start * sizeof(uint32_t));
     memcpy(&buffer[start], m_pixelBuffer, m_bufferSize * sizeof(uint32_t));
-//    buffer[150] = m_pixelBuffer[150];
     memset(&buffer[end], 0, (size - end) * sizeof(uint32_t));
 }
 

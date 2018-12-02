@@ -2,7 +2,7 @@
 #include "Layer.h"
 #include <QSharedPointer>
 
-class StartLayer : Layer {
+class StartLayer : public Layer {
 public:
     StartLayer();
 
@@ -11,10 +11,7 @@ public:
     QSharedPointer<Layer> child() const;
     void setChild(QSharedPointer<Layer> child);
 
-    virtual uint32_t pixel(uint16_t index) override;
-    virtual void startDraw() override;
     virtual void draw(uint32_t *buffer, uint32_t size) override;
-    virtual void endDraw() override;
     virtual bool animationFinished() override;
     virtual void setNewChild(Layer *currentChild, QSharedPointer<Layer> newChild) override;
 

@@ -69,7 +69,7 @@ void CommandExecutor::cFadeTo(const QStringList &args, QString &) {
     expects(5, args);
     m_layers->addTo(args[0].toUShort(),
           new FadeLayer(m_layers->current(),
-                        m_layers->at(args[1].toUShort()),
+                        m_layers->take(args[1].toUShort()),
                         static_cast<Interpolator::Type>(args[2].toUShort()),
                         args[3].toUShort(),
                         args[4].toUShort()));
@@ -77,9 +77,9 @@ void CommandExecutor::cFadeTo(const QStringList &args, QString &) {
 
 void CommandExecutor::cFade(const QStringList &args, QString &) {
     expects(6, args);
-    m_layers->addTo(args[2].toUShort(),
-                    new FadeLayer(m_layers->at(args[0].toUShort()),
-                                  m_layers->at(args[1].toUShort()),
+    m_layers->addTo(args[0].toUShort(),
+                    new FadeLayer(m_layers->take(args[1].toUShort()),
+                                  m_layers->take(args[2].toUShort()),
                                   static_cast<Interpolator::Type>(args[3].toUShort()),
                                   args[4].toUShort(),
                                   args[5].toUShort()));
