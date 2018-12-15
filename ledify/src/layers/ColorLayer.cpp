@@ -18,7 +18,3 @@ void ColorLayer::draw(uint32_t *buffer, uint32_t size) {
         buffer[i] = m_pixel;
     }
 }
-
-void ColorLayer::setNewChild(Layer *, QSharedPointer<Layer> newChild) {
-    qCCritical(COLOR) << "Unexpected: ColorLayer receiving child %p" << newChild;
-}

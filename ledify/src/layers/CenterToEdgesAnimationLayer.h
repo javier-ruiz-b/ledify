@@ -10,8 +10,6 @@ public:
 
     virtual void draw(uint32_t *buffer, uint32_t size) override;
     virtual bool animationFinished() override { return false; }
-    virtual void setNewChild(Layer *currentChild, QSharedPointer<Layer> newChild) override;
-
 
 private:
     TimeControl *m_time;

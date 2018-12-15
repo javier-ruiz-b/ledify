@@ -1,5 +1,16 @@
 #include "Layer.h"
 #include <QScopedPointer>
+#include <QtTest/QtTest>
+
+bool Layer::animationFinished() {
+    return true;
+}
+
+void Layer::setNewChild(Layer *currentChild, QSharedPointer<Layer> newChild) {
+    qCritical() << "Unexpected: Layer " << this
+                << "receiving new child" << newChild
+                << "for child" << currentChild;
+}
 
 void Layer::setParent(Layer *parent) {
     m_parent = parent;

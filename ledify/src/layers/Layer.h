@@ -7,8 +7,9 @@ public:
     virtual ~Layer() = default;
 
     virtual void draw(uint32_t *buffer, uint32_t size) = 0;
-    virtual bool animationFinished() = 0;
-    virtual void setNewChild(Layer *currentChild, QSharedPointer<Layer> newChild) = 0;
+
+    virtual bool animationFinished();
+    virtual void setNewChild(Layer *currentChild, QSharedPointer<Layer> newChild);
 
     void setParent(Layer *parent);
 

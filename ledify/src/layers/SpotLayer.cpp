@@ -28,7 +28,3 @@ void SpotLayer::draw(uint32_t *buffer, uint32_t size) {
     memcpy(&buffer[start], m_pixelBuffer, m_bufferSize * sizeof(uint32_t));
     memset(&buffer[end], 0, (size - end) * sizeof(uint32_t));
 }
-
-void SpotLayer::setNewChild(Layer *, QSharedPointer<Layer> newChild) {
-    qCritical() << "Unexpected: ColorLayer receiving child %p" << newChild;
-}

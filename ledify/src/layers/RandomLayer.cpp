@@ -10,8 +10,3 @@ void RandomLayer::draw(uint32_t *buffer, uint32_t size) {
         buffer[i] = static_cast<uint32_t>(qrand() | (qrand() & 0xFF) << 16);
     }
 }
-
-void RandomLayer::setNewChild(Layer *, QSharedPointer<Layer> newChild) {
-    qCCritical(RANDOM) << "Unexpected: ColorLayer receiving child %p" << newChild;
-}
-
