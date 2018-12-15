@@ -13,7 +13,6 @@ public:
 private:
     QSharedPointer<Layer> m_layer;
     uint32_t *m_tempBuffer = nullptr;
-    bool m_startSet = false;
     uint32_t m_startMs;
     float m_speed;
 };

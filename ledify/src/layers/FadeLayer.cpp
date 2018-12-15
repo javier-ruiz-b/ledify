@@ -70,7 +70,6 @@ inline uint32_t FadeLayer::drawPixel(uint32_t sourcePixel, uint32_t destinationP
 
 void FadeLayer::draw(uint32_t *buffer, uint32_t size) {
     recalculateTimeDifference();
-    m_alphaDestination = interpolatedDestinationValue();
     if (finished()) {
         qCDebug(FADE) << "FadeLayer"
                  << static_cast<void *>(this)
@@ -81,6 +80,12 @@ void FadeLayer::draw(uint32_t *buffer, uint32_t size) {
         m_parent->setNewChild(this, m_destination);
         return;
     }
+    if (!started()) {
+        m_source->draw(buffer, size);
+        return;
+    }
+
+    m_alphaDestination = interpolatedDestinationValue();
 
     if (m_currentTimeDifferenceMs >= m_durationMs) {
         return m_destination->draw(buffer, size);
@@ -118,6 +123,10 @@ void FadeLayer::setNewChild(Layer *currentChild, QSharedPointer<Layer> newChild)
         qCCritical(FADE) << "Couldn't set new child: Unknown current ptr!:"
                          << static_cast<void *>(currentChild);
     }
+}
+
+bool FadeLayer::started() {
+    return m_currentTimeDifferenceMs > 0;
 }
 
 bool FadeLayer::finished() {

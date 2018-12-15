@@ -9,6 +9,8 @@
 #include "LedStripController.h"
 #include "Color.h"
 
+#include <thread>
+
 static const int c_numLeds = 300;
 static QVector<int> m_colorData(c_numLeds);
 int main(int argc, char *argv[]) {
@@ -39,6 +41,10 @@ Simulator::Simulator(QObject *parent) : QObject(parent) {
             m_colorData[i] = static_cast<int>(newColor.rgbw());
         }
         setLedData(QVariant::fromValue<QVector<int>>(m_colorData));
+
+        constexpr double refreshRateInHz = 120;
+        constexpr auto waitDuration = std::chrono::duration<double, std::milli> (1000 / refreshRateInHz);
+        std::this_thread::sleep_for(waitDuration);
     });
 
     m_ledController->startDrawLoop();

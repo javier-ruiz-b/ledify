@@ -14,7 +14,7 @@ public:
     void setParent(Layer *parent);
 
 protected:
-    Layer *m_parent;
+    Layer *m_parent = nullptr;
 
 private:
     uint32_t pixel(uint32_t i);

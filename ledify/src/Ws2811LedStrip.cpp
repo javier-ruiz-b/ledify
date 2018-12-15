@@ -2,6 +2,8 @@
 #include <QtDebug>
 #include <Layer.h>
 
+#include <thread>
+
 #define GPIO_PIN        18
 #define DMA             10
 
@@ -32,11 +34,13 @@ void Ws2811LedStrip::deinitialize() {
 }
 
 void Ws2811LedStrip::render(Layer *rootLayer) {
+    waitIfNecessary();
     rootLayer->draw(m_ledBuffer, m_numLeds);
     ws2811_return_t errCode;
     if ((errCode = ws2811_render(&m_ledStrip)) != WS2811_SUCCESS) {
         qWarning("ws2811_render failed: %s\n", ws2811_get_return_t_str(errCode));
     }
+    m_lastRendered = std::chrono::high_resolution_clock::now();
 }
 
 bool Ws2811LedStrip::isAnyLedOn() {
@@ -50,4 +54,15 @@ bool Ws2811LedStrip::isAnyLedOn() {
         }
     }
     return false;
+}
+
+void Ws2811LedStrip::waitIfNecessary() {
+    constexpr double refreshRateInHz = 60;
+    constexpr auto waitDuration = std::chrono::duration<double, std::milli> (1000 / refreshRateInHz);
+
+    auto now = std::chrono::high_resolution_clock::now();
+    auto renderDuration = now - m_lastRendered;
+    if (renderDuration > waitDuration) {
+        std::this_thread::sleep_for(waitDuration - renderDuration);
+    }
 }

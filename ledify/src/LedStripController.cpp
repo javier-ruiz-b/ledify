@@ -133,7 +133,6 @@ void LedStripController::draw() {
 }
 
 void LedStripController::drawLoop() {
-    auto start = std::chrono::system_clock::now();
     if (!m_relayController->isOn()) {
         return;
     }
@@ -147,10 +146,7 @@ void LedStripController::drawLoop() {
             m_relayController->turnOff(c_trafoIdlePowerOffDelayMs);
         }
     } else {
-        auto now = std::chrono::system_clock::now();
-        auto duration = now - start;
-        auto diffProcessingMs = std::chrono::duration_cast<std::chrono::milliseconds>(duration).count();
-        m_loopTimer->start(qMax(c_drawRefreshAnimationMs - static_cast<int>(diffProcessingMs), 1));
+        m_loopTimer->start();
     }
 }
 

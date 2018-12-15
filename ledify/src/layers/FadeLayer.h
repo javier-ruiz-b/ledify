@@ -11,6 +11,7 @@ public:
     virtual ~FadeLayer() override;
 
     void setParams(QSharedPointer<Layer> source, QSharedPointer<Layer> destination, Interpolator::Type interpolator, uint16_t startTimeMs, uint16_t durationMs);
+    bool started();
     bool finished();
 
     virtual void draw(uint32_t *buffer, uint32_t size) override;
