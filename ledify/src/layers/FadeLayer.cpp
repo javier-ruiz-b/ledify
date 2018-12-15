@@ -56,11 +56,14 @@ inline uint8_t pixelComponent(uint32_t sourcePixel,
            / 256;
 }
 
-inline uint32_t FadeLayer::drawPixel(uint32_t sourcePixel, uint32_t destinationPixel, uint16_t alphaSource) {
-    uint8_t w = pixelComponent(sourcePixel, destinationPixel, alphaSource, m_alphaDestination, 24);
-    uint8_t r = pixelComponent(sourcePixel, destinationPixel, alphaSource, m_alphaDestination, 16);
-    uint8_t g = pixelComponent(sourcePixel, destinationPixel, alphaSource, m_alphaDestination, 8);
-    uint8_t b = pixelComponent(sourcePixel, destinationPixel, alphaSource, m_alphaDestination, 0);
+inline uint32_t FadeLayer::drawPixel(uint32_t sourcePixel,
+                                     uint32_t destinationPixel,
+                                     uint16_t alphaSource,
+                                     uint8_t alphaDestination) {
+    uint8_t w = pixelComponent(sourcePixel, destinationPixel, alphaSource, alphaDestination, 24);
+    uint8_t r = pixelComponent(sourcePixel, destinationPixel, alphaSource, alphaDestination, 16);
+    uint8_t g = pixelComponent(sourcePixel, destinationPixel, alphaSource, alphaDestination, 8);
+    uint8_t b = pixelComponent(sourcePixel, destinationPixel, alphaSource, alphaDestination, 0);
 
     return (static_cast<uint32_t>(w) << 24) |
            (static_cast<uint32_t>(r) << 16) |
@@ -70,26 +73,6 @@ inline uint32_t FadeLayer::drawPixel(uint32_t sourcePixel, uint32_t destinationP
 
 void FadeLayer::draw(uint32_t *buffer, uint32_t size) {
     recalculateTimeDifference();
-    if (finished()) {
-        qCDebug(FADE) << "FadeLayer"
-                 << static_cast<void *>(this)
-                 << "finished. (" << static_cast<unsigned int>(m_currentTimeDifferenceMs)
-                 << ">" << static_cast<unsigned int>(m_durationMs)
-                 << m_time->millis()
-                 << "-" << m_startMs;
-        m_parent->setNewChild(this, m_destination);
-        return;
-    }
-    if (!started()) {
-        m_source->draw(buffer, size);
-        return;
-    }
-
-    m_alphaDestination = interpolatedDestinationValue();
-
-    if (m_currentTimeDifferenceMs >= m_durationMs) {
-        return m_destination->draw(buffer, size);
-    }
 
     if (m_tempBuffer == nullptr) {
         m_tempBuffer = new uint32_t[size];
@@ -100,12 +83,29 @@ void FadeLayer::draw(uint32_t *buffer, uint32_t size) {
     m_source->draw(sourceBuffer, size);
     m_destination->draw(destinationBuffer, size);
 
-    uint16_t alphaSource = 256 - m_alphaDestination;
+    if (!started()) {
+        return;
+    }
+    if (finished()) {
+        qCDebug(FADE) << "FadeLayer"
+                 << static_cast<void *>(this)
+                 << "finished. (" << static_cast<unsigned int>(m_currentTimeDifferenceMs)
+                 << ">" << static_cast<unsigned int>(m_durationMs)
+                 << m_time->millis()
+                 << "-" << m_startMs;
+        m_destination->draw(buffer, size);
+        m_parent->setNewChild(this, m_destination);
+        return;
+    }
+
+    auto alphaDestination = interpolatedDestinationValue();
+    uint16_t alphaSource = 256 - alphaDestination;
 
     for (uint32_t i = 0; i < size; i++) {
         buffer[i] = drawPixel(sourceBuffer[i],
                               destinationBuffer[i],
-                              alphaSource);
+                              alphaSource,
+                              alphaDestination);
     }
 }
 

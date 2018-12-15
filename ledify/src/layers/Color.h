@@ -15,6 +15,8 @@ private:
                 (static_cast<uint32_t>(b) & 255);
     }
 
+    uint8_t add(uint8_t component1, uint8_t component2);
+
 public:
     Color() = default;
 
@@ -24,32 +26,16 @@ public:
     }
 
     Color(uint32_t rgbw) : m_rgbw(rgbw) {}
-    Color(const Color &color, float multiply) {
-        m_rgbw = componentsToPixel(color.r() * multiply,
-                                    color.g() * multiply,
-                                    color.b() * multiply,
-                                    color.w() * multiply);
-    }
+    Color(const Color &color, float multiply);
 
-    uint32_t rgbw() const {
-        return m_rgbw;
-    }
+    Color add(Color &otherColor);
 
-    uint8_t w() const {
-        return static_cast<uint8_t>(m_rgbw >> 24);
-    }
+    uint32_t rgbw() const;
 
-    uint8_t r() const {
-        return static_cast<uint8_t>((m_rgbw >> 16) & 255);
-    }
-
-    uint8_t g() const {
-        return static_cast<uint8_t>((m_rgbw >> 8) & 255);
-    }
-
-    uint8_t b() const {
-        return static_cast<uint8_t>(m_rgbw & 255);
-    }
+    uint8_t r() const;
+    uint8_t g() const;
+    uint8_t b() const;
+    uint8_t w() const;
 
 
 private:

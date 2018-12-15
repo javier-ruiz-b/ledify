@@ -1,7 +1,9 @@
 
 addLibrary (Layer)
 addLibrary (StartLayer)
-addLibrary (ColorLayer)
+addLibrary (Color)
+addLibrary (ColorLayer Color)
+addLibrary (AdditionLayer Color)
 addLibrary (RandomLayer)
 addLibrary (SpotLayer)
 addLibrary (SlideAnimationLayer)

@@ -5,6 +5,7 @@
 #include "FpsCalculator.h"
 #include "TimeControl.h"
 #include "ColorLayer.h"
+#include "AdditionLayer.h"
 #include "FadeLayer.h"
 #include "RandomLayer.h"
 #include "SlideAnimationLayer.h"
@@ -128,35 +129,23 @@ void CommandExecutor::cOn(const QStringList &, QString &) {
     QSharedPointer<Layer> red(new SpotLayer(Color(203, 1, 1, 1), 50, 50, Interpolator::InterpolatorLinear));
     QSharedPointer<Layer> green(new SpotLayer(Color(1, 203, 1, 1), 200, 50, Interpolator::InterpolatorLinear));
     QSharedPointer<Layer> blue(new SpotLayer(Color(1, 1, 203, 1), 150, 150, Interpolator::InterpolatorLinear));
-    QSharedPointer<Layer> spot(new SpotLayer(Color(203, 80, 1, 203), 150, 150, Interpolator::InterpolatorLinear));
+    QSharedPointer<Layer> white(new SpotLayer(Color(203, 80, 1, 203), 150, 150, Interpolator::InterpolatorLinear));
 
-    auto redAnimation = QSharedPointer<Layer> (new SlideAnimationLayer(red, 0.25));
-    auto greenAnimation = QSharedPointer<Layer> (new SlideAnimationLayer(green, -0.25));
-    auto blueAnimation = QSharedPointer<Layer> (new SlideAnimationLayer(blue, 0.25));
+    auto redAnimation = QSharedPointer<Layer> (new SlideAnimationLayer(red, 0.15f));
+    auto greenAnimation = QSharedPointer<Layer> (new SlideAnimationLayer(green, -0.15f));
+    auto blueAnimation = QSharedPointer<Layer> (new SlideAnimationLayer(blue, 0.35f));
+    auto whiteAnimation = QSharedPointer<Layer> (new SlideAnimationLayer(blue, -0.35f));
 
-    auto animation = QSharedPointer<Layer> (new FadeLayer(m_layers->current(),
-                                  redAnimation,
-                                  Interpolator::InterpolatorAccelerate, 0, 1000));
-    animation = QSharedPointer<Layer> (new FadeLayer(animation,
-                              greenAnimation,
-                              Interpolator::InterpolatorAccelerate, 1000, 2000));
-    animation = QSharedPointer<Layer> (new FadeLayer(animation,
-                              blueAnimation,
-                              Interpolator::InterpolatorAccelerate, 1500, 2500));
+    auto allLayers = QSharedPointer<Layer> (new AdditionLayer({redAnimation, greenAnimation, blueAnimation, whiteAnimation}));
 
-    auto fadeEnd = new FadeLayer(animation,
-                              spot,
-                              Interpolator::InterpolatorAccelerate, 2500, 4000);
+    auto fadeStart = new FadeLayer(m_layers->current(),
+                              allLayers,
+                              Interpolator::InterpolatorAccelerate, 0, 1000);
+    auto fadeEnd = new FadeLayer(QSharedPointer<Layer> (fadeStart),
+                              white,
+                              Interpolator::InterpolatorAccelerate, 4000, 5500);
     m_layers->setAsRoot(fadeEnd);
 }
-
-//void CommandExecutor::cOn(const QStringList &, QString &) {
-//    QSharedPointer<Layer> spotLayer(new SpotLayer(Color(203, 80, 1, 203), 150, 150, Interpolator::InterpolatorLinear));
-//    auto fade = new FadeLayer(m_layers->current(),
-//                              spotLayer,
-//                              Interpolator::InterpolatorAccelerate, 0, 2000);
-//    m_layers->setAsRoot(fade);
-//}
 
 void CommandExecutor::cOnIfNight(const QStringList &args, QString &response) {
     if (!m_dayTime.isDay()) {

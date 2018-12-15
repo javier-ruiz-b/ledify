@@ -20,7 +20,7 @@ public:
 
 private:
     inline unsigned char interpolatedDestinationValue();
-    inline uint32_t drawPixel(uint32_t sourcePixel, uint32_t destinationPixel, uint16_t alphaSource);
+    inline uint32_t drawPixel(uint32_t sourcePixel, uint32_t destinationPixel, uint16_t alphaSource, uint8_t alphaDestination);
     void recalculateTimeDifference();
 
 private:
