@@ -1,7 +1,6 @@
 #include "LedStripController.h"
 
 #include <cstdio>
-#include <chrono>
 #include <QTimer>
 #include <QString>
 #include <Color.h>
@@ -146,7 +145,7 @@ void LedStripController::drawLoop() {
             m_relayController->turnOff(c_trafoIdlePowerOffDelayMs);
         }
     } else {
-        m_loopTimer->start();
+        m_loopTimer->start(0);
     }
 }
 

@@ -44,8 +44,7 @@ private:
 private:
     const int c_trafoPowerOnDelayMs = 500;
     const int c_trafoIdlePowerOffDelayMs = 6000;
-    const int c_drawRefreshIdleMs = 3000;
-    const int c_drawRefreshAnimationMs = 1000 / 50;
+    const int c_drawRefreshIdleMs = 4000;
 
     RelayController *m_relayController;
     FpsCalculator m_fpsCalculator;
