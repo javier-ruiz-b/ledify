@@ -9,6 +9,7 @@
 #include "FadeLayer.h"
 #include "RandomLayer.h"
 #include "SlideAnimationLayer.h"
+#include "AdditionLayer.h"
 #include <SpotLayer.h>
 #include <Color.h>
 
@@ -34,6 +35,7 @@ CommandExecutor::CommandExecutor(LayerController *layers, FpsCalculator *fpsCalc
     m_commandToFunction.insert("MOVE", funcWrapper(cMove));
     m_commandToFunction.insert("SLIDE", funcWrapper(cSlideAnimation));
     m_commandToFunction.insert("SPOT", funcWrapper(cSpot));
+    m_commandToFunction.insert("ADD", funcWrapper(cAdd));
 }
 
 bool CommandExecutor::parseCommand(const QString &command, const QStringList &args, QString &response) {
@@ -128,7 +130,16 @@ void CommandExecutor::cSpot(const QStringList &args, QString &) {
                                   args[4].toUShort()),
                             args[5].toFloat(),
                             args[6].toFloat(),
-                            static_cast<Interpolator::Type>(args[7].toUShort())));
+            static_cast<Interpolator::Type>(args[7].toUShort())));
+}
+
+void CommandExecutor::cAdd(const QStringList &args, QString &) {
+    QVector<QSharedPointer<Layer>> layers;
+    for (int i = 1; i < args.length(); i++) {
+        layers << m_layers->take(args[i].toUShort());
+    }
+    m_layers->addTo(args[0].toUShort(),
+                    new AdditionLayer(layers));
 }
 
 void CommandExecutor::cOff(const QStringList &, QString &) {
