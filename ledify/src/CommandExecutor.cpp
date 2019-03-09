@@ -17,6 +17,7 @@ Q_LOGGING_CATEGORY(EXECUTOR, "ledify.executor", QtWarningMsg)
 
 #define funcWrapper(func) [=](const QStringList &args, QString &response) { this->func(args, response); }
 #define expects(expectedArgs, args) if (args.count() != expectedArgs) { qCWarning(EXECUTOR) << "Expected" << expectedArgs << "instead of" << args.count(); return; }
+#define expectsAtLeast(expectedAtLeastArgs, args) if (args.count() >= expectedAtLeastArgs) { qCWarning(EXECUTOR) << "Expected at least" << expectedAtLeastArgs << "instead of" << args.count(); return; }
 
 CommandExecutor::CommandExecutor(LayerController *layers, FpsCalculator *fpsCalculator)
     : m_layers(layers), m_fpsCalculator(fpsCalculator) {
@@ -122,7 +123,7 @@ void CommandExecutor::cSlideAnimation(const QStringList &args, QString &) {
 }
 
 void CommandExecutor::cSpot(const QStringList &args, QString &) {
-    expects(4, args);
+    expects(8, args);
     m_layers->addTo(args[0].toUShort(),
             new SpotLayer(  Color(args[1].toUShort(),
                                   args[2].toUShort(),
@@ -134,8 +135,10 @@ void CommandExecutor::cSpot(const QStringList &args, QString &) {
 }
 
 void CommandExecutor::cAdd(const QStringList &args, QString &) {
+    expectsAtLeast(2, args);
     QVector<QSharedPointer<Layer>> layers;
     for (int i = 1; i < args.length(); i++) {
+        qCDebug(EXECUTOR) << "Taking layer" << args[i].toUShort();
         layers << m_layers->take(args[i].toUShort());
     }
     m_layers->addTo(args[0].toUShort(),
