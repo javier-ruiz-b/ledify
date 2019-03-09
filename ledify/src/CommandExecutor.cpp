@@ -17,7 +17,7 @@ Q_LOGGING_CATEGORY(EXECUTOR, "ledify.executor", QtWarningMsg)
 
 #define funcWrapper(func) [=](const QStringList &args, QString &response) { this->func(args, response); }
 #define expects(expectedArgs, args) if (args.count() != expectedArgs) { qCWarning(EXECUTOR) << "Expected" << expectedArgs << "instead of" << args.count(); return; }
-#define expectsAtLeast(expectedAtLeastArgs, args) if (args.count() >= expectedAtLeastArgs) { qCWarning(EXECUTOR) << "Expected at least" << expectedAtLeastArgs << "instead of" << args.count(); return; }
+#define expectsAtLeast(expectedAtLeastArgs, args) if (args.count() < expectedAtLeastArgs) { qCWarning(EXECUTOR) << "Expected at least" << expectedAtLeastArgs << "instead of" << args.count(); return; }
 
 CommandExecutor::CommandExecutor(LayerController *layers, FpsCalculator *fpsCalculator)
     : m_layers(layers), m_fpsCalculator(fpsCalculator) {
