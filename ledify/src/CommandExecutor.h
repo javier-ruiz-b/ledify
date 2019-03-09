@@ -31,6 +31,7 @@ private:
     void cCopy(const QStringList &args, QString &response);
     void cMove(const QStringList &args, QString &response);
     void cSlideAnimation(const QStringList &args, QString &response);
+    void cSpot(const QStringList &args, QString &response);
 
 private:
     LayerController *m_layers;

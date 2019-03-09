@@ -33,6 +33,7 @@ CommandExecutor::CommandExecutor(LayerController *layers, FpsCalculator *fpsCalc
     m_commandToFunction.insert("COPY", funcWrapper(cCopy));
     m_commandToFunction.insert("MOVE", funcWrapper(cMove));
     m_commandToFunction.insert("SLIDE", funcWrapper(cSlideAnimation));
+    m_commandToFunction.insert("SPOT", funcWrapper(cSpot));
 }
 
 bool CommandExecutor::parseCommand(const QString &command, const QStringList &args, QString &response) {
@@ -115,7 +116,19 @@ void CommandExecutor::cSlideAnimation(const QStringList &args, QString &) {
     expects(2, args);
     m_layers->addTo(args[0].toUShort(),
                     new SlideAnimationLayer(m_layers->current(),
-                                 args[1].toFloat()));
+                                            args[1].toFloat()));
+}
+
+void CommandExecutor::cSpot(const QStringList &args, QString &) {
+    expects(4, args);
+    m_layers->addTo(args[0].toUShort(),
+            new SpotLayer(  Color(args[1].toUShort(),
+                                  args[2].toUShort(),
+                                  args[3].toUShort(),
+                                  args[4].toUShort()),
+                            args[5].toFloat(),
+                            args[6].toFloat(),
+                            static_cast<Interpolator::Type>(args[7].toUShort())));
 }
 
 void CommandExecutor::cOff(const QStringList &, QString &) {
