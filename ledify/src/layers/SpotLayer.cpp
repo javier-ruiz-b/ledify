@@ -7,7 +7,6 @@ SpotLayer::SpotLayer(const Color &color, float position, float size, Interpolato
     uint32_t bufferSize = 2 * static_cast<uint32_t>(size);
     m_bufferSize = bufferSize;
 
-    delete m_pixelBuffer;
     m_pixelBuffer = new uint32_t[bufferSize];
     memset(m_pixelBuffer, 0, bufferSize * sizeof(uint32_t));
     for (uint32_t i = 0; i < m_bufferSize/2; i++) {
@@ -17,6 +16,10 @@ SpotLayer::SpotLayer(const Color &color, float position, float size, Interpolato
         m_pixelBuffer[m_bufferSize/2 - i] = resultingColor.rgbw();
         m_pixelBuffer[m_bufferSize/2 + i] = resultingColor.rgbw();
     }
+}
+
+SpotLayer::~SpotLayer() {
+    delete[] m_pixelBuffer;
 }
 
 
