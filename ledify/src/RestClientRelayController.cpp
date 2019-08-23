@@ -26,7 +26,8 @@ bool RestClientRelayController::isOn() {
 }
 
 void RestClientRelayController::changeRelayState(bool state, int delayMs) {
-
+    m_timer->disconnect();
+    m_timer->stop();
     connect(m_timer, &QTimer::timeout, this, [this, state] {
         m_timer->stop();
         if (m_state == state) {

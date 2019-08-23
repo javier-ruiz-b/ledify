@@ -117,7 +117,9 @@ void LedStripController::terminate() {
     commandOff();
     QTimer::singleShot(5000, this, [this] { //force
         m_relayController->turnOff(0);
-        emit terminated();
+        QTimer::singleShot(1000, this, [this] {
+            emit terminated();
+        });
     });
 }
 

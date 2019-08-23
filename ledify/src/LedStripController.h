@@ -43,7 +43,7 @@ private:
 
 private:
     const int c_trafoPowerOnDelayMs = 500;
-    const int c_trafoIdlePowerOffDelayMs = 6000;
+    const int c_trafoIdlePowerOffDelayMs = 4000;
     const int c_drawRefreshIdleMs = 4000;
 
     RestClientRelayController *m_relayController;
