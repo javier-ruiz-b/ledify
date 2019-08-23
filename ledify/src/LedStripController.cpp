@@ -7,7 +7,7 @@
 #include <ColorLayer.h>
 #include "ILedStrip.h"
 #include "Layer.h"
-#include "RelayController.h"
+#include "RestClientRelayController.h"
 #include "TimeControl.h"
 
 Q_LOGGING_CATEGORY(CONTROLLER, "ledify.controller", QtWarningMsg)
@@ -16,7 +16,7 @@ LedStripController::LedStripController(ILedStrip *ledStrip, IWiringPi *wiringPi,
     : QObject(parent), m_ledStrip(ledStrip) {
     connect(this, &LedStripController::terminated, this, &LedStripController::deinitialize);
 
-    m_relayController = new RelayController(wiringPi, this);
+    m_relayController = new RestClientRelayController(this);
     auto blackColor = m_layerController.add(new ColorLayer(Color(0, 0, 0, 0)));
     m_layerController.setAsRoot(blackColor);
     m_executor.reset(new CommandExecutor(&m_layerController, &m_fpsCalculator));
@@ -108,8 +108,8 @@ void LedStripController::terminate() {
         return;
     }
 
-    connect(m_relayController, &RelayController::relayStateChanged,
-            this, [this] (int, bool state) {
+    connect(m_relayController, &RestClientRelayController::relayStateChanged,
+            this, [this] (bool state) {
         if (!state) {
             emit terminated();
         }

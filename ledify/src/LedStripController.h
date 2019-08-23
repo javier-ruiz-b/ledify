@@ -10,7 +10,7 @@ class ILedStrip;
 class IWiringPi;
 class Layer;
 class QString;
-class RelayController;
+class RestClientRelayController;
 
 class LedStripController : public QObject {
     Q_OBJECT
@@ -46,7 +46,7 @@ private:
     const int c_trafoIdlePowerOffDelayMs = 6000;
     const int c_drawRefreshIdleMs = 4000;
 
-    RelayController *m_relayController;
+    RestClientRelayController *m_relayController;
     FpsCalculator m_fpsCalculator;
     CommandReader m_commandReader;
     LayerController m_layerController;
