@@ -26,14 +26,15 @@ bool RestClientRelayController::isOn() {
 }
 
 void RestClientRelayController::changeRelayState(bool state, int delayMs) {
-    if (m_state == state) {
-        qCDebug(RESTRELAY) << "Same state. Not sending request";
-        return;
-    }
 
     connect(m_timer, &QTimer::timeout, this, [this, state] {
         m_timer->stop();
-        sendHttpRequest(state);
+        if (m_state == state) {
+            qCDebug(RESTRELAY) << "Same state. Not sending request";
+            return;
+        } else {
+            sendHttpRequest(state);
+        }
     });
 
     m_timer->start(delayMs);
@@ -49,8 +50,6 @@ void RestClientRelayController::sendHttpRequest(bool originalState) {
 
     bool state = inverted ^ originalState;
 
-    // http://192.168.178.50/send?protocol=clarus_switch&on=1&id=A0&unit=0
-    //"http://192.168.178.50/send?protocol=clarus_switch&off=1&id=0&unit=A0"
     QString command = state ? "on" : "off";
     QUrl url("http://" + ip
              + "/send?protocol=" + protocol
