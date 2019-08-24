@@ -34,6 +34,7 @@ void Ws2811LedStrip::deinitialize() {
 }
 
 void Ws2811LedStrip::render(Layer *rootLayer) {
+    memset(m_ledBuffer, 0, m_numLeds * sizeof(uint32_t));
     rootLayer->draw(m_ledBuffer, m_numLeds);
     ws2811_return_t errCode;
     if ((errCode = ws2811_render(&m_ledStrip)) != WS2811_SUCCESS) {

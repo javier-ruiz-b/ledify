@@ -30,6 +30,7 @@ int main(int argc, char *argv[]) {
 Simulator::Simulator(QObject *parent) : QObject(parent) {
     m_ledController = new LedStripController(&m_ledStrip, new MockRelayController(this), this);
     connect(m_ledController, &LedStripController::drawPixels, this, [this] (Layer *rootLayer) {
+        memset(m_colorData.data(), 0, static_cast<uint32_t>(m_colorData.size()) * sizeof(uint32_t));
         rootLayer->draw(reinterpret_cast<uint32_t *>(m_colorData.data()),
                         static_cast<uint32_t>(m_colorData.size()));
         for (uint16_t i = 0; i < m_colorData.count(); i++) {
@@ -53,6 +54,6 @@ Simulator::Simulator(QObject *parent) : QObject(parent) {
 }
 
 void Simulator::sendCommand(const QString &string) {
-    m_ledController->parseReceivedString(string);
+    m_ledController->parseReceivedString(string.toUpper());
     m_ledController->turnOnRelayAndRefresh();
 }

@@ -116,10 +116,10 @@ void CommandExecutor::cMove(const QStringList &args, QString &) {
 }
 
 void CommandExecutor::cSlideAnimation(const QStringList &args, QString &) {
-    expects(2, args);
+    expects(3, args);
     m_layers->addTo(args[0].toUShort(),
-                    new SlideAnimationLayer(m_layers->current(),
-                                            args[1].toFloat()));
+                    new SlideAnimationLayer(m_layers->take(args[1].toUShort()),
+                                            args[2].toFloat()));
 }
 
 void CommandExecutor::cSpot(const QStringList &args, QString &) {

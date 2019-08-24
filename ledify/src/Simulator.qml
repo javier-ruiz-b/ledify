@@ -28,6 +28,12 @@ ApplicationWindow {
 
     }
 
+
+    function toHex(d) {
+        return  ("0"+(Number(d).toString(16))).slice(-2).toUpperCase()
+    }
+
+
     SimulatorController {
         id: simulator
         onLedDataChanged: {
@@ -36,8 +42,12 @@ ApplicationWindow {
             for (var i = 0; (i < ledData.length) &&
                             (i < ledColors.model); i++) {
                 var value = ledData[i]
-//                console.log("#" + value.toString(16))
-                ledColors.itemAt(i).color = "#" + value.toString(16)
+                var r = toHex(value >> 16)
+                var g = toHex((value >> 8) & 0xFF)
+                var b = toHex(value & 0xFF)
+                var rgb = "FF" + r + g + b;
+//                console.log("[" + i + "] = #" + rgb)
+                ledColors.itemAt(i).color = "#" + rgb
             }
         }
     }
