@@ -31,3 +31,16 @@ bool Daytime::isDay(const QDateTime &dateTime) {
     return minsSinceMidForSunrise < currentMinutes &&
             currentMinutes < minsSinceMidForSunset;
 }
+
+bool Daytime::isAfterMidnight() {
+    return isAfterMidnight(QDateTime::currentDateTime());
+}
+
+bool Daytime::isAfterMidnight(const QDateTime &dateTime) {
+    if (isDay(dateTime)) {
+        return false;
+    }
+
+    auto hour = dateTime.time().hour();
+    return (0 <= hour) && (hour <= 12);
+}

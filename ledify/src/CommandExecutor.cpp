@@ -178,10 +178,10 @@ void CommandExecutor::cOn(const QStringList &, QString &) {
 }
 
 void CommandExecutor::cOnIfNight(const QStringList &args, QString &response) {
-    if (!m_dayTime.isDay()) {
+    if (!m_dayTime.isDay() && !m_dayTime.isAfterMidnight()) {
         cOn(args, response);
     } else {
-        qCDebug(EXECUTOR) << "Not turning on, it's currently day.";
+        qCDebug(EXECUTOR) << "Not turning on, it's currently day or after midnight.";
     }
 }
 

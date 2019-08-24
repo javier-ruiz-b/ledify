@@ -23,4 +23,16 @@ void DaytimeTest::isDayAtNoon() {
     QVERIFY(m_tested->isDay(dt));
 }
 
+void DaytimeTest::isAfterMidnight() {
+    QDateTime dt(QDate(2000, 1, 1), QTime(1, 0));
+
+    QVERIFY(m_tested->isAfterMidnight(dt));
+}
+
+void DaytimeTest::isNotAfterMidnight() {
+    QDateTime dt(QDate(2000, 1, 1), QTime(12, 0));
+
+    QVERIFY(!m_tested->isAfterMidnight(dt));
+}
+
 QTEST_APPLESS_MAIN(DaytimeTest)

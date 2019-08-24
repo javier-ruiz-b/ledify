@@ -9,6 +9,8 @@ public:
     ~Daytime();
     bool isDay();
     bool isDay(const QDateTime &dateTime);
+    bool isAfterMidnight();
+    bool isAfterMidnight(const QDateTime &dateTime);
 
 private:
     Dusk2Dawn *m_dusk2dawn;

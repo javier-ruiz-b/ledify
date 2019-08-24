@@ -15,6 +15,8 @@ private slots:
 
     void isNightAtMidnight();
     void isDayAtNoon();
+    void isAfterMidnight();
+    void isNotAfterMidnight();
 
 private:
     Daytime *m_tested;
