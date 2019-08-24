@@ -4,7 +4,6 @@
 #include <QTest>
 
 #include "MockLedStrip.h"
-#include "MockWiringPi.h"
 
 class LedStripController;
 class Adafruit_NeoPixel;
@@ -38,8 +37,7 @@ private:
     void writeCommand(std::string command);
 
 private:
-    MockLedStrip m_ledStrip;
-    MockWiringPi m_wiringPi;
+    MockLedStrip m_ledStrip{NUM_LED};
     LedStripController *m_tested = nullptr;
     const int m_numLeds = NUM_LED;
     int m_leds[NUM_LED];

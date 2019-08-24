@@ -2,7 +2,6 @@
 #include <QObject>
 #include "SerialPort.h"
 #include "LedStripController.h"
-#include "WiringPiWrapper.h"
 #include "Ws2811LedStrip.h"
 #include "RestServer.h"
 
@@ -45,7 +44,6 @@ private:
     SerialPort m_serial;
     LedStripController *m_controller;
 
-    WiringPiWrapper m_wiringPi;
     Ws2811LedStrip m_ledStrip;
 
     RestServer restServer;

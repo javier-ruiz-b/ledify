@@ -12,7 +12,7 @@
 
 Q_LOGGING_CATEGORY(CONTROLLER, "ledify.controller", QtWarningMsg)
 
-LedStripController::LedStripController(ILedStrip *ledStrip, IWiringPi *wiringPi, QObject *parent)
+LedStripController::LedStripController(ILedStrip *ledStrip, QObject *parent)
     : QObject(parent), m_ledStrip(ledStrip) {
     connect(this, &LedStripController::terminated, this, &LedStripController::deinitialize);
 

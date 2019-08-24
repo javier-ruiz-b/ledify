@@ -10,7 +10,7 @@
 void LedStripControllerTest::init() {
     TimeControl::instance()->setMocked(true);
     TimeControl::instance()->setMillis(0);
-    m_tested = new LedStripController(&m_ledStrip, &m_wiringPi, this);
+    m_tested = new LedStripController(&m_ledStrip, this);
 //    m_buffer = (int *) m_buffer;
     memset(m_leds, 0xFE, NUM_LED*sizeof(uint32_t));
     connect(m_tested, &LedStripController::drawPixels, this, [this] (Layer *rootLayer) {
@@ -60,7 +60,7 @@ void LedStripControllerTest::createsTwoColorsAndSetsSecond() {
 void LedStripControllerTest::fadesBetweenTwoColors() {
     writeCommand("C+COLOR=0,255,0,0,0");
     writeCommand("C+COLOR=1,0,255,0,0");
-    writeCommand("C+FADE=2,0,1,0,1000,1000");
+    writeCommand("C+FADE=2,0,1,1,1000,1000");
     writeCommand("C+SET=2");
 
     m_tested->draw();
@@ -77,7 +77,7 @@ void LedStripControllerTest::fadesBetweenCurrentLayerAndAnotherColor() {
     writeCommand("C+COLOR=0,255,0,0,0");
     writeCommand("C+SET=0");
     writeCommand("C+COLOR=1,0,255,0,0");
-    writeCommand("C+FADETO=2,1,0,1000,1000");
+    writeCommand("C+FADETO=2,1,1,1000,1000");
     writeCommand("C+SET=2");
 
     m_tested->draw();
@@ -91,8 +91,8 @@ void LedStripControllerTest::twoFadesAtTheSameTime() {
     writeCommand("C+COLOR=0,255,0,0,0");
     writeCommand("C+COLOR=1,0,255,0,0");
     writeCommand("C+COLOR=2,127,127,255,0");
-    writeCommand("C+FADE=3,0,1,0,0,1000"); // COLOR3= 0+1 @ 500ms = 127,127,0,0
-    writeCommand("C+FADE=4,2,3,0,0,1000"); // COLOR4= 2+3 € 500ms = 127,127,127,0
+    writeCommand("C+FADE=3,0,1,1,0,1000"); // COLOR3= 0+1 @ 500ms = 127,127,0,0
+    writeCommand("C+FADE=4,2,3,1,0,1000"); // COLOR4= 2+3 € 500ms = 127,127,127,0
     writeCommand("C+SET=4");
 
     m_tested->draw();

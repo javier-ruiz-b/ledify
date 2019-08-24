@@ -16,7 +16,7 @@ class LedStripController : public QObject {
     Q_OBJECT
 
 public:
-    LedStripController(ILedStrip *ledStrip, IWiringPi *wiringPi, QObject *parent = nullptr);
+    LedStripController(ILedStrip *ledStrip, QObject *parent = nullptr);
 
     void initializeDependencies();
     LayerController &layerController();

@@ -15,5 +15,4 @@ public:
 private:
     uint32_t *m_ledBuffer = nullptr;
     ws2811_t m_ledStrip;
-    uint32_t m_numLeds;
 };

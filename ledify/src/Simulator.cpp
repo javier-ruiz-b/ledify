@@ -11,7 +11,7 @@
 
 #include <thread>
 
-static const int c_numLeds = 300;
+static const int c_numLeds = SIMULATOR_LEDS;
 static QVector<int> m_colorData(c_numLeds);
 int main(int argc, char *argv[]) {
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
 }
 
 Simulator::Simulator(QObject *parent) : QObject(parent) {
-    m_ledController = new LedStripController(&m_ledStrip, &m_wiringPi, this);
+    m_ledController = new LedStripController(&m_ledStrip, this);
     connect(m_ledController, &LedStripController::drawPixels, this, [this] (Layer *rootLayer) {
         rootLayer->draw(reinterpret_cast<uint32_t *>(m_colorData.data()),
                         static_cast<uint32_t>(m_colorData.size()));

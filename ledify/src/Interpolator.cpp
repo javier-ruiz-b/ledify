@@ -1,5 +1,9 @@
 #include "Interpolator.h"
 #include <cmath>
+#include <QLoggingCategory>
+
+Q_LOGGING_CATEGORY(INTERPOLATOR, "ledify.interpolator", QtWarningMsg)
+
 
 float Interpolator::value(Type type, float current, float end) {
     switch (type) {
@@ -15,6 +19,8 @@ float Interpolator::value(Type type, float current, float end) {
 //    default:
         return linearValue(current, end);
     }
+    qCWarning(INTERPOLATOR) << "Wrong interpolator type:" << type;
+    return 0;
 }
 
 float Interpolator::acceleratedValue(float current, float end, float factor) {

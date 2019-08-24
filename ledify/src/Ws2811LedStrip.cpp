@@ -11,7 +11,7 @@
 #define STRIP_TYPE      SK6812_STRIP_GRBW
 
 Ws2811LedStrip::Ws2811LedStrip(uint32_t numLeds)
-    : m_numLeds(numLeds) {}
+    : ILedStrip (numLeds) {}
 
 void Ws2811LedStrip::initialize() {
     m_ledStrip.freq = TARGET_FREQ;

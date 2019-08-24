@@ -5,7 +5,7 @@
 #include <QVariant>
 
 #include "MockLedStrip.h"
-#include "MockWiringPi.h"
+#define SIMULATOR_LEDS 300
 
 class LedStripController;
 
@@ -34,7 +34,6 @@ public slots:
 
 private:
     LedStripController *m_ledController;
-    MockLedStrip m_ledStrip;
-    MockWiringPi m_wiringPi;
+    MockLedStrip m_ledStrip{SIMULATOR_LEDS};
     QVariant m_ledData;
 };
