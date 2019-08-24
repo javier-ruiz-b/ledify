@@ -10,13 +10,13 @@ class ILedStrip;
 class IWiringPi;
 class Layer;
 class QString;
-class RestClientRelayController;
+class IRelayController;
 
 class LedStripController : public QObject {
     Q_OBJECT
 
 public:
-    LedStripController(ILedStrip *ledStrip, QObject *parent = nullptr);
+    LedStripController(ILedStrip *ledStrip, IRelayController *relayController, QObject *parent = nullptr);
 
     void initializeDependencies();
     LayerController &layerController();
@@ -46,14 +46,13 @@ private:
     const int c_trafoIdlePowerOffDelayMs = 4000;
     const int c_drawRefreshIdleMs = 4000;
 
-    RestClientRelayController *m_relayController;
+    ILedStrip *m_ledStrip;
+    IRelayController *m_relayController;
     FpsCalculator m_fpsCalculator;
     CommandReader m_commandReader;
     LayerController m_layerController;
     QScopedPointer<CommandExecutor> m_executor;
     QTimer *m_loopTimer;
-
-    ILedStrip *m_ledStrip;
 
     friend class LedStripControllerTest;
 };

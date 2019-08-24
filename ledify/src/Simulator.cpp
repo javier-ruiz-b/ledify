@@ -7,6 +7,7 @@
 #include "Simulator.h"
 #include "Layer.h"
 #include "LedStripController.h"
+#include "MockRelayController.h"
 #include "Color.h"
 
 #include <thread>
@@ -27,7 +28,7 @@ int main(int argc, char *argv[]) {
 }
 
 Simulator::Simulator(QObject *parent) : QObject(parent) {
-    m_ledController = new LedStripController(&m_ledStrip, this);
+    m_ledController = new LedStripController(&m_ledStrip, new MockRelayController(this), this);
     connect(m_ledController, &LedStripController::drawPixels, this, [this] (Layer *rootLayer) {
         rootLayer->draw(reinterpret_cast<uint32_t *>(m_colorData.data()),
                         static_cast<uint32_t>(m_colorData.size()));

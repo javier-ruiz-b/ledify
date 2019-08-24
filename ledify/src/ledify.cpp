@@ -9,6 +9,7 @@
 #include <wiringPi.h>
 
 #include "LayerController.h"
+#include "RestClientRelayController.h"
 #include <QtDebug>
 #include <QString>
 
@@ -56,7 +57,7 @@ bool Ledify::init() {
         emit finished();
         return false;
     }
-    auto controller = new LedStripController(&m_ledStrip, this);
+    auto controller = new LedStripController(&m_ledStrip, new RestClientRelayController(this), this);
     connect (controller, &LedStripController::terminated, this, &Ledify::finished);
     controller->initializeDependencies();
     restServer.registerCallback([controller] (QString &command) -> QString {

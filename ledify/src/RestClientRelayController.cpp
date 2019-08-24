@@ -4,11 +4,12 @@
 #include <qhttpfwd.hpp>
 #include <QLoggingCategory>
 
-Q_LOGGING_CATEGORY(RESTRELAY, "ledify.restrelay", QtDebugMsg)
+Q_LOGGING_CATEGORY(RESTRELAY, "ledify.restrelay", QtWarningMsg)
 
 using namespace qhttp::client;
 
-RestClientRelayController::RestClientRelayController(QObject *parent) : QObject(parent) {
+RestClientRelayController::RestClientRelayController(QObject *parent)
+    : IRelayController(parent) {
     m_timer = new QTimer(this);
     m_httpClient = new QHttpClient(this);
 }

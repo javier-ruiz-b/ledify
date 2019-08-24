@@ -12,11 +12,10 @@
 
 Q_LOGGING_CATEGORY(CONTROLLER, "ledify.controller", QtWarningMsg)
 
-LedStripController::LedStripController(ILedStrip *ledStrip, QObject *parent)
-    : QObject(parent), m_ledStrip(ledStrip) {
+LedStripController::LedStripController(ILedStrip *ledStrip, IRelayController *relayController, QObject *parent)
+    : QObject(parent), m_ledStrip(ledStrip), m_relayController(relayController) {
     connect(this, &LedStripController::terminated, this, &LedStripController::deinitialize);
 
-    m_relayController = new RestClientRelayController(this);
     auto blackColor = m_layerController.add(new ColorLayer(Color(0, 0, 0, 0)));
     m_layerController.setAsRoot(blackColor);
     m_executor.reset(new CommandExecutor(&m_layerController, &m_fpsCalculator));

@@ -1,6 +1,7 @@
 #pragma once
 #include <QObject>
 #include <QTimer>
+#include "IRelayController.h"
 
 namespace qhttp {
 namespace client {
@@ -9,19 +10,18 @@ class QHttpRequest;
 class QHttpResponse;
 }
 }
+
 using namespace qhttp::client;
 
-class RestClientRelayController : public QObject {
+
+class RestClientRelayController : public IRelayController {
     Q_OBJECT
 public:
     explicit RestClientRelayController(QObject *parent = nullptr);
 
-    void turnOff(int delayMs = 2000);
-    void turnOn(int delayMs = 0);
-    bool isOn();
-
-signals:
-    void relayStateChanged(bool state);
+    virtual void turnOff(int delayMs = 2000);
+    virtual void turnOn(int delayMs = 0);
+    virtual bool isOn();
 
 private:
     void changeRelayState(bool state, int delayMs);

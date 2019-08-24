@@ -5,12 +5,12 @@
 #include <ColorLayer.h>
 #include <Color.h>
 #include <iostream>
-
+#include <MockRelayController.h>
 
 void LedStripControllerTest::init() {
     TimeControl::instance()->setMocked(true);
     TimeControl::instance()->setMillis(0);
-    m_tested = new LedStripController(&m_ledStrip, this);
+    m_tested = new LedStripController(&m_ledStrip, new MockRelayController(this), this);
 //    m_buffer = (int *) m_buffer;
     memset(m_leds, 0xFE, NUM_LED*sizeof(uint32_t));
     connect(m_tested, &LedStripController::drawPixels, this, [this] (Layer *rootLayer) {
