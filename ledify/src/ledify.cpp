@@ -6,7 +6,6 @@
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/socket.h>
-#include <wiringPi.h>
 
 #include "LayerController.h"
 #include "RestClientRelayController.h"
@@ -25,17 +24,9 @@ int main(int argc, char **argv) {
     return a.exec();
 }
 
-Ledify::Ledify(const QStringList &arguments, QObject *parent)
+Ledify::Ledify(const QStringList &, QObject *parent)
     : QObject(parent), m_ledStrip(300) {
     setupUnixSignalHandlers();
-
-    QString serialInput = "/dev/ttyAMA0";
-    if (arguments.size() >= 2) {
-        if (arguments[0] == "-D") {
-            serialInput = arguments[1];
-        }
-    }
-    m_serial.begin(serialInput.toUtf8().constData(), 9600);
 }
 
 void Ledify::setupUnixSignalHandlers() {
@@ -51,12 +42,6 @@ void Ledify::setupUnixSignalHandlers() {
 }
 
 bool Ledify::init() {
-    if (wiringPiSetup() == -1) {
-        qCritical() << "Unable to start wiringPi:"
-                    << strerror (errno);
-        emit finished();
-        return false;
-    }
     auto controller = new LedStripController(&m_ledStrip, new RestClientRelayController(this), this);
     connect (controller, &LedStripController::terminated, this, &Ledify::finished);
     controller->initializeDependencies();

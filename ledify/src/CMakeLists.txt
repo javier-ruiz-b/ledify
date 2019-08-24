@@ -40,17 +40,17 @@ addLibrary (LedStripController CommandReader FpsCalculator CommandExecutor RestC
 if (BUILD_TESTS OR BUILD_SIMULATOR)
     addLibrary (MockRelayController IRelayController)
     addLibrary (MockLedStrip)
-    addLibrary (MockWiringPi)
+#    addLibrary (MockWiringPi)
 endif()
 
 # main
 option(BUILD_LEDIFY "Build Ledify" ON)
 if(BUILD_LEDIFY)    
     # WiringPi
-    aux_source_directory(wiringPi/wiringPi WIRING_PI_SOURCES)
-    include_directories(wiringPi wiringPi/wiringPi)
-    add_library(wiringPi ${WIRING_PI_SOURCES})
-    target_link_libraries(wiringPi Threads::Threads)
+#    aux_source_directory(wiringPi/wiringPi WIRING_PI_SOURCES)
+#    include_directories(wiringPi wiringPi/wiringPi)
+#    add_library(wiringPi ${WIRING_PI_SOURCES})
+#    target_link_libraries(wiringPi Threads::Threads)
 
     # rpi_ws281x
     aux_source_directory(rpi_ws281x RPI_WS281X_SOURCES)
@@ -59,11 +59,11 @@ if(BUILD_LEDIFY)
     add_library(rpi_ws281x ${RPI_WS281X_SOURCES})
 
 
-    addLibrary (SerialPort wiringPi)
-    addLibrary (WiringPiWrapper wiringPi)
+#    addLibrary (SerialPort wiringPi)
+#    addLibrary (WiringPiWrapper wiringPi)
     addLibrary (Ws2811LedStrip rpi_ws281x Layer)
     add_executable(${PROJECT_NAME} ledify.cpp)
-    target_link_libraries(${PROJECT_NAME} LedStripController SerialPort RestServer WiringPiWrapper Ws2811LedStrip)
+    target_link_libraries(${PROJECT_NAME} LedStripController RestServer Ws2811LedStrip)
 endif()
 
 option(BUILD_TEST_RESTSERVER "Build Test RestServer" OFF)

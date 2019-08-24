@@ -41,7 +41,6 @@ private:
     QSocketNotifier *m_snHup;
     QSocketNotifier *m_snTerm;
 
-    SerialPort m_serial;
     LedStripController *m_controller;
 
     Ws2811LedStrip m_ledStrip;
