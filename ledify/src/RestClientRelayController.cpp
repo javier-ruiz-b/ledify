@@ -1,17 +1,16 @@
 #include "RestClientRelayController.h"
-#include <qhttpclient.hpp>
-#include <qhttpclientresponse.hpp>
-#include <qhttpfwd.hpp>
 #include <QLoggingCategory>
+#include <QUrl>
+#include <cpp-httplib/httplib.h>
+#include <string>
 
 Q_LOGGING_CATEGORY(RESTRELAY, "ledify.restrelay", QtWarningMsg)
 
-using namespace qhttp::client;
+using namespace httplib;
 
 RestClientRelayController::RestClientRelayController(QObject *parent)
     : IRelayController(parent) {
     m_timer = new QTimer(this);
-    m_httpClient = new QHttpClient(this);
 }
 
 void RestClientRelayController::turnOff(int delayMs) {
@@ -59,27 +58,25 @@ void RestClientRelayController::sendHttpRequest(bool originalState) {
              + "&id=" + id
              + "&unit=" + unit);
 
+    QString request("send?protocol=" + protocol
+             + "&" + command + "=1"
+             + "&id=" + id
+             + "&unit=" + unit);
     qCDebug(RESTRELAY) << "Sending GET request" << url.toString();
 
-    m_httpClient->killConnection();
-    m_httpClient = new QHttpClient(this);
-    m_httpClient->setConnectingTimeOut(2000, [] {
-        qCWarning(RESTRELAY, "Failed to connect to REST client (pilight)");
-    });
-    m_httpClient->request(qhttp::EHTTP_GET, url, [this, originalState](QHttpResponse* res) {
-        res->onData([](const QByteArray& chunk) {
-            qCDebug(RESTRELAY).noquote() << "Data:" << chunk;
-        });
+    const int timeoutSecs = 2;
+    const int httpPort = 2;
+    httplib::Client cli(ip.toUtf8(), httpPort, timeoutSecs);
 
-        if (res->status() != qhttp::ESTATUS_OK) {
-            qCWarning(RESTRELAY) << "Response code" << res->status() << res->statusString();
-        } else {
-            m_state = originalState;
-            emit relayStateChanged(originalState);
-            qCDebug(RESTRELAY) << "Response OK, state changed:" << originalState;
-        }
-    });
-
+    auto res = cli.Get(request.toUtf8());
+    if (res && res->status == 200) {
+        qCDebug(RESTRELAY) << "Response:" << res->body.c_str();
+        m_state = originalState;
+        emit relayStateChanged(originalState);
+        qCDebug(RESTRELAY) << "Response OK, state changed:" << originalState;
+    } else {
+        qCWarning(RESTRELAY) << "Failed to connect to REST client (pilight)";
+    }
 
 
 }

@@ -1,7 +1,7 @@
 #include "Daytime.h"
 #include <QDateTime>
 #include <QTimeZone>
-#include <Dusk2Dawn.h>
+#include <Dusk2Dawn/Dusk2Dawn.h>
 
 Daytime::Daytime() {
     float berlinLat = 52.520008f;

@@ -1,42 +1,39 @@
 #include "RestServer.h"
 
-#include <qhttpserver.hpp>
-#include <qhttpserverrequest.hpp>
-#include <qhttpserverresponse.hpp>
 #include <QLoggingCategory>
+#include <cpp-httplib/httplib.h>
 
 Q_LOGGING_CATEGORY(REST, "ledify.restserver", QtWarningMsg)
 
-using namespace qhttp::server;
+using namespace httplib;
 
 RestServer::RestServer(QObject *parent) : QObject(parent) {
-    m_server = new QHttpServer(this);
-    m_server->listen(QHostAddress::Any, 8033, [this] (QHttpRequest* req, QHttpResponse* res) {
-        emit requestReceived(req, res);
+
+    Server svr;
+
+    svr.Get(R"(.*)", [this](const Request& req, Response& res) {
+        QString urlString = req.path.c_str();
+
+       if (urlString.size() < 2) {
+           res.set_content("Send me more!\n", "text/plain");
+           res.status = 406; //ESTATUS_NOT_ACCEPTABLE
+           return;
+       }
+       auto commands = urlString.mid(1);
+
+       QByteArray responses = "";
+       foreach(auto command, commands.split("+", QString::SplitBehavior::SkipEmptyParts)) {
+           qCDebug(REST) << "Received command" << command;
+           responses += m_callback(command).toUtf8() + ";";
+       }
+       res.set_content(responses.data(), "text/plain");
+
     });
 
-    if ( m_server->isListening() ) {
+
+    if (svr.listen("0.0.0.0", 8033)) {
         qCDebug(REST, "Started REST server");
     } else {
         qCWarning(REST, "Failed to start REST server");
     }
-}
-
-void RestServer::requestReceived(QHttpRequest *req, QHttpResponse *res) {
-    QString urlString = req->url().toString();
-
-    if (urlString.size() < 2) {
-        res->setStatusCode(qhttp::ESTATUS_NOT_ACCEPTABLE);
-        res->end("Send me more!\n");
-        return;
-    }
-    auto commands = urlString.mid(1);
-
-    QByteArray responses = "";
-    foreach(auto command, commands.split("+", QString::SplitBehavior::SkipEmptyParts)) {
-        qCDebug(REST) << "Received command" << command;
-        responses += m_callback(command).toUtf8() + ";";
-    }
-    res->setStatusCode(qhttp::ESTATUS_OK);
-    res->end(responses);
 }

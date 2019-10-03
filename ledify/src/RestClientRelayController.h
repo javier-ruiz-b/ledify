@@ -3,17 +3,6 @@
 #include <QTimer>
 #include "IRelayController.h"
 
-namespace qhttp {
-namespace client {
-class QHttpClient;
-class QHttpRequest;
-class QHttpResponse;
-}
-}
-
-using namespace qhttp::client;
-
-
 class RestClientRelayController : public IRelayController {
     Q_OBJECT
 public:
@@ -28,7 +17,6 @@ private:
     void sendHttpRequest(bool state);
 
 private:
-    QHttpClient *m_httpClient;
     QTimer *m_timer;
     bool m_state = false;
 };
