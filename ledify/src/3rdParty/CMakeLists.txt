@@ -16,7 +16,7 @@ add_library(Dusk2Dawn ${DUSK2DAWN_SOURCES})
 if(BUILD_LEDIFY)
     aux_source_directory(rpi_ws281x RPI_WS281X_SOURCES)
     list(REMOVE_ITEM RPI_WS281X_SOURCES "rpi_ws281x/main.c")
-    #add_library(rpi_ws281x ${RPI_WS281X_SOURCES})
+    add_library(rpi_ws281x ${RPI_WS281X_SOURCES})
     # WiringPi
     #    aux_source_directory(wiringPi/wiringPi WIRING_PI_SOURCES)
     #    include_directories(wiringPi wiringPi/wiringPi)

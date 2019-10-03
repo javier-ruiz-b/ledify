@@ -28,7 +28,7 @@ addLibrary (IRelayController)
 addLibrary (RestClientRelayController IRelayController)
 addLibrary (LayerController Layer FadeLayer ColorLayer StartLayer RandomLayer SpotLayer SlideAnimationLayer AdditionLayer)
 addLibrary (CommandExecutor LayerController TimeControl Daytime)
-addLibrary (RestServer ws2_32)
+addLibrary (RestServer)
 addLibrary (LedStripController CommandReader FpsCalculator CommandExecutor RestClientRelayController TimeControl)
 
 if (BUILD_TESTS OR BUILD_SIMULATOR)
