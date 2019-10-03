@@ -58,14 +58,14 @@ void RestClientRelayController::sendHttpRequest(bool originalState) {
              + "&id=" + id
              + "&unit=" + unit);
 
-    QString request("send?protocol=" + protocol
+    QString request("/send?protocol=" + protocol
              + "&" + command + "=1"
              + "&id=" + id
              + "&unit=" + unit);
     qCDebug(RESTRELAY) << "Sending GET request" << url.toString();
 
     const int timeoutSecs = 2;
-    const int httpPort = 2;
+    const int httpPort = 80;
     httplib::Client cli(ip.toUtf8(), httpPort, timeoutSecs);
 
     auto res = cli.Get(request.toUtf8());
