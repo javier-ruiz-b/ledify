@@ -44,7 +44,7 @@ if(BUILD_LEDIFY)
     include_directories(3rdParty/rpi_ws281x)
     addLibrary (Ws2811LedStrip rpi_ws281x Layer)
     add_executable(${PROJECT_NAME} ledify.cpp)
-    target_link_libraries(${PROJECT_NAME} LedStripController RestServer Ws2811LedStrip)
+    target_link_libraries(${PROJECT_NAME} LedStripController RestServer Ws2811LedStrip Threads::Threads)
 endif()
 
 if(BUILD_TEST_RESTSERVER)
