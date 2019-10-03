@@ -66,25 +66,7 @@ bool LedStripController::isAnyLedOn() {
 }
 
 QString LedStripController::parseReceivedString(const QString &received) {
-    qCDebug(CONTROLLER) << "Recv:" << received;
-
-    QString response;
-    auto lines = received.split(QRegularExpression("(;|\n| )"));
-    for (auto line: lines) {
-        auto commandAndArgs = line.split("=");
-        if (commandAndArgs.empty()) {
-            qCDebug(CONTROLLER) << "Empty command";
-            return "Empty command";
-        }
-        auto command = commandAndArgs.first();
-        QStringList args;
-        if (commandAndArgs.count() >= 2) {
-            args = commandAndArgs[1].split(",");
-        }
-
-        m_executor->parseCommand(command, args, response);
-    }
-    return response;
+    return m_executor->parseCommand(received);
 }
 
 void LedStripController::commandOff() {

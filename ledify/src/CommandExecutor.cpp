@@ -49,6 +49,28 @@ bool CommandExecutor::parseCommand(const QString &command, const QStringList &ar
     return true;
 }
 
+QString CommandExecutor::parseCommand(const QString &received) {
+    qCDebug(EXECUTOR) << "Recv:" << received;
+
+    QString response;
+    auto lines = received.split(QRegularExpression("(;|\n| )"));
+    for (auto line: lines) {
+        auto commandAndArgs = line.split("=");
+        if (commandAndArgs.empty()) {
+            qCWarning(EXECUTOR) << "Received empty command";
+            return "Empty command";
+        }
+        auto command = commandAndArgs.first();
+        QStringList args;
+        if (commandAndArgs.count() >= 2) {
+            args = commandAndArgs[1].split(",");
+        }
+
+        parseCommand(command, args, response);
+    }
+    return response;
+}
+
 void CommandExecutor::cSet(const QStringList &args, QString &) {
     expects(1, args);
     m_layers->setAsRoot(args[0].toUShort());

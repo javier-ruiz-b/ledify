@@ -103,12 +103,14 @@ void LedStripControllerTest::twoFadesAtTheSameTime() {
 }
 
 void LedStripControllerTest::triesToSetAnUnsetIndex() {
+    QTest::ignoreMessage(QtSystemMsg,QRegularExpression("Doesn't exist"));
     m_tested->m_layerController.root().reset();
     writeCommand("C+SET=0");
     QVERIFY(m_tested->m_layerController.root().child().isNull());
 }
 
 void LedStripControllerTest::triesToSetAnInvalidIndex() {
+    QTest::ignoreMessage(QtSystemMsg,QRegularExpression("Doesn't exist"));
     m_tested->m_layerController.root().reset();
     writeCommand("C+SET=65240");
     QVERIFY(m_tested->m_layerController.root().child().isNull());

@@ -12,7 +12,7 @@ class CommandExecutor {
 public:
     CommandExecutor(LayerController *layers, FpsCalculator *fpsCalculator);
 
-    bool parseCommand(const QString &command, const QStringList &args, QString &response);
+    QString parseCommand(const QString &received);
 
 public:
     void cOff(const QStringList &args, QString &response);
@@ -33,6 +33,9 @@ private:
     void cSlideAnimation(const QStringList &args, QString &response);
     void cSpot(const QStringList &args, QString &response);
     void cAdd(const QStringList &args, QString &response);
+
+private:
+    bool parseCommand(const QString &command, const QStringList &args, QString &response);
 
 private:
     LayerController *m_layers;
