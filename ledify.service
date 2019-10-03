@@ -1,7 +1,9 @@
 [Unit]
 Description=Ledify
+After=pilight.service
 
 [Service]
+Restart=always
 ExecStart=/usr/local/bin/ledify
 
 [Install]
