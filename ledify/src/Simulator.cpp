@@ -51,6 +51,10 @@ Simulator::Simulator(QObject *parent) : QObject(parent) {
 
     m_ledController->startDrawLoop();
     m_ledController->commandOnIfNight();
+
+    QTimer::singleShot(250, [this] {
+        this->sendCommand("ON");
+    });
 }
 
 void Simulator::sendCommand(const QString &string) {

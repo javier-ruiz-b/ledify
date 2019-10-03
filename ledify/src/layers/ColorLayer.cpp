@@ -9,6 +9,13 @@ ColorLayer::ColorLayer(const Color &color) {
     m_pixel = color.rgbw();
 }
 
+ColorLayer *ColorLayer::createFromCommand(const QStringList &args, QString &) {
+    return new ColorLayer(Color(args[1].toUShort(),
+                                args[2].toUShort(),
+                                args[3].toUShort(),
+                                args[4].toUShort()));
+}
+
 void ColorLayer::setColor(const Color &color) {
     m_pixel = color.rgbw();
 }

@@ -21,6 +21,7 @@ Q_LOGGING_CATEGORY(EXECUTOR, "ledify.executor", QtWarningMsg)
 
 CommandExecutor::CommandExecutor(LayerController *layers, FpsCalculator *fpsCalculator)
     : m_layers(layers), m_fpsCalculator(fpsCalculator) {
+
     m_commandToFunction.insert("SET", funcWrapper(cSet));
     m_commandToFunction.insert("RANDOM", funcWrapper(cRandom));
     m_commandToFunction.insert("COLOR", funcWrapper(cColor));
@@ -53,13 +54,9 @@ void CommandExecutor::cSet(const QStringList &args, QString &) {
     m_layers->setAsRoot(args[0].toUShort());
 }
 
-void CommandExecutor::cColor(const QStringList &args, QString &) {
+void CommandExecutor::cColor(const QStringList &args, QString &response) {
     expects(5, args);
-    m_layers->addTo(args[0].toUShort(),
-                    new ColorLayer(Color(args[1].toUShort(),
-                                         args[2].toUShort(),
-                                         args[3].toUShort(),
-                                         args[4].toUShort())));
+    m_layers->addTo(args[0].toUShort(), ColorLayer::createFromCommand(args, response));
 }
 
 void CommandExecutor::cRandom(const QStringList &, QString &) {
@@ -153,24 +150,25 @@ void CommandExecutor::cOff(const QStringList &, QString &) {
 }
 
 void CommandExecutor::cOn(const QStringList &, QString &) {
-    QSharedPointer<Layer> red(new SpotLayer(Color(200, 0, 0, 0), 150, 20, Interpolator::InterpolatorLinear));
-    QSharedPointer<Layer> green(new SpotLayer(Color(0, 200, 0, 0), 200, 20, Interpolator::InterpolatorLinear));
-    QSharedPointer<Layer> blue(new SpotLayer(Color(0, 0, 200, 0), 150, 20, Interpolator::InterpolatorLinear));
-    QSharedPointer<Layer> white(new SpotLayer(Color(203, 80, 1, 203), 150, 10, Interpolator::InterpolatorLinear));
-    QSharedPointer<Layer> spot(new SpotLayer(Color(203, 80, 1, 203), 150, 150, Interpolator::InterpolatorLinear));
+    QSharedPointer<Layer> red(new SpotLayer(Color(150, 0, 0, 0), 150, 75, Interpolator::InterpolatorLinear));
+    QSharedPointer<Layer> green(new SpotLayer(Color(0, 150, 0, 0), 150, 75, Interpolator::InterpolatorLinear));
+    QSharedPointer<Layer> blue(new SpotLayer(Color(0, 0, 150, 0), 150, 75, Interpolator::InterpolatorLinear));
+    QSharedPointer<Layer> white(new SpotLayer(Color(0, 0, 0, 255), 150, 4, Interpolator::InterpolatorDecelerate));
+    QSharedPointer<Layer> spot(new SpotLayer(Color(203, 80, 2, 203), 150, 150, Interpolator::InterpolatorLinear));
 
     auto redAnimation = QSharedPointer<Layer> (new SlideAnimationLayer(red, 0.12f));
     auto redAnimation2 = QSharedPointer<Layer> (new SlideAnimationLayer(red, -0.12f));
     auto greenAnimation = QSharedPointer<Layer> (new SlideAnimationLayer(green, -0.25f));
     auto blueAnimation = QSharedPointer<Layer> (new SlideAnimationLayer(blue, 0.25f));
-    auto whiteAnimation = QSharedPointer<Layer> (new SlideAnimationLayer(white, -0.085f));
-    auto whiteAnimation2 = QSharedPointer<Layer> (new SlideAnimationLayer(white, 0.085f));
+    auto whiteAnimation = QSharedPointer<Layer> (new SlideAnimationLayer(white, -0.1f));
+    auto whiteAnimation2 = QSharedPointer<Layer> (new SlideAnimationLayer(white, 0.1f));
 
     auto allLayers = QSharedPointer<Layer> (new AdditionLayer({redAnimation, redAnimation2, greenAnimation, blueAnimation, whiteAnimation, whiteAnimation2}));
+//    auto allLayers = QSharedPointer<Layer> (new AdditionLayer({red, green, blue, white}));
 
     auto fadeStart = new FadeLayer(m_layers->current(),
                               allLayers,
-                              Interpolator::InterpolatorAccelerate, 0, 1000);
+                              Interpolator::InterpolatorAccelerate, 0, 100);
     auto fadeEnd = new FadeLayer(QSharedPointer<Layer> (fadeStart),
                               spot,
                               Interpolator::InterpolatorAccelerate, 3000, 4000);
