@@ -29,4 +29,5 @@ private:
     QHash<int, QSharedPointer<Layer>> m_indexedLayers;
 
     friend class LedStripControllerTest;
+    friend class SmokeTest;
 };

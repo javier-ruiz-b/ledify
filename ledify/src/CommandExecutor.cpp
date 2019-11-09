@@ -13,7 +13,7 @@
 #include <SpotLayer.h>
 #include <Color.h>
 
-Q_LOGGING_CATEGORY(EXECUTOR, "ledify.executor", QtWarningMsg)
+Q_LOGGING_CATEGORY(EXECUTOR, "ledify.executor", QtDebugMsg)
 
 #define funcWrapper(func) [=](const QStringList &args, QString &response) { this->func(args, response); }
 #define expects(expectedArgs, args) if (args.count() != expectedArgs) { qCWarning(EXECUTOR) << "Expected" << expectedArgs << "instead of" << args.count(); return; }

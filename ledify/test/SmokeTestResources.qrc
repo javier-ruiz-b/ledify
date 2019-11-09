@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>SmokeTestFiles/on.txt</file>
+        <file>SmokeTestFiles/complex-coded-on.txt</file>
+    </qresource>
+</RCC>

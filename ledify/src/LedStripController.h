@@ -55,4 +55,5 @@ private:
     QTimer *m_loopTimer;
 
     friend class LedStripControllerTest;
+    friend class SmokeTest;
 };

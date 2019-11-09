@@ -7,7 +7,7 @@ if(UNIX)
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fsanitize=address -fno-omit-frame-pointer")
 endif()
 
-set(CMAKE_CXX_FLAGS_RELEASE "-O2 -fPIC -Wno-gnu-zero-variadic-macro-arguments")
+set(CMAKE_CXX_FLAGS_RELEASE "-O2 -fPIC")
 
 set(CMAKE_AUTOMOC ON)
 
