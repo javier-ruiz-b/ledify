@@ -40,6 +40,7 @@ bool SmokeTest::runTestFile(QString &contents) {
 
     for (auto command: contents.split("\n", QString::SkipEmptyParts)) {
         tested.parseReceivedString(command);
+        tested.draw();
     }
 
     bool drawn = false;
