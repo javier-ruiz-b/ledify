@@ -11,6 +11,12 @@ public:
     virtual void draw (uint32_t *ledBuffer) = 0;
     virtual bool isAnyLedOn() = 0;
 
+    uint32_t numLeds() const {
+        return m_numLeds;
+    }
+
 protected:
     uint32_t m_numLeds;
 };
+
+

@@ -11,12 +11,15 @@ class IWiringPi;
 class Layer;
 class QString;
 class IRelayController;
+class VideoBuffer;
 
 class LedStripController : public QObject {
     Q_OBJECT
 
 public:
-    LedStripController(ILedStrip *ledStrip, IRelayController *relayController, QObject *parent = nullptr);
+    LedStripController(ILedStrip *ledStrip,
+                       IRelayController *relayController,
+                       QObject *parent = nullptr);
 
     void initializeDependencies();
     LayerController &layerController();
@@ -48,6 +51,7 @@ private:
 
     ILedStrip *m_ledStrip;
     IRelayController *m_relayController;
+    VideoBuffer *m_videoBuffer;
     FpsCalculator m_fpsCalculator;
     CommandReader m_commandReader;
     LayerController m_layerController;

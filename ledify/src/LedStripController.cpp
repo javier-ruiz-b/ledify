@@ -9,6 +9,7 @@
 #include "Layer.h"
 #include "RestClientRelayController.h"
 #include "TimeControl.h"
+#include "VideoBuffer.h"
 
 Q_LOGGING_CATEGORY(CONTROLLER, "ledify.controller", QtWarningMsg)
 
@@ -19,6 +20,8 @@ LedStripController::LedStripController(ILedStrip *ledStrip, IRelayController *re
     auto blackColor = m_layerController.add(new ColorLayer(Color(0, 0, 0, 0)));
     m_layerController.setAsRoot(blackColor);
     m_executor.reset(new CommandExecutor(&m_layerController, &m_fpsCalculator));
+
+    m_videoBuffer = new VideoBuffer(ledStrip->numLeds());
 
     m_loopTimer = new QTimer(this);
     m_loopTimer->setSingleShot(true);
@@ -139,7 +142,11 @@ void LedStripController::drawLoop() {
 void LedStripController::drawToLedStrip(Layer *rootLayer) {
     m_ledStrip->render(rootLayer);
 
-    m_ledStrip->draw();
+    uint32_t* buffer = new uint32_t[m_videoBuffer->numLeds()];
+    rootLayer->draw(buffer, m_videoBuffer->numLeds());
+    m_ledStrip->draw(buffer);
+
+    delete[] buffer;
 }
 
 LayerController &LedStripController::layerController() {
