@@ -27,6 +27,7 @@ public:
 private:
     void renderingLoop();
     void drawingLoop();
+    void changePriority(std::thread &th, int priority);
 
 private:
     constexpr static int c_buffers = 3;

@@ -1,4 +1,6 @@
 #include "VideoBuffer.h"
+#include <iostream>
+#include <cstring>
 
 VideoBuffer::VideoBuffer(size_t numLeds, QObject *parent)
     : QObject(parent), m_numLeds(numLeds) {
@@ -16,6 +18,7 @@ VideoBuffer::~VideoBuffer() {
 void VideoBuffer::start() {
     m_renderingLoop = new std::thread(&VideoBuffer::renderingLoop, this);
     m_drawingLoop = new std::thread(&VideoBuffer::drawingLoop, this);
+    changePriority(*m_renderingLoop, 1);
 }
 
 void VideoBuffer::stop() {
@@ -57,12 +60,9 @@ void VideoBuffer::drawingLoop() {
         m_bufferBusy[index].lock();
     }
 }
-//void VideoBuffer::drawingLoop() {
-//    while (!finishing) {
-//        m_renderCallback(m_buffer[0], m_numLeds);
-//        m_drawerCallback(m_buffer[0], m_numLeds);
-//        constexpr double refreshRateInHz = 30;
-//        constexpr auto waitDuration = std::chrono::duration<double, std::milli> (1000 / refreshRateInHz);
-//        std::this_thread::sleep_for(waitDuration);
-//    }
-//}
+
+void VideoBuffer::changePriority(std::thread &th, int priority) {
+    if(pthread_setschedprio(th.native_handle(), priority)) {
+        std::cerr << "Failed to set Thread priority : " << std::strerror(errno) << std::endl;
+    }
+}
