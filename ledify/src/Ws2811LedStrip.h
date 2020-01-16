@@ -9,7 +9,6 @@ public:
     Ws2811LedStrip(uint32_t numLeds);
     void initialize () override;
     void deinitialize () override;
-    void render (Layer *buffer) override;
     void draw (uint32_t *ledBuffer)  override;
     bool isAnyLedOn() override;
 

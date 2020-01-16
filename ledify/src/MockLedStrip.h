@@ -16,8 +16,9 @@ public:
 
     void initialize () override {}
     void deinitialize () override {}
-    void render (Layer *layer) override {
-        layer->draw(m_buffer, m_numLeds);
+
+    void draw (uint32_t *ledBuffer) override {
+        m_buffer = ledBuffer;
         m_anyLedOn = false;
         for (uint32_t i = 0; i < m_numLeds; i++) {
             if (m_buffer[i] != 0) {
@@ -25,10 +26,6 @@ public:
                 break;
             }
         }
-    }
-
-    void draw (uint32_t *ledBuffer) override {
-        m_buffer = ledBuffer;
     }
     bool isAnyLedOn() override { return m_anyLedOn; }
 

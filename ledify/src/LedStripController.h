@@ -33,6 +33,7 @@ public:
 
 signals:
     void drawPixels(Layer *rootLayer);
+    void drawBuffer(uint32_t *buffer, unsigned long numLeds);
     void terminated();
 
 private:
@@ -47,6 +48,8 @@ private:
     const int c_trafoPowerOnDelayMs = 500;
     const int c_trafoIdlePowerOffDelayMs = 4000;
     const int c_drawRefreshIdleMs = 4000;
+
+    bool m_wasAnyLedOn = false;
 
     ILedStrip *m_ledStrip;
     IRelayController *m_relayController;

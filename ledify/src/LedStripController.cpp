@@ -22,14 +22,24 @@ LedStripController::LedStripController(ILedStrip *ledStrip, IRelayController *re
     m_executor.reset(new CommandExecutor(&m_layerController, &m_fpsCalculator));
 
     m_videoBuffer = new VideoBuffer(ledStrip->numLeds());
-//    m_videoBuffer->registerRenderCallback([this] (uint32_t *buffer, size_t numLeds) -> bool {
+    m_videoBuffer->registerRenderCallback([this] (uint32_t *buffer, size_t numLeds) -> bool {
+        if (!m_relayController->isOn()) {
+            return false;
+        }
+        auto child = m_layerController.root().child();
+        if (!child.isNull()) {
+            m_fpsCalculator.tick();
+            child->draw(buffer, static_cast<uint32_t>(numLeds));
+//                m_ledStrip->draw(buffer);
+        }
+
+
 //        if (isAnyLedOn()) {
 ////            m_loopTimer->start(c_drawRefreshIdleMs);
-//            m_fpsCalculator.tick();
-//            auto rootLayer = m_layerController.root();
 
-//            auto child = rootLayer.child();
+//            auto child = m_layerController.root().child();
 //            if (!child.isNull()) {
+//                m_fpsCalculator.tick();
 //                child->draw(buffer, static_cast<uint32_t>(numLeds));
 ////                m_ledStrip->draw(buffer);
 //            }
@@ -37,20 +47,34 @@ LedStripController::LedStripController(ILedStrip *ledStrip, IRelayController *re
 //            m_relayController->turnOff(c_trafoIdlePowerOffDelayMs);
 //            return false;
 //        }
-//        return true;
-//    });
-//    m_videoBuffer->registerDrawerCallback([this] (uint32_t *buffer, size_t numLeds) -> bool {
-//        m_ledStrip->draw(buffer);
-//        return true;
-//    });
+        return true;
+    });
+    m_videoBuffer->registerDrawerCallback([this] (uint32_t *buffer, size_t size) -> bool {
+        emit drawBuffer(buffer, size);
+        return true;
+    });
 
+    connect(this, &LedStripController::drawBuffer, this, [this] (uint32_t *buffer, unsigned long) {
+        m_ledStrip->draw(buffer);
 
-    m_loopTimer = new QTimer(this);
-    m_loopTimer->setSingleShot(true);
-    m_loopTimer->setInterval(10*1000);
-    connect(m_loopTimer, &QTimer::timeout, this, &LedStripController::drawLoop);
+        auto isOn = m_ledStrip->isAnyLedOn();
+        if (isOn != m_wasAnyLedOn) {
+            if (isOn && !m_relayController->isOn()) {
+                m_relayController->turnOn();
+            } else if (!isOn && m_relayController->isOn()) {
+                m_relayController->turnOff(c_trafoIdlePowerOffDelayMs);
+            }
+            m_wasAnyLedOn = isOn;
+        }
+        return true;
+    }, Qt::BlockingQueuedConnection);
+
     m_ledStrip->initialize();
-    connect(this, &LedStripController::drawPixels, this, &LedStripController::drawToLedStrip);
+    m_loopTimer = new QTimer(this);
+//    m_loopTimer->setSingleShot(true);
+//    m_loopTimer->setInterval(10*1000);
+//    connect(m_loopTimer, &QTimer::timeout, this, &LedStripController::drawLoop);
+//    connect(this, &LedStripController::drawPixels, this, &LedStripController::drawToLedStrip);
 }
 
 void LedStripController::turnOnRelayAndRefresh() {
@@ -63,6 +87,7 @@ void LedStripController::turnOnRelayAndRefresh() {
 }
 
 void LedStripController::deinitialize() {
+    m_videoBuffer->stop();
     m_ledStrip->deinitialize();
 }
 
@@ -105,6 +130,7 @@ void LedStripController::commandOnIfNight() {
 
 void LedStripController::startDrawLoop() {
     m_loopTimer->start(0);
+    m_videoBuffer->start();
 }
 
 void LedStripController::terminate() {
@@ -116,8 +142,8 @@ void LedStripController::terminate() {
     }
 
     connect(m_relayController, &RestClientRelayController::relayStateChanged,
-            this, [this] (bool state) {
-        if (!state) {
+            this, [this] (bool isOn) {
+        if (!isOn) {
             emit terminated();
         }
     });

@@ -7,7 +7,6 @@ public:
     virtual ~ILedStrip() = default;
     virtual void initialize () = 0;
     virtual void deinitialize () = 0;
-    virtual void render (Layer *rootLayer) = 0;
     virtual void draw (uint32_t *ledBuffer) = 0;
     virtual bool isAnyLedOn() = 0;
 
