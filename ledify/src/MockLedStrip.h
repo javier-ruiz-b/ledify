@@ -7,11 +7,11 @@
 class MockLedStrip : public ILedStrip {
 public:
     MockLedStrip(uint32_t numLeds) : ILedStrip(numLeds) {
-//        m_buffer = new uint32_t[numLeds];
+        m_buffer = new uint32_t[numLeds];
     }
 
     virtual ~MockLedStrip() override {
-//        delete[] m_buffer;
+        delete[] m_buffer;
     }
 
     void initialize () override {}

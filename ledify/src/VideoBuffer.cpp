@@ -24,7 +24,6 @@ void VideoBuffer::stop() {
     finishing = true;
 }
 
-size_t VideoBuffer::numLeds() const
-{
+size_t VideoBuffer::numLeds() const {
     return m_numLeds;
 }

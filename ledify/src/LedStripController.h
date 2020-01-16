@@ -21,7 +21,6 @@ public:
                        IRelayController *relayController,
                        QObject *parent = nullptr);
 
-    void initializeDependencies();
     LayerController &layerController();
     bool writeChar(char c);
     bool animationFinished();

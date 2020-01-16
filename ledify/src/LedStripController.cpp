@@ -22,11 +22,35 @@ LedStripController::LedStripController(ILedStrip *ledStrip, IRelayController *re
     m_executor.reset(new CommandExecutor(&m_layerController, &m_fpsCalculator));
 
     m_videoBuffer = new VideoBuffer(ledStrip->numLeds());
+//    m_videoBuffer->registerRenderCallback([this] (uint32_t *buffer, size_t numLeds) -> bool {
+//        if (isAnyLedOn()) {
+////            m_loopTimer->start(c_drawRefreshIdleMs);
+//            m_fpsCalculator.tick();
+//            auto rootLayer = m_layerController.root();
+
+//            auto child = rootLayer.child();
+//            if (!child.isNull()) {
+//                child->draw(buffer, static_cast<uint32_t>(numLeds));
+////                m_ledStrip->draw(buffer);
+//            }
+//        } else {
+//            m_relayController->turnOff(c_trafoIdlePowerOffDelayMs);
+//            return false;
+//        }
+//        return true;
+//    });
+//    m_videoBuffer->registerDrawerCallback([this] (uint32_t *buffer, size_t numLeds) -> bool {
+//        m_ledStrip->draw(buffer);
+//        return true;
+//    });
+
 
     m_loopTimer = new QTimer(this);
     m_loopTimer->setSingleShot(true);
     m_loopTimer->setInterval(10*1000);
     connect(m_loopTimer, &QTimer::timeout, this, &LedStripController::drawLoop);
+    m_ledStrip->initialize();
+    connect(this, &LedStripController::drawPixels, this, &LedStripController::drawToLedStrip);
 }
 
 void LedStripController::turnOnRelayAndRefresh() {
@@ -36,11 +60,6 @@ void LedStripController::turnOnRelayAndRefresh() {
     } else {
         m_loopTimer->start(0);
     }
-}
-
-void LedStripController::initializeDependencies() {
-    m_ledStrip->initialize();
-    connect(this, &LedStripController::drawPixels, this, &LedStripController::drawToLedStrip);
 }
 
 void LedStripController::deinitialize() {
@@ -140,8 +159,6 @@ void LedStripController::drawLoop() {
 }
 
 void LedStripController::drawToLedStrip(Layer *rootLayer) {
-    m_ledStrip->render(rootLayer);
-
     uint32_t* buffer = new uint32_t[m_videoBuffer->numLeds()];
     rootLayer->draw(buffer, m_videoBuffer->numLeds());
     m_ledStrip->draw(buffer);

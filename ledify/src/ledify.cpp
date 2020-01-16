@@ -44,7 +44,6 @@ void Ledify::setupUnixSignalHandlers() {
 bool Ledify::init() {
     auto controller = new LedStripController(&m_ledStrip, new RestClientRelayController(this), this);
     connect (controller, &LedStripController::terminated, this, &Ledify::finished);
-    controller->initializeDependencies();
     restServer.registerCallback([controller] (QString &command) -> QString {
         auto result = controller->parseReceivedString(command);
         controller->turnOnRelayAndRefresh();
