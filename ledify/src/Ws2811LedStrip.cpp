@@ -42,6 +42,14 @@ void Ws2811LedStrip::render(Layer *rootLayer) {
     }
 }
 
+void Ws2811LedStrip::draw(uint32_t *ledBuffer) {
+    ws2811_return_t errCode;
+    memcpy(m_ledBuffer, ledBuffer, sizeof(uint32_t)*m_numLeds);
+    if ((errCode = ws2811_render(&m_ledStrip)) != WS2811_SUCCESS) {
+        qWarning("ws2811_render failed: %s\n", ws2811_get_return_t_str(errCode));
+    }
+}
+
 bool Ws2811LedStrip::isAnyLedOn() {
     if (!m_ledBuffer) {
         return false;

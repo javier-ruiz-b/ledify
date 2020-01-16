@@ -138,6 +138,8 @@ void LedStripController::drawLoop() {
 
 void LedStripController::drawToLedStrip(Layer *rootLayer) {
     m_ledStrip->render(rootLayer);
+
+    m_ledStrip->draw();
 }
 
 LayerController &LedStripController::layerController() {
