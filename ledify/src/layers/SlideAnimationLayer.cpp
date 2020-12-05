@@ -10,8 +10,9 @@ SlideAnimationLayer::~SlideAnimationLayer() {
     delete[] m_tempBuffer;
 }
 
-void SlideAnimationLayer::draw(uint32_t *buffer, uint32_t size) {
-    m_layer->draw(buffer, size);
+void SlideAnimationLayer::draw(QVector<quint32> &buffer) {
+    auto size = buffer.size();
+    m_layer->draw(buffer);
     if (m_tempBuffer == nullptr) {
         m_tempBuffer = new uint32_t[size];
         m_startMs = TimeControl::instance()->millis();
@@ -28,11 +29,11 @@ void SlideAnimationLayer::draw(uint32_t *buffer, uint32_t size) {
         offset = static_cast<uint32_t>(diffAndSpeed) % size;
     }
 
-    memcpy(&m_tempBuffer[offset], buffer, (size - offset) * sizeof(uint32_t));
+    memcpy(&m_tempBuffer[offset], buffer.constData(), (size - offset) * sizeof(uint32_t));
     if (offset) {
         memcpy(m_tempBuffer, &buffer[size-offset], offset * sizeof(uint32_t));
     }
-    memcpy(buffer, m_tempBuffer, size * sizeof(uint32_t));
+    memcpy(buffer.data(), m_tempBuffer, size * sizeof(uint32_t));
 }
 
 void SlideAnimationLayer::setNewChild(Layer *, QSharedPointer<Layer> newChild) {

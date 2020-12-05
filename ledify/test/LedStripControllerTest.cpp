@@ -10,11 +10,11 @@
 void LedStripControllerTest::init() {
     TimeControl::instance()->setMocked(true);
     TimeControl::instance()->setMillis(0);
-    m_tested = new LedStripController(&m_ledStrip, new MockRelayController(this), this);
+    m_tested = new LedStripController(m_ledStrip.data(), new MockRelayController(this), this);
 //    m_buffer = (int *) m_buffer;
-    memset(m_leds, 0xFE, NUM_LED*sizeof(uint32_t));
+    memset(m_leds.data(), 0xFE, NUM_LED*sizeof(uint32_t));
     connect(m_tested, &LedStripController::drawPixels, this, [this] (Layer *rootLayer) {
-        rootLayer->draw(reinterpret_cast<uint32_t *>(m_leds), NUM_LED);
+        rootLayer->draw(m_leds);
     });
 }
 

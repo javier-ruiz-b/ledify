@@ -3,6 +3,7 @@
 #include <MockLedStrip.h>
 #include "AlwaysOnRelayController.h"
 #include <TimeControl.h>
+#include <QScopedPointer>
 
 SmokeTest::SmokeTest(QObject *parent) : QObject(parent) {
     TimeControl::instance()->setMocked(true);
@@ -28,12 +29,13 @@ void SmokeTest::readTestFiles() {
 
 bool SmokeTest::runTestFile(QString &contents) {
     const int cLedCount = 151;
+    Config::createInstance(this)->setLedCount(cLedCount);
 
     TimeControl::instance()->setMillis(0);
 
-    MockLedStrip ledStrip(cLedCount);
+    QScopedPointer<MockLedStrip> ledStrip(new MockLedStrip());
     AlwaysOnRelayController relayController;
-    LedStripController tested(&ledStrip, &relayController);
+    LedStripController tested(ledStrip.data(), &relayController);
 
     relayController.turnOn();
     QTest::qWait(0);
@@ -44,11 +46,11 @@ bool SmokeTest::runTestFile(QString &contents) {
     }
 
     bool drawn = false;
-    int leds[cLedCount];
-    memset(leds, 0xFE, cLedCount * sizeof(uint32_t));
+    QVector<quint32> leds(cLedCount);
+    memset(leds.data(), 0xFE, cLedCount * sizeof(uint32_t));
     connect(&tested, &LedStripController::drawPixels, this,
             [&drawn, &leds] (Layer *rootLayer) {
-        rootLayer->draw(reinterpret_cast<uint32_t *>(leds), cLedCount);
+        rootLayer->draw(leds);
         drawn = true;
     });
 

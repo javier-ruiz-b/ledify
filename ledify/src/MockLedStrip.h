@@ -3,23 +3,22 @@
 #include "ILedStrip.h"
 
 #include "Layer.h"
+#include "Config.h"
 
 class MockLedStrip : public ILedStrip {
 public:
-    MockLedStrip(uint32_t numLeds) : ILedStrip(numLeds) {
-        m_buffer = new uint32_t[numLeds];
-    }
-
-    virtual ~MockLedStrip() override {
-        delete[] m_buffer;
+    MockLedStrip() :  ILedStrip() {
+        auto numLeds = Config::instance()->ledCount();
+        m_buffer.resize(numLeds);
     }
 
     void initialize () override {}
     void deinitialize () override {}
     void render (Layer *layer) override {
-        layer->draw(m_buffer, m_numLeds);
+        auto numLeds = Config::instance()->ledCount();
+        layer->draw(m_buffer);
         m_anyLedOn = false;
-        for (uint32_t i = 0; i < m_numLeds; i++) {
+        for (uint32_t i = 0; i < numLeds; i++) {
             if (m_buffer[i] != 0) {
                 m_anyLedOn = true;
                 break;
@@ -30,5 +29,5 @@ public:
 
 private:
     bool m_anyLedOn = false;
-    uint32_t *m_buffer;
+    QVector<quint32> m_buffer;
 };

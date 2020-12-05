@@ -1,12 +1,13 @@
 #pragma once
 #include <stdint.h>
 #include <QSharedPointer>
+#include <QVector>
 
 class Layer {
 public:
     virtual ~Layer() = default;
 
-    virtual void draw(uint32_t *buffer, uint32_t size) = 0;
+    virtual void draw(QVector<quint32> &buffer) = 0;
 
     virtual bool animationFinished();
     virtual void setNewChild(Layer *currentChild, QSharedPointer<Layer> newChild);

@@ -29,9 +29,7 @@ FadeLayer::FadeLayer(QSharedPointer<Layer> source, QSharedPointer<Layer> destina
     m_destination->setParent(this);
 }
 
-FadeLayer::~FadeLayer() {
-    delete[] m_tempBuffer;
-}
+FadeLayer::~FadeLayer() {}
 
 void FadeLayer::recalculateTimeDifference() {
     uint32_t currentTimeMs = m_time->millis();
@@ -71,17 +69,17 @@ inline uint32_t FadeLayer::drawPixel(uint32_t sourcePixel,
            b;
 }
 
-void FadeLayer::draw(uint32_t *buffer, uint32_t size) {
+void FadeLayer::draw(QVector<quint32> &buffer) {
     recalculateTimeDifference();
 
-    if (m_tempBuffer == nullptr) {
-        m_tempBuffer = new uint32_t[size];
+    if (m_tempBuffer.isEmpty()) {
+        m_tempBuffer.resize(buffer.size());
     }
-    auto sourceBuffer = buffer;
-    auto destinationBuffer = m_tempBuffer;
+    auto &sourceBuffer = buffer;
+    auto &destinationBuffer = m_tempBuffer;
 
-    m_source->draw(sourceBuffer, size);
-    m_destination->draw(destinationBuffer, size);
+    m_source->draw(sourceBuffer);
+    m_destination->draw(destinationBuffer);
 
     if (!started()) {
         return;
@@ -93,7 +91,7 @@ void FadeLayer::draw(uint32_t *buffer, uint32_t size) {
                  << ">" << static_cast<unsigned int>(m_durationMs)
                  << m_time->millis()
                  << "-" << m_startMs;
-        m_destination->draw(buffer, size);
+        m_destination->draw(buffer);
         m_parent->setNewChild(this, m_destination);
         return;
     }
@@ -101,7 +99,7 @@ void FadeLayer::draw(uint32_t *buffer, uint32_t size) {
     auto alphaDestination = interpolatedDestinationValue();
     uint16_t alphaSource = 256 - alphaDestination;
 
-    for (uint32_t i = 0; i < size; i++) {
+    for (int i = 0; i < buffer.size(); i++) {
         buffer[i] = drawPixel(sourceBuffer[i],
                               destinationBuffer[i],
                               alphaSource,

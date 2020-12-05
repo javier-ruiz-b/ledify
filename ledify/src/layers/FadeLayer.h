@@ -14,7 +14,7 @@ public:
     bool started();
     bool finished();
 
-    virtual void draw(uint32_t *buffer, uint32_t size) override;
+    virtual void draw(QVector<quint32> &buffer) override;
     virtual bool animationFinished() override { return false; }
     virtual void setNewChild(Layer *currentChild, QSharedPointer<Layer> newChild) override;
 
@@ -34,7 +34,7 @@ private:
     uint16_t m_durationMs;
     Interpolator::Type m_interpolator;
     unsigned char m_alphaDestination;
-    uint32_t *m_tempBuffer = nullptr;
+    QVector<quint32> m_tempBuffer;
 
     friend class LedStripControllerTest;
 };

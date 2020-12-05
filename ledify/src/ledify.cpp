@@ -11,6 +11,7 @@
 #include "RestClientRelayController.h"
 #include <QtDebug>
 #include <QString>
+#include <Config.h>
 
 int Ledify::s_sighupFd[2];
 int Ledify::s_sigtermFd[2];
@@ -25,7 +26,7 @@ int main(int argc, char **argv) {
 }
 
 Ledify::Ledify(const QStringList &, QObject *parent)
-    : QObject(parent), m_ledStrip(300) {
+    : QObject(parent) {
     setupUnixSignalHandlers();
 }
 
@@ -42,7 +43,9 @@ void Ledify::setupUnixSignalHandlers() {
 }
 
 bool Ledify::init() {
-    auto controller = new LedStripController(&m_ledStrip, new RestClientRelayController(this), this);
+    Config::createInstance(this);
+    m_ledStrip.reset(new Ws2811LedStrip());
+    auto controller = new LedStripController(m_ledStrip.data(), new RestClientRelayController(this), this);
     connect (controller, &LedStripController::terminated, this, &Ledify::finished);
     controller->initializeDependencies();
     restServer.registerCallback([controller] (QString &command) -> QString {

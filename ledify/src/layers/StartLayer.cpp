@@ -16,8 +16,8 @@ void StartLayer::setChild(QSharedPointer<Layer> child) {
     setNewChild(nullptr, child);
 }
 
-void StartLayer::draw(uint32_t *buffer, uint32_t size) {
-    m_child->draw(buffer, size);
+void StartLayer::draw(QVector<quint32> &buffer) {
+    m_child->draw(buffer);
 }
 
 bool StartLayer::animationFinished() {

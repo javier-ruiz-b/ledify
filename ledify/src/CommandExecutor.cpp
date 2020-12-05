@@ -157,8 +157,13 @@ void CommandExecutor::cAdd(const QStringList &args, QString &) {
     expectsAtLeast(2, args);
     QVector<QSharedPointer<Layer>> layers;
     for (int i = 1; i < args.length(); i++) {
+        auto layer = m_layers->take(args[i].toUShort());
+        if (layer.isNull()) {
+            qCDebug(EXECUTOR) << "Layer doesn't exist:" << args[i].toUShort();
+            continue;
+        }
         qCDebug(EXECUTOR) << "Taking layer" << args[i].toUShort();
-        layers << m_layers->take(args[i].toUShort());
+        layers << layer;
     }
     m_layers->addTo(args[0].toUShort(),
                     new AdditionLayer(layers));

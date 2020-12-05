@@ -8,7 +8,7 @@ class CenterToEdgesAnimationLayer : public Layer {
 public:
     CenterToEdgesAnimationLayer(QSharedPointer<Layer> background, Interpolator::Type interpolator, uint32_t color, uint16_t pixels, uint16_t durationMs, float endDistance);
 
-    virtual void draw(uint32_t *buffer, uint32_t size) override;
+    virtual void draw(QVector<quint32> &buffer) override;
     virtual bool animationFinished() override { return false; }
 
 private:

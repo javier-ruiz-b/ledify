@@ -3,6 +3,7 @@
 #include <QQuickStyle>
 #include <QVariant>
 #include <QtQuickControls2>
+#include <QScopedPointer>
 
 #include "Simulator.h"
 #include "Layer.h"
@@ -12,8 +13,8 @@
 
 #include <thread>
 
-static const int c_numLeds = SIMULATOR_LEDS;
-static QVector<int> m_colorData(c_numLeds);
+static const int c_numLeds = 300;
+static QVector<quint32> m_colorData(c_numLeds);
 int main(int argc, char *argv[]) {
     QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QGuiApplication app(argc, argv);
@@ -28,11 +29,12 @@ int main(int argc, char *argv[]) {
 }
 
 Simulator::Simulator(QObject *parent) : QObject(parent) {
-    m_ledController = new LedStripController(&m_ledStrip, new MockRelayController(this), this);
+    Config::createInstance(this)->setLedCount(c_numLeds);
+    ledStrip.reset(new MockLedStrip());
+    m_ledController = new LedStripController(ledStrip.data(), new MockRelayController(this), this);
     connect(m_ledController, &LedStripController::drawPixels, this, [this] (Layer *rootLayer) {
         memset(m_colorData.data(), 0, static_cast<uint32_t>(m_colorData.size()) * sizeof(uint32_t));
-        rootLayer->draw(reinterpret_cast<uint32_t *>(m_colorData.data()),
-                        static_cast<uint32_t>(m_colorData.size()));
+        rootLayer->draw(m_colorData);
         for (uint16_t i = 0; i < m_colorData.count(); i++) {
             Color color(static_cast<uint32_t>(m_colorData[i]));
             //simulate white
@@ -42,7 +44,7 @@ Simulator::Simulator(QObject *parent) : QObject(parent) {
                            qMin(color.b() + w, 255), 0);
             m_colorData[i] = static_cast<int>(newColor.rgbw());
         }
-        setLedData(QVariant::fromValue<QVector<int>>(m_colorData));
+        setLedData(QVariant::fromValue<QVector<quint32>>(m_colorData));
 
         constexpr double refreshRateInHz = 120;
         constexpr auto waitDuration = std::chrono::duration<double, std::milli> (1000 / refreshRateInHz);

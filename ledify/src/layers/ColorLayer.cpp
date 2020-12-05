@@ -20,8 +20,8 @@ void ColorLayer::setColor(const Color &color) {
     m_pixel = color.rgbw();
 }
 
-void ColorLayer::draw(uint32_t *buffer, uint32_t size) {
-    for(uint32_t i = 0; i < size; i++)  {
+void ColorLayer::draw(QVector<quint32> &buffer) {
+    for(int i = 0; i < buffer.size(); i++)  {
         buffer[i] = m_pixel;
     }
 }

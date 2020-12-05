@@ -1,11 +1,10 @@
 #pragma once
 #include <QObject>
+#include <QSharedPointer>
 #include "SerialPort.h"
 #include "LedStripController.h"
 #include "Ws2811LedStrip.h"
 #include "RestServer.h"
-
-#define NUM_LEDS 300
 
 class QTimer;
 
@@ -43,7 +42,7 @@ private:
 
     LedStripController *m_controller;
 
-    Ws2811LedStrip m_ledStrip;
+    QSharedPointer<Ws2811LedStrip> m_ledStrip;
 
     RestServer restServer;
 };

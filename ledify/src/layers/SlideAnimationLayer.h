@@ -6,7 +6,7 @@ public:
     SlideAnimationLayer(QSharedPointer<Layer> layer, float speed);
     virtual ~SlideAnimationLayer() override;
 
-    virtual void draw(uint32_t *buffer, uint32_t size) override;
+    virtual void draw(QVector<quint32> &buffer) override;
     virtual bool animationFinished() override { return false; }
     virtual void setNewChild(Layer *, QSharedPointer<Layer> newChild) override;
 

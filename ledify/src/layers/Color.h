@@ -15,7 +15,6 @@ private:
                 (static_cast<uint32_t>(b) & 255);
     }
 
-    uint8_t add(uint8_t component1, uint8_t component2);
 
 public:
     Color() = default;
@@ -29,6 +28,8 @@ public:
     Color(const Color &color, float multiply);
 
     Color add(Color &otherColor);
+    static uint8_t add(uint8_t component1, uint8_t component2);
+    static uint32_t add(uint32_t component1, uint32_t component2);
 
     uint32_t rgbw() const;
 

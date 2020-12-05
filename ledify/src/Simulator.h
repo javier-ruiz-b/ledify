@@ -5,7 +5,6 @@
 #include <QVariant>
 
 #include "MockLedStrip.h"
-#define SIMULATOR_LEDS 300
 
 class LedStripController;
 
@@ -34,6 +33,6 @@ public slots:
 
 private:
     LedStripController *m_ledController;
-    MockLedStrip m_ledStrip{SIMULATOR_LEDS};
     QVariant m_ledData;
+    QScopedPointer<MockLedStrip> ledStrip;
 };

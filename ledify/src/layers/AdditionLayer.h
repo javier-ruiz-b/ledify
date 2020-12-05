@@ -8,10 +8,10 @@ public:
     AdditionLayer(QVector<QSharedPointer<Layer>> layers);
     virtual ~AdditionLayer() override;
 
-    virtual void draw(uint32_t *buffer, uint32_t size) override;
+    virtual void draw(QVector<quint32> &buffer) override;
 
 private:
     QVector<QSharedPointer<Layer>> m_layers;
-    QVector<uint32_t *> m_buffers;
+    QVector<QVector<quint32>> m_buffers;
 
 };

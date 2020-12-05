@@ -11,7 +11,7 @@ public:
     QSharedPointer<Layer> child() const;
     void setChild(QSharedPointer<Layer> child);
 
-    virtual void draw(uint32_t *buffer, uint32_t size) override;
+    virtual void draw(QVector<quint32> &buffer) override;
     virtual bool animationFinished() override;
     virtual void setNewChild(Layer *currentChild, QSharedPointer<Layer> newChild) override;
 

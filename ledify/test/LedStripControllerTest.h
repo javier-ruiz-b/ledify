@@ -2,6 +2,7 @@
 
 #define NUM_LED 100
 #include <QTest>
+#include <QVector>
 
 #include "MockLedStrip.h"
 
@@ -13,7 +14,10 @@ class LedStripControllerTest : public QObject {
     Q_OBJECT
 
 public:
-    LedStripControllerTest() {}
+    LedStripControllerTest() {
+        Config::createInstance(this)->setLedCount(NUM_LED);
+        m_ledStrip.reset(new MockLedStrip());
+    }
 
 private slots:
     void init();
@@ -37,8 +41,8 @@ private:
     void writeCommand(std::string command);
 
 private:
-    MockLedStrip m_ledStrip{NUM_LED};
+    QSharedPointer<MockLedStrip> m_ledStrip;
     LedStripController *m_tested = nullptr;
-    const int m_numLeds = NUM_LED;
-    int m_leds[NUM_LED];
+    int m_numLeds = NUM_LED;
+    QVector<quint32> m_leds{NUM_LED};
 };

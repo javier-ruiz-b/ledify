@@ -17,10 +17,7 @@ void Layer::setParent(Layer *parent) {
 }
 
 uint32_t Layer::pixel(uint32_t i) {
-    uint32_t size = i + 1;
-    auto buff = new uint32_t[size];
-    draw(buff, size);
-    uint32_t rgbw = buff[i];
-    delete[] buff;
-    return rgbw;
+    QVector<quint32> buffer(i + 1);
+    draw(buffer);
+    return buffer[i];
 }

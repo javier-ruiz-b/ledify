@@ -21,11 +21,11 @@ SpotLayer::~SpotLayer() {
     delete[] m_pixelBuffer;
 }
 
-void SpotLayer::draw(uint32_t *buffer, uint32_t size) {
+void SpotLayer::draw(QVector<quint32> &buffer) {
     auto start = static_cast<uint32_t>(m_position - m_bufferSize/2);
 
-    auto maxSize = qMin(static_cast<int>(size) - static_cast<int>(start),
+    auto maxSize = qMin(static_cast<int>(buffer.size()) - static_cast<int>(start),
                         static_cast<int>(m_bufferSize));
-    memset(buffer, 0, size * sizeof(uint32_t));
+    memset(buffer.data(), 0, buffer.size() * sizeof(uint32_t));
     memcpy(&buffer[start], m_pixelBuffer, static_cast<size_t>(maxSize) * sizeof(uint32_t));
 }

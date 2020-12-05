@@ -7,6 +7,16 @@ uint8_t Color::add(uint8_t component1, uint8_t component2) {
     return component1 + component2;
 }
 
+uint32_t Color::add(uint32_t color1, uint32_t color2) {
+    uint32_t result = 0;
+    for (int i = 0; i < 4; i++) {
+        auto component1 = static_cast<uint8_t>((color1 >> i*8) & 255);
+        auto component2 = static_cast<uint8_t>((color2 >> i*8) & 255);
+        result |= add(component1, component2) << i*8;
+    }
+    return result;
+}
+
 Color::Color(const Color &color, float multiply) {
     m_rgbw = componentsToPixel(color.r() * multiply,
                                color.g() * multiply,
