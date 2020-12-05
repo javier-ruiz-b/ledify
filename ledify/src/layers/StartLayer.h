@@ -4,7 +4,7 @@
 
 class StartLayer : public Layer {
 public:
-    StartLayer();
+    StartLayer(QSharedPointer<Layer> child = nullptr);
 
     void reset();
 

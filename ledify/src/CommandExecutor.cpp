@@ -10,6 +10,7 @@
 #include "RandomLayer.h"
 #include "SlideAnimationLayer.h"
 #include "AdditionLayer.h"
+#include "ChristmasLayer.h"
 #include <SpotLayer.h>
 #include <Color.h>
 
@@ -38,6 +39,7 @@ CommandExecutor::CommandExecutor(LayerController *layers, FpsCalculator *fpsCalc
     m_commandToFunction.insert("SLIDE", funcWrapper(cSlideAnimation));
     m_commandToFunction.insert("SPOT", funcWrapper(cSpot));
     m_commandToFunction.insert("ADD", funcWrapper(cAdd));
+    m_commandToFunction.insert("CHRISTMAS", funcWrapper(cChristmas));
 }
 
 bool CommandExecutor::parseCommand(const QString &command, const QStringList &args, QString &response) {
@@ -166,7 +168,18 @@ void CommandExecutor::cAdd(const QStringList &args, QString &) {
         layers << layer;
     }
     m_layers->addTo(args[0].toUShort(),
-                    new AdditionLayer(layers));
+            new AdditionLayer(layers));
+}
+
+void CommandExecutor::cChristmas(const QStringList &args, QString &) {
+    expects(6, args);
+    m_layers->addTo(args[0].toUShort(),
+            new ChristmasLayer( args[1].toUInt(),
+                                args[2].toInt(),
+                                args[3].toInt(),
+                                args[4].toInt(),
+                                args[5].toInt()));
+
 }
 
 void CommandExecutor::cOff(const QStringList &, QString &) {

@@ -1,8 +1,9 @@
 #include "StartLayer.h"
 #include <QtDebug>
 
-StartLayer::StartLayer()
-    : m_child(nullptr) {}
+StartLayer::StartLayer(QSharedPointer<Layer> child) {
+    setNewChild(nullptr, child);
+}
 
 void StartLayer::reset() {
     m_child.clear();

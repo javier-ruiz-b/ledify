@@ -33,6 +33,7 @@ private:
     void cSlideAnimation(const QStringList &args, QString &response);
     void cSpot(const QStringList &args, QString &response);
     void cAdd(const QStringList &args, QString &response);
+    void cChristmas(const QStringList &args, QString &response);
 
 private:
     bool parseCommand(const QString &command, const QStringList &args, QString &response);
