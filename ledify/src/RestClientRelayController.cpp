@@ -65,7 +65,7 @@ void RestClientRelayController::sendHttpRequest(bool originalState) {
     qCDebug(RESTRELAY) << "Sending GET request" << url.toString();
 
     const int timeoutSecs = 2;
-    const int httpPort = 80;
+    const int httpPort = 8090;
     httplib::Client cli(ip.toUtf8(), httpPort, timeoutSecs);
 
     auto res = cli.Get(request.toUtf8());
