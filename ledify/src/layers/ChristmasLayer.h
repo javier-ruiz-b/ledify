@@ -28,5 +28,5 @@ private:
     QSharedPointer<Layer> m_black;
     QSharedPointer<Layer> m_aditionLayer;
 
-    QSharedPointer<Layer> createLight(int bufferSize);
+    QSharedPointer<Layer> createLight(int lightIndex, int numLeds);
 };

@@ -46,7 +46,7 @@ Simulator::Simulator(QObject *parent) : QObject(parent) {
         }
         setLedData(QVariant::fromValue<QVector<quint32>>(m_colorData));
 
-        constexpr double refreshRateInHz = 120;
+        constexpr double refreshRateInHz = 60;
         constexpr auto waitDuration = std::chrono::duration<double, std::milli> (1000 / refreshRateInHz);
         std::this_thread::sleep_for(waitDuration);
     });
