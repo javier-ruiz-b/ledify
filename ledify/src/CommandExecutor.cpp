@@ -190,11 +190,11 @@ void CommandExecutor::cOff(const QStringList &, QString &) {
 }
 
 void CommandExecutor::cOn(const QStringList &, QString &) {
-    QSharedPointer<Layer> red(new SpotLayer(Color(150, 0, 0, 0), 150, 75, Interpolator::InterpolatorLinear));
-    QSharedPointer<Layer> green(new SpotLayer(Color(0, 150, 0, 0), 150, 75, Interpolator::InterpolatorLinear));
-    QSharedPointer<Layer> blue(new SpotLayer(Color(0, 0, 150, 0), 150, 75, Interpolator::InterpolatorLinear));
+    QSharedPointer<Layer> red(new SpotLayer(Color(150, 0, 0, 0), 150, 100, Interpolator::InterpolatorLinear));
+    QSharedPointer<Layer> green(new SpotLayer(Color(0, 150, 0, 0), 150, 100, Interpolator::InterpolatorLinear));
+    QSharedPointer<Layer> blue(new SpotLayer(Color(0, 0, 150, 0), 150, 100, Interpolator::InterpolatorLinear));
     QSharedPointer<Layer> white(new SpotLayer(Color(0, 0, 0, 255), 150, 4, Interpolator::InterpolatorDecelerate));
-    QSharedPointer<Layer> spot(new SpotLayer(Color(203, 80, 2, 203), 150, 150, Interpolator::InterpolatorLinear));
+    QSharedPointer<Layer> spot(new SpotLayer(Color(203, 80, 2, 203), 150, 300, Interpolator::InterpolatorLinear));
 
     auto redAnimation = QSharedPointer<Layer> (new SlideAnimationLayer(red, 0.12f));
     auto redAnimation2 = QSharedPointer<Layer> (new SlideAnimationLayer(red, -0.12f));
