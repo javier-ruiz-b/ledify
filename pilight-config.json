@@ -1,0 +1,133 @@
+{
+	"devices": {
+		"ledStripPower": {
+			"protocol": [ "clarus_switch" ],
+			"id": [{
+				"id": "A0",
+				"unit": 0
+			}],
+			"state": "on"
+		},
+		"nightTableLight": {
+			"protocol": [ "clarus_switch" ],
+			"id": [{
+				"id": "B1",
+				"unit": 0
+			}],
+			"state": "on"
+		},
+		"relay1": {
+			"protocol": [ "clarus_switch" ],
+			"id": [{
+				"id": "C0",
+				"unit": 0
+			}],
+			"state": "on"
+		},
+		"relay2": {
+			"protocol": [ "clarus_switch" ],
+			"id": [{
+				"id": "A2",
+				"unit": 0
+			}],
+			"state": "on"
+		},
+		"relay3": {
+			"protocol": [ "clarus_switch" ],
+			"id": [{
+				"id": "B0",
+				"unit": 0
+			}],
+			"state": "on"
+		},
+		"intertechno0": {
+			"protocol": [ "kaku_switch" ],
+			"id": [{
+				"id": 13965290,
+				"unit": 0
+			}],
+			"state": "on"
+		},
+		"intertechno1": {
+			"protocol": [ "kaku_switch" ],
+			"id": [{
+				"id": 13965290,
+				"unit": 1
+			}],
+			"state": "on"
+		},
+		"intertechno2": {
+			"protocol": [ "kaku_switch" ],
+			"id": [{
+				"id": 13965290,
+				"unit": 2
+			}],
+			"state": "on"
+		}
+	},
+	"rules": {},
+	"gui": {
+		"ledStripPower": {
+			"group": [ "Power" ],
+			"media": [ "web" ],
+			"name": "LED power"
+		},
+		"intertechno0": {
+			"group": [ "Light" ],
+			"media": [ "web" ],
+			"name": "Computer Light"
+		},
+		"intertechno1": {
+			"group": [ "Light" ],
+			"media": [ "web" ],
+			"name": "Wardrobe/Side Light"
+		},
+		"intertechno2": {
+			"group": [ "Light" ],
+			"media": [ "web" ],
+			"name": "TV Light"
+		}
+	},
+	"settings": {
+		"log-level": 6,
+		"pid-file": "/var/run/pilight.pid",
+		"log-file": "/var/log/pilight.log",
+		"standalone": 0,
+		"webserver-enable": 1,
+		"webserver-root": "/usr/local/share/pilight/webgui",
+		"webserver-http-port": 8091,
+		"webserver-https-port": 5002,
+		"webserver-cache": 1,
+		"whitelist": "",
+		"gpio-platform": "raspberrypi4"
+	},
+	"hardware": {
+		"433gpio": {
+			"sender": 0,
+			"receiver": 2
+		}
+	},
+	"registry": {
+		"webserver": {
+			"ssl": {
+				"certificate": {
+					"location": "/etc/pilight/pilight.pem",
+					"secure": 0
+				}
+			}
+		},
+		"pilight": {
+			"version": {
+				"current": "8.1.5"
+			}
+		},
+		"hardware": {
+			"RF433": {
+				"mingaplen": 4420,
+				"maxgaplen": 72900,
+				"minrawlen": 26,
+				"maxrawlen": 400
+			}
+		}
+	}
+}
